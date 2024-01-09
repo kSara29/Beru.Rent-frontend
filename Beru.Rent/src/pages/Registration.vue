@@ -6,70 +6,175 @@
         <div class="row">
             <div class="col-md-3"></div>
             <div class="col-md-6">
-                <form>
+                <v-form ref="registrationForm" @submit.prevent>
                     <div class="form-group">
-                        <label for="registration-email">Почта</label>
-                        <input type="email" class="form-control" id="registration-email" aria-describedby="registration-emailHelp"
-                            placeholder="example@email.com">
-                        <small id="emailHelp" class="form-text text-muted">введите свою почту в формате: example@email.com</small>
+                      <v-text-field
+                        v-model="email"
+                        name="email"
+                        label="Почта"
+                        :rules="emailRule"
+                        hide-details="auto"
+                      ></v-text-field>
                     </div>
                     <br />
                     <div class="form-group">
-                        <label for="registration-login">Логин пользователя</label>
-                        <input type="text" class="form-control" id="registration-login" aria-describedby="registration-login"
-                            placeholder="UserName">
-                        <small id="registration-login" class="form-text text-muted">Придумайте своё имя пользователя</small>
+                      <v-text-field
+                        v-model="login"
+                        name="login"
+                        label="Логин пользователя"
+                        :rules="loginRule"
+                        hide-details="auto">
+                      </v-text-field>
                     </div>
                     <br />
                     <div class="form-group">
-                        <label for="registration-firstName">Имя</label>
-                        <input type="text" class="form-control" id="registration-firstName" aria-describedby="registration-firstNameHelp"
-                            placeholder="Имя">
-                        <small id="registration-firstNameHelp" class="form-text text-muted">введите своё имя</small>
+                      <v-text-field
+                        v-model="firstName"
+                        name="firstName"
+                        label="Имя"
+                        :rules="nameRule"
+                        hide-details="auto">
+                      </v-text-field>
                     </div>
                     <br />
                     <div class="form-group">
-                        <label for="registration-lastName">Фамилия</label>
-                        <input type="text" class="form-control" id="registration-lastName" aria-describedby="registration-lastNameHelp"
-                            placeholder="Фамилия">
-                        <small id="registration-lastNameHelp" class="form-text text-muted">введите свою фамилию</small>
+                      <v-text-field
+                        v-model="lastName"
+                        name="secondName"
+                        label="Фамилия"
+                        :rules="lastNameRule"
+                        hide-details="auto">
+                      </v-text-field>
                     </div>
                     <br />
                     <div class="form-group">
-                        <label for="registration-IIN">ИИН</label>
-                        <input type="text" class="form-control" id="registration-firstName" aria-describedby="registration-IIN"
-                            placeholder="ИИН номер">
-                        <small id="registration-IIN" class="form-text text-muted">введите свой ИИн</small>
+                      <v-text-field
+                        v-model="iinNumber"
+                        name="iinNumber"
+                        label="ИИН номер"
+                        :rules="iinRule"
+                        hide-details="auto">
+                      </v-text-field>
                     </div>
                     <br />
                     <div class="form-group">
-                        <label for="registration-firstName">Номер телефона</label>
-                        <input type="text" class="form-control" id="registration-firstName" aria-describedby="firstNameHelp"
-                            placeholder="Имя">
-                        <small id="emailHelp" class="form-text text-muted">введите свой номер телефона</small>
+                      <v-text-field
+                        v-model="phoneNumber"
+                        name="phoneNumber"
+                        label="Номер телефона"
+                        :rules="phoneRule"
+                        hide-details="auto">
+                      </v-text-field>
                     </div>
                     <br />
                     <div class="form-group">
-                        <label for="exampleInputPassword1">Придумайте пароль</label>
-                        <input type="password" class="form-control" id="registration-password" placeholder="введите пароль">
+                      <v-text-field
+                        v-model="password"
+                        type="password"
+                        name="password"
+                        label="Придумайте пароль"
+                        :rules="passwordRule"
+                        hide-details="auto">
+                      </v-text-field>
                     </div>
                     <br />
-                    <div class="form-group">
-                        <label for="exampleInputPassword1">Придумайте пароль</label>
-                        <input type="password" class="form-control" id="registration-repeat" placeholder="повторите свой пароль">
-                    </div>
-                    <br />
-                    <button type="submit" id="registration-sender" class="btn btn-primary">Отправить</button>
-                </form>
+                  <v-btn type="submit" @click="send" block="true" class="btn-primary">Зарегистрироваться</v-btn>
+                </v-form>
             </div>
+            <p>hello {{response}}</p>
             <div class="col-md-3"></div>
         </div>
     </div>
 </template>
 
 <script>
+import axios from 'axios'
 export default {
 
+  data: () => ({
+    email: '',
+    emailRule: [
+      value => !!value || 'Объязательное поле.',
+      value => {
+        const pattern =
+          /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
+        return pattern.test(value) || 'введите свою почту в формате: example@email.com'
+      }
+    ],
+    login: '',
+    loginRule: [
+      value => !!value || 'Придумайте логин.',
+      value => {
+        const pattern =
+          /^[A-z0-9_-]{3,15}$/
+        return pattern.test(value) || 'Логин не соответстует требованиям'
+      }
+    ],
+    firstName: '',
+    nameRule: [
+      value => !!value || 'Введите своё имя.',
+      value => value.length > 1 || 'Длина имени должна быть больше одной буквы',
+      value => {
+        const pattern =
+          /^[A-zА-я,ӘәІіӨөҺһҒғҚқҢңҰұҮү]{2,20}$/
+        return pattern.test(value) || 'Введите своё настоящее имя'
+      }
+    ],
+    lastName: '',
+    lastNameRule: [
+      value => !!value || 'Введите свою фамилию.',
+      value => value.length > 1 || 'Длина фамилии должна быть больше одной буквы',
+      value => {
+        const pattern =
+          /^[A-zА-я,ӘәІіӨөҺһҒғҚқҢңҰұҮү]{2,20}$/
+        return pattern.test(value) || 'Введите свою настоящую фамилию'
+      }
+    ],
+    iinNumber: '',
+    iinRule: [
+      value => !!value || 'введите свой ИИН',
+      value => value.length === 12 || 'ИИН должен содержать 12 цифр',
+      value => {
+        const pattern =
+          /^[0-9]{12,12}$/
+        return pattern.test(value) || 'ИИН должен содержать только цифры!'
+      }
+    ],
+    phoneNumber: '',
+    phoneRule: [
+      value => {
+        const pattern =
+          /^[+][0-9]{3}[)]?[-\s.]?[0-9]{3}[-\s.]?[0-9]{4,6}$/
+        return pattern.test(value) || 'Введите номер телефона начиная с +7'
+      }
+    ],
+    password: '',
+    passwordRule: [
+      value => !!value || 'Придумайте пароль',
+      value => {
+        const pattern =
+          /^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?).{8,}$/
+        return pattern.test(value) || 'Пароль должна содержать минимум 1 большую букву и 1 цифру'
+      }
+    ],
+    response: ''
+  }),
+  methods: {
+    send() {
+      var vm = {
+        FirstName: this.firstName,
+        LastName: this.lastName,
+        UserName: this.login,
+        IIN: this.iinNumber,
+        Mail: this.email,
+        Phone: this.phoneNumber,
+        Password: this.password
+      }
+
+      axios.post('http://localhost:5181/api/user/create', vm)
+        .then(response => console.log(response))
+    }
+  }
 }
 </script>
 
