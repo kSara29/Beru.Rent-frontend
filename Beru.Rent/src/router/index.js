@@ -5,12 +5,12 @@ const routes = [
   {
     path: '/',
     name: 'Beru.Rent',
-    component: () => import('@/pages/MainPage'),
-  },  
+    component: () => import('@/pages/Default/MainPage.vue'),
+  },
   {
     path: '/register',
-    name: 'регистрация',  
-    component: () => import('@/pages/Registration'),
+    name: 'регистрация',
+    component: () => import('@/pages/UserPages/Registration.vue'),
   }
 ]
 

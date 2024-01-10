@@ -81,7 +81,6 @@
                   <v-btn type="submit" @click="send" block="true" class="btn-primary">Зарегистрироваться</v-btn>
                 </v-form>
             </div>
-            <p>hello {{response}}</p>
             <div class="col-md-3"></div>
         </div>
     </div>
