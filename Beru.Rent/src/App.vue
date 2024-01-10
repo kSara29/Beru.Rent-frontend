@@ -2,17 +2,20 @@
     <v-app>
         <Navbar />
         <br/>
-        <div class="col-md-3"></div>
+        <br/>
+        <LoadPicture />
         <router-view />
     </v-app>
 </template>
 <script>
     import Navbar from "@/components/Navbar.vue";
+    import LoadPicture from "@/components/Forms/LoadPicture.vue";
 
     export default{
         name: 'App',
         components: {
-            Navbar
+            Navbar,
+            LoadPicture
         }
     };
 </script>
