@@ -12,6 +12,12 @@ const routes = [
     name: 'регистрация',
     component: () => import('@/pages/UserPages/Registration.vue'),
   }
+  ,
+  {
+    path: '/createad',
+    name: 'создать объявление',
+    component: () => import('@/pages/AdPages/CreateAd.vue'),
+  }
 ]
 
 const router = createRouter({

@@ -11,6 +11,9 @@
             <v-btn outlined class="ml-3">
                 <router-link to="/register">Регистрация</router-link>
             </v-btn>
+            <v-btn outlined class="ml-3">
+                <router-link to="/createad">Создать объявление</router-link>
+            </v-btn>
         </v-app-bar>
     </v-container>
 </template>
