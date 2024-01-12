@@ -11,6 +11,11 @@ const routes = [
     path: '/register',
     name: 'регистрация',
     component: () => import('@/pages/UserPages/Registration.vue'),
+  },
+  {
+    path: '/details/:id',
+    name: 'DetailPage',
+    component: () => import('@/pages/Default/AdDetails.vue'),
   }
 ]
 
