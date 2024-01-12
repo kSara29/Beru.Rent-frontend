@@ -2,6 +2,9 @@
   <v-container class="d-flex">
     <v-row>
       <v-col cols="12" md="8">
+        <v-container v-if="itemData">
+          <p class="display-6">{{itemData.title}}</p>
+        </v-container>
         <v-carousel hide-delimiters style="height: 500px;">
           <v-carousel-item
             v-for="(image, index) in carouselImages"
@@ -15,95 +18,113 @@
           <h5>Описание товара</h5>
           <p>{{ itemData.description }}</p>
         </v-container>
+
+        <v-container>
+          <v-btn style="background-color: darkslategrey; color: white">Показать номер</v-btn>
+          <v-btn style="background-color: #0d194d; color: white; margin-left: 30px">Написать</v-btn>
+        </v-container>
       </v-col>
 
       <v-col cols="12" md="4">
         <v-container>
           <p>Выберите период аренды:</p>
-          <v-container class="rentPeriod" style="padding: 0px">
-            <v-container class="d-flex align-center">
+          <v-container class="rentPeriod align-center" style="padding: 0px">
+            <v-container class="d-flex align-center justify-content-around rentSubCon">
               <p :class="{'text-grey': switchValue}">посуточная</p>
               <v-switch
                 color="primary"
                 v-model="switchValue"
+                style="width: 50px; padding-left: 60px"
               ></v-switch>
               <p :class="{'text-grey': !switchValue}">почасовая</p>
             </v-container>
-<!--            <v-row justify="space-around">
-              <v-menu
-                ref="menu"
-                v-model="menu"
-                :close-on-content-click="false"
-                :nudge-width="200"
-                transition="scale-transition"
-                offset-y
-              >
-                <template v-slot:activator="{ on, attrs }">
-                  <v-btn icon v-bind="attrs" v-on="on">
-                    <v-icon>mdi-calendar</v-icon>
-                  </v-btn>
-                </template>
-                <v-date-picker
-                  v-model="date"
-                  min="2016-06-15"
-                  max="2030-12-21"
-                  @input="menu = false"
-                ></v-date-picker>
-              </v-menu>
-            </v-row>-->
-            <v-date-picker
-              min="2016-06-15"
-              max="2030-12-21"
-              style="max-width: 100%"
-            ></v-date-picker>
+
+            <v-container class="d-flex rentDatePeriod">
+              <template v-if="!switchValue">
+                <v-text-field variant="solo"></v-text-field>
+                <v-text-field variant="solo"></v-text-field>
+              </template>
+
+              <template v-else>
+                <v-container>
+                  <v-text-field variant="solo"></v-text-field>
+                  <v-text-field variant="solo"></v-text-field>
+                </v-container>
+                <v-container>
+                  <v-text-field variant="solo"></v-text-field>
+                  <v-text-field variant="solo"></v-text-field>
+                </v-container>
+              </template>
+            </v-container>
+
+            <v-container v-if="itemData">
+              <p>Аренда ------------------------ {{itemData.price}}</p>
+            </v-container>
+          </v-container>
+        </v-container>
+
+        <v-container>
+          <v-container class="rentPeriod align-center" style="padding: 0px">
+            <v-container class="d-flex align-center justify-content-around rentSubCon">
+              <p :class="{'text-grey': switchValueDelivery}">Самовывоз</p>
+              <v-switch
+                color="primary"
+                v-model="switchValueDelivery"
+                style="width: 50px; padding-left: 60px"
+              ></v-switch>
+              <p :class="{'text-grey': !switchValueDelivery}">Доставка</p>
+            </v-container>
+
+            <v-container class="d-flex rentDatePeriod" v-if="itemData">
+              <template v-if="!switchValueDelivery">
+                <v-container style="background-color: #9b9c9e; border-radius: 15px; margin-bottom: 30px">
+                  <p>Адрес доставки: {{itemData.city}}, {{itemData.street}}</p>
+                </v-container>
+              </template>
+
+              <template v-else>
+                <v-container>
+                  <v-container style="padding: 0px">
+                    <v-text-field label="Адрес доставки" variant="solo"></v-text-field>
+                  </v-container>
+                  <v-container style="padding: 0px">
+                    <v-text-field label="Подъезд" variant="solo"></v-text-field>
+                    <v-text-field label="квартира" variant="solo"></v-text-field>
+                  </v-container>
+                </v-container>
+              </template>
+            </v-container>
+          </v-container>
+        </v-container>
+
+        <v-container v-if="itemData">
+          <v-container style="background-color: #803306; border-radius: 15px;
+          padding: 5px; color: white">
+            <p class="display-6">Итого {{itemData.price}}</p>
+          </v-container>
+          <v-container>
+            <v-btn size="x-large" style="background-color: #ed68a4; border-radius: 15px">
+              Запросить аренду</v-btn>
           </v-container>
         </v-container>
       </v-col>
 
     </v-row>
   </v-container>
-
-  <v-container>
-    <v-menu
-      ref="menu"
-      v-model="menu"
-      :close-on-content-click="false"
-      :nudge-right="40"
-      v-model:return-value="date"
-      lazy
-      transition="scale-transition"
-      offset-y
-      full-width
-      min-width="290px"
-    >
-      <template v-slot:activator="{ on }">
-        <v-text-field
-          v-model="date"
-          label="Picker in menu"
-          prepend-icon="event"
-          v-on="on"
-        ></v-text-field>
-      </template>
-      <v-date-picker v-model="date" no-title scrollable>
-        <v-spacer></v-spacer>
-        <v-btn flat color="primary" @click="menu = false">Cancel</v-btn>
-        <v-btn flat color="primary" @click="$refs.menu.save(date)">OK</v-btn>
-      </v-date-picker>
-    </v-menu>
-  </v-container>
 </template>
 
 <script>
   import axios from "axios";
+
   export default {
     data() {
       return {
         itemData: null,
         itemId: null,
         carouselImages: [],
-        switchValue: true,
-        date: new Date().toISOString().substr(0, 10),
-        menu: false
+        switchValue: false,
+        menu: false,
+        switchValueDelivery: false
       };
     },
     created() {
@@ -143,5 +164,16 @@
   .rentPeriod{
     background-color: #edf2ef;
     border-radius: 15px;
+    margin: 0px;
+  }
+  .rentSubCon{
+    padding-top: 0px;
+    padding-bottom: 0px;
+    margin: 0px;
+  }
+  .rentDatePeriod{
+    padding-top: 0px;
+    padding-bottom: 0px;
+    margin: 0px;
   }
 </style>
