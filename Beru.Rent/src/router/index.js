@@ -16,6 +16,11 @@ const routes = [
     path: '/profile',
     name: 'личный кабинет',
     component: () => import('@/pages/UserPages/Profile.vue')
+  },
+  {
+    path: '/details/:id',
+    name: 'DetailPage',
+    component: () => import('@/pages/Default/AdDetails.vue'),
   }
 ]
 
