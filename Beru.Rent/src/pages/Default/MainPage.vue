@@ -36,7 +36,7 @@
 
     <v-row>
       <v-col cols="12" md="6" lg="4" v-for="item in paginatedItems" :key="item.id">
-        <router-link :to="{ name: 'DetailPage', params: { id: item.id }}">
+        <router-link :to="{ name: 'DetailPage', params: { id: item.id }}" class="no-underline">
           <v-card class="mx-auto">
             <v-img
               :src="item.image"
@@ -140,11 +140,13 @@ export default {
     margin-top: 250px;
   }
   .mx-auto{
-    max-height: 600px;
+    height: 550px;
     margin-top: 30px;
-    text-decoration: none;
   }
   .category{
     width: 30%;
+  }
+  .no-underline {
+    text-decoration: none;
   }
 </style>
