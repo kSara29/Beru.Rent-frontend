@@ -5,8 +5,9 @@
 <template>
   
   <v-form @submit.prevent>
-    <div>
+    <div class="form-group">
       <v-select
+      variant="outlined"
         prepend-icon="mdi-go-kart"
         label="Выберите категорию"
         v-model="categoryId"
@@ -14,7 +15,8 @@
       ></v-select>
     </div>
     <div class="form-group">
-      <v-text-field
+      <v-text-field clearable
+      variant="outlined"
         prepend-icon="mdi-text"
         v-model="title"
         name="Укажите название"
@@ -24,17 +26,21 @@
       ></v-text-field>
     </div>
     <div class="form-group">
-      <v-text-field
+      <v-textarea
+      clearable
+      variant="outlined"
         prepend-icon="mdi-text-long"
         v-model="description"
         name="Опишите товар"
         label="Опишите товар"
         :rules="descriptionRules"
         hide-details="auto"
-      ></v-text-field>
+      ></v-textarea>
     </div>
     <div class="form-group">
       <v-text-field
+      clearable
+      variant="outlined"
         prepend-icon="mdi-exclamation"
         v-model="extraConditions"
         name="Дополнительные условия"
@@ -53,6 +59,8 @@
     </div>
     <div class="form-group" v-if="deposit">
       <v-text-field
+      clearable
+      variant="outlined"
         prepend-icon="mdi-cash-multiple"
         v-model="minDeposit"
         name="Минимальный залог"
@@ -61,16 +69,19 @@
         hide-details="auto"
       ></v-text-field>
     </div>
-    <div>
+    <div class="form-group">
       <v-select
+      variant="outlined"
         prepend-icon="mdi-timer-sand"
         label="Минимальный промежуток времени для аренды"
         v-model="timeunitId"
         :items="timeunit"
       ></v-select>
     </div>
-    <div>
+    <div class="form-group">
       <v-text-field
+      clearable
+      variant="outlined"
         prepend-icon="mdi-cash-multiple"
         v-model="price"
         label="Цена за единицу времени аренды (например за месяц)"
@@ -78,8 +89,9 @@
         hide-details="auto"
       ></v-text-field>
     </div>
-    <div>
-      <v-select        
+    <div class="form-group">
+      <v-select 
+      variant="outlined"       
         prepend-icon="mdi-file-sign"
         label="Тип контракта"
         v-model="contractTypeId"
@@ -88,6 +100,8 @@
     </div>
     <div class="form-group">
       <v-text-field
+      clearable
+      variant="outlined"
         prepend-icon="mdi-map-marker"
         v-model="addressString"
         name="Введите адрес одной строкой"
@@ -148,5 +162,7 @@
 </script>
 
 <style scoped>
-
+.form-group{
+  margin-top: 10px;
+}
 </style>
