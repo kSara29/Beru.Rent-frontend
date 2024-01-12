@@ -6,7 +6,7 @@
     label="Добавьте фото"
     multiple
     placeholder="Выбрать файлы"
-    prepend-icon="mdi-paperclip"
+    prepend-icon="mdi-image-multiple"
     variant="outlined"
     :show-size="1000"
   >

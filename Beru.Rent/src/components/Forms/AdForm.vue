@@ -6,6 +6,7 @@
   <v-form @submit.prevent>
     <div>
       <v-select
+        prepend-icon="mdi-go-kart"
         label="Выберите категорию"
         v-model="categoryId"
         :items="categories"
@@ -13,6 +14,7 @@
     </div>
     <div class="form-group">
       <v-text-field
+        prepend-icon="mdi-text"
         v-model="title"
         name="Укажите название"
         label="Укажите название"
@@ -22,6 +24,7 @@
     </div>
     <div class="form-group">
       <v-text-field
+        prepend-icon="mdi-text-long"
         v-model="description"
         name="Опишите товар"
         label="Опишите товар"
@@ -31,15 +34,17 @@
     </div>
     <div class="form-group">
       <v-text-field
+        prepend-icon="mdi-exclamation"
         v-model="extraConditions"
         name="Дополнительные условия"
-        label="допольнительные условия"
+        label="Дополнительные условия"
         :rules="conditionRules"
         hide-details="auto"
       ></v-text-field>
     </div>
     <div class="form-group">
       <v-checkbox
+        prepend-icon="mdi-credit-card-outline"
         v-model="deposit"
         label="Требуется ли залог?"
         hide-details="auto"
@@ -47,6 +52,7 @@
     </div>
     <div class="form-group" v-if="deposit">
       <v-text-field
+        prepend-icon="mdi-cash-multiple"
         v-model="minDeposit"
         name="Минимальный залог"
         label="Минимальный залог"
@@ -56,6 +62,7 @@
     </div>
     <div>
       <v-select
+        prepend-icon="mdi-timer-sand"
         label="Минимальный промежуток времени для аренды"
         v-model="timeunitId"
         :items="timeunit"
@@ -63,6 +70,7 @@
     </div>
     <div>
       <v-text-field
+        prepend-icon="mdi-cash-multiple"
         v-model="price"
         label="Цена за единицу времени аренды (например за месяц)"
         :rules="priceRules"
@@ -70,18 +78,22 @@
       ></v-text-field>
     </div>
     <div>
-      <v-select
-        label="Выберите категорию"
-        v-model="categoryId"
-        :items="categories"
-      ></v-select>
-    </div>
-    <div>
-      <v-select
+      <v-select        
+        prepend-icon="mdi-file-sign"
         label="Тип контракта"
         v-model="contractTypeId"
         :items="contracts"
       ></v-select>
+    </div>
+    <div class="form-group">
+      <v-text-field
+        prepend-icon="mdi-map-marker"
+        v-model="addressString"
+        name="Введите адрес одной строкой"
+        label="Введите адрес одной строкой"
+        :rules="address"
+        hide-details="auto"
+      ></v-text-field>
     </div>
     
     <br />
@@ -105,6 +117,10 @@
       extraConditions: '',
       conditionRules: [
        // value => !!value || 'а что он должен сюда вводит?'
+      ],
+      addressString: '',
+      address: [
+       value => !!value || 'Адрес обязателен'
       ],
       deposit: false,
       minDeposit: '',
