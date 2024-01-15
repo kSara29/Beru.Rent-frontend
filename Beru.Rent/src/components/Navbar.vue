@@ -1,5 +1,5 @@
 <template>
-    <v-container fluid>
+    <v-container fluid="">
         <v-app-bar
             color="black"
             dark
@@ -10,6 +10,9 @@
             </v-btn>
             <v-btn outlined class="ml-3">
                 <router-link to="/register">Регистрация</router-link>
+            </v-btn>
+            <v-btn>
+              <router-link to="/profile">Личный кабинет</router-link>
             </v-btn>
         </v-app-bar>
     </v-container>
