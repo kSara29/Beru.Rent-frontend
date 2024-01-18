@@ -35,7 +35,7 @@
 
 
     <v-row>
-      <v-col cols="12" md="6" lg="4" v-for="item in paginatedItems" :key="item.id">
+      <v-col cols="12" md="6" lg="4" v-for="item in items" :key="item.id">
         <router-link :to="{ name: 'DetailPage', params: { id: item.id }}" class="no-underline">
           <v-card class="mx-auto">
             <v-img
@@ -82,52 +82,53 @@ export default {
     return {
       items: [],
       currentPage: 1,
-      itemsPerPage: 10,
-      selectedCategory: 'All',
-      categories: ['All','Computer', 'Gloves', 'Ball', 'Soap', 'Bike', 'Table'],
-      selectedSort: 'Сначала последние',
-      sortOptions: ['Сначала последние', 'По цене (убывание)', 'По цене (возрастание)']
+      selectedCategory: 'all',
+      categories: ['all','computer', 'cat', 'Ball', 'Soap', 'Bike', 'Table'],
+      selectedSort: 'fromnew',
+      sortOptions: ['fromnew', 'fromold', 'fromhigh', 'fromlow'],
+      totalPages: 0
     };
   },
-  computed: {
-    filteredItems() {
-      if (!this.selectedCategory || this.selectedCategory === 'All') {
-        return this.items;
+  methods: {
+    fetchItems() {
+      let params = {
+        page: this.currentPage,
+        cat: this.selectedCategory
+      };
+
+      if (['fromnew', 'fromold'].includes(this.selectedSort)) {
+        params.sortdate = this.selectedSort;
+        params.sortprice = null;
+      } else if (['fromhigh', 'fromlow'].includes(this.selectedSort)) {
+        params.sortprice = this.selectedSort;
+        params.sortdate = null;
       }
-      return this.items.filter(item => item.category === this.selectedCategory);
-    },
-    sortedItems() {
-      let itemsToSort = [...this.filteredItems];
-      return itemsToSort.sort((a, b) => {
-        switch (this.selectedSort) {
-          case 'Сначала последние':
-            return new Date(b.createdAt) - new Date(a.createdAt);
-          case 'По цене (убывание)':
-            return parseFloat(b.price) - parseFloat(a.price);
-          case 'По цене (возрастание)':
-            return parseFloat(a.price) - parseFloat(b.price);
-          default:
-            return 0; // в случае отсутствия сортировки
-        }
-      });
-    },
-    paginatedItems() {
-      const start = (this.currentPage - 1) * this.itemsPerPage;
-      const end = start + this.itemsPerPage;
-      return this.sortedItems.slice(start, end);
-    },
-    totalPages() {
-      return Math.ceil(this.sortedItems.length / this.itemsPerPage);
+
+
+      axios.get('https://localhost:7196/api/ad/get', { params })
+          .then(response => {
+            this.items = response.data.mainPageDto;
+            this.totalPages = response.data.totalPage;
+            console.log(response.data)
+          })
+          .catch(error => {
+            console.error('Ошибка при загрузке данных:', error);
+          });
     }
   },
   created() {
-    axios.get('https://659f92975023b02bfe89e55f.mockapi.io/api/mock/ad')
-      .then(response => {
-        this.items = response.data;
-      })
-      .catch(error => {
-        console.error('Ошибка при загрузке данных:', error);
-      });
+    this.fetchItems();
+  },
+  watch: {
+    currentPage() {
+      this.fetchItems();
+    },
+    selectedCategory() {
+      this.fetchItems();
+    },
+    selectedSort() {
+      this.fetchItems();
+    }
   }
 };
 </script>

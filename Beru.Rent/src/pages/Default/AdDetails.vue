@@ -3,7 +3,7 @@
     <v-row>
       <v-col cols="12" md="8">
         <v-container v-if="itemData">
-          <p class="display-6">{{itemData.title}}</p>
+          <p class="display-6">{{itemData.title }}</p>
         </v-container>
         <v-carousel hide-delimiters style="height: 500px;">
           <v-carousel-item
@@ -78,7 +78,8 @@
             <v-container class="d-flex rentDatePeriod" v-if="itemData">
               <template v-if="!switchValueDelivery">
                 <v-container style="background-color: #9b9c9e; border-radius: 15px; margin-bottom: 30px">
-                  <p>Адрес доставки: {{itemData.city}}, {{itemData.street}}</p>
+                  <p>Адрес товара: {{itemData.addressExtra.country}}, {{itemData.addressExtra.city}}, {{itemData.addressExtra.street}},
+                  {{itemData.addressExtra.house}}</p>
                 </v-container>
               </template>
 
@@ -134,10 +135,11 @@
     methods: {
       fetchItemData() {
         const itemId = this.$route.params.id;
-        axios.get(`https://659f92975023b02bfe89e55f.mockapi.io/api/mock/ad/${itemId}`)
+        axios.get(`https://localhost:7196/api/ad/get/${itemId}`)
           .then(response => {
-            this.itemData = response.data;
+            this.itemData = response.data.data;
             this.prepareCarouselImages(this.itemData.image);
+            console.log(response.data)
           })
           .catch(error => {
             console.error('Ошибка при загрузке данных товара:', error);
