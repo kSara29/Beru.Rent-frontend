@@ -1,5 +1,5 @@
 <template>
-    <v-parallax height="600" src="https://cdn.vuetifyjs.com/images/backgrounds/vbanner.jpg">
+    <v-parallax height="600px!important" src="https://cdn.vuetifyjs.com/images/backgrounds/vbanner.jpg">
       <div class="slogan d-flex flex-column justify-center align-center text-white">
         <h1 class="text-h4 font-weight-thin mb-4">
           Взять вещи в аренду —
@@ -39,7 +39,7 @@
         <router-link :to="{ name: 'DetailPage', params: { id: item.id }}" class="no-underline">
           <v-card class="mx-auto">
             <v-img
-              :src="item.image"
+              :src="dataUrl(item.files)"
               cover
             >
             </v-img>
@@ -114,7 +114,13 @@ export default {
           .catch(error => {
             console.error('Ошибка при загрузке данных:', error);
           });
-    }
+    },
+    dataUrl(byteArray) {
+      if (!byteArray || !Array.isArray(byteArray) || byteArray.length === 0) return '';
+
+
+      return 'data:image/jpeg;base64,' + byteArray[0];
+    },
   },
   created() {
     this.fetchItems();
@@ -135,7 +141,7 @@ export default {
 
 <style>
   .v-img__img{
-    height: 60%!important;
+    height: 100%!important;
   }
   .slogan{
     margin-top: 250px;
@@ -149,5 +155,8 @@ export default {
   }
   .no-underline {
     text-decoration: none;
+  }
+  .v-responsive{
+    height: 50%!important;
   }
 </style>
