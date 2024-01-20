@@ -3,7 +3,7 @@
 </script>
 
 <template>
-  
+
   <v-form @submit.prevent>
     <div class="form-group">
       <v-select
@@ -90,8 +90,8 @@
       ></v-text-field>
     </div>
     <div class="form-group">
-      <v-select 
-      variant="outlined"       
+      <v-select
+      variant="outlined"
         prepend-icon="mdi-file-sign"
         label="Тип контракта"
         v-model="contractTypeId"
@@ -110,7 +110,7 @@
         hide-details="auto"
       ></v-text-field>
     </div>
-    
+
     <br />
 
   </v-form>
@@ -120,7 +120,7 @@
 <script>
   export default {
     data: () => ({
-      title: '',
+      title: 'Hello',
       titleRules: [
         value => !!value || 'Название обязательно',
         value => value.length < 30 || 'Название не должно быть больше 30 символов',
@@ -157,7 +157,26 @@
       contracts: ['Недвижимость', 'Движимое имущество'],
       timeunitId: '',
       timeunit: ['Час','Сутки','Неделя','Месяц']
-    })
+    }),
+    methods: {
+      getData() {
+        let title = this.title;
+        console.log(title)
+        let user = {
+          title: this.title,
+          description: this.description,
+          extraConditions: this.extraConditions,
+          deposit: this.deposit,
+          minDeposit: this.minDeposit,
+          price: this.price,
+          categoryId: this.categoryId,
+          contractTypeId: this.contractTypeId,
+          timeUnitId: this.timeunitId
+        };
+        console.log(user);
+        return user;
+      }
+    }
   }
 </script>
 
