@@ -18,11 +18,12 @@ import AdFormVue from "@/components/Forms/AdForm.vue";
 import UploadMultiPhotoVue from "@/components/Forms/UploadMultiPhoto.vue";
 import SubmitBtn from "@/components/Forms/SubmitBtn.vue";
 import axios from "axios";
+console.log(AdFormVue.methods.getData())
 export default {
   data:() => ({
     user: '',
     files: UploadMultiPhotoVue.methods.getFiles,
-    userData: AdFormVue.methods.getData
+    userData: AdFormVue.methods.fakeData
   }),
   components: {
       UploadMultiPhotoVue,
@@ -31,11 +32,9 @@ export default {
   },
   methods: {
     onSend() {
-      let data = this.userData()
-      console.log(data)
       let form = {
-        photos: this.files,
-        user: this.userData
+        photos: this.files(),
+        user: this.userData()
       }
       console.log(form)
     },

@@ -167,8 +167,7 @@ export default {
     repPassword: '',
     repPasswordRules: [
       value => !!value || 'Повторите пароль'
-    ],
-    response: ''
+    ]
   }),
   methods: {
     send() {

@@ -34,6 +34,7 @@
   <v-btn @click="onRemove()">Удалить последнее</v-btn>
 </template>
 <script>
+  import axios from 'axios'
   export default {
     data:() => ({
       files: [],
@@ -54,7 +55,15 @@
         this.sendingFiles.splice(-1)
       },
       getFiles() {
-        return this.sendingFiles
+        let files = this.sendingFiles
+        return files
+      },
+      onSend() {
+        let form = new FormData();
+        for(let i = 0; i < this.sendingFiles.length; i++){
+          form.append(i, this.sendingFiles[i])
+        }
+        axios.post('http://localhost', form)
       }
     }
   }

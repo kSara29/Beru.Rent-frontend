@@ -10,16 +10,17 @@
       variant="outlined"
         prepend-icon="mdi-go-kart"
         label="Выберите категорию"
+        name="categoryId"
         v-model="categoryId"
         :items="categories"
       ></v-select>
     </div>
     <div class="form-group">
       <v-text-field clearable
-      variant="outlined"
+        variant="outlined"
         prepend-icon="mdi-text"
         v-model="title"
-        name="Укажите название"
+        name="title"
         label="Укажите название"
         :rules="titleRules"
         hide-details="auto"
@@ -31,7 +32,7 @@
       variant="outlined"
         prepend-icon="mdi-text-long"
         v-model="description"
-        name="Опишите товар"
+        name="description"
         label="Опишите товар"
         :rules="descriptionRules"
         hide-details="auto"
@@ -43,7 +44,7 @@
       variant="outlined"
         prepend-icon="mdi-exclamation"
         v-model="extraConditions"
-        name="Дополнительные условия"
+        name="extraConditions"
         label="Дополнительные условия"
         :rules="conditionRules"
         hide-details="auto"
@@ -53,6 +54,7 @@
       <v-checkbox
         prepend-icon="mdi-credit-card-outline"
         v-model="deposit"
+        name="deposit"
         label="Требуется ли залог?"
         hide-details="auto"
       ></v-checkbox>
@@ -63,7 +65,7 @@
       variant="outlined"
         prepend-icon="mdi-cash-multiple"
         v-model="minDeposit"
-        name="Минимальный залог"
+        name="minDeposit"
         label="Минимальный залог"
         :rules="minimumDepositRules"
         hide-details="auto"
@@ -75,6 +77,7 @@
         prepend-icon="mdi-timer-sand"
         label="Минимальный промежуток времени для аренды"
         v-model="timeunitId"
+        name="timeunitId"
         :items="timeunit"
       ></v-select>
     </div>
@@ -84,6 +87,7 @@
       variant="outlined"
         prepend-icon="mdi-cash-multiple"
         v-model="price"
+        name="price"
         label="Цена за единицу времени аренды (например за месяц)"
         :rules="priceRules"
         hide-details="auto"
@@ -95,6 +99,7 @@
         prepend-icon="mdi-file-sign"
         label="Тип контракта"
         v-model="contractTypeId"
+        name="contractTypeId"
         :items="contracts"
       ></v-select>
     </div>
@@ -104,77 +109,81 @@
       variant="outlined"
         prepend-icon="mdi-map-marker"
         v-model="addressString"
-        name="Введите адрес одной строкой"
+        name="addressString"
         label="Введите адрес одной строкой"
         :rules="address"
         hide-details="auto"
       ></v-text-field>
     </div>
-
     <br />
-
+    <v-btn @click="getData()" type="submit">Создать объявление</v-btn>
   </v-form>
 </template>
 
 
 <script>
   export default {
-    data: () => ({
-      title: 'Hello',
-      titleRules: [
-        value => !!value || 'Название обязательно',
-        value => value.length < 30 || 'Название не должно быть больше 30 символов',
-        value => value.length > 3 || 'Название должно содержать хотя бы 3 букв'
-      ],
-      description: '',
-      descriptionRules: [
-        value => !!value || 'Описание обязательно',
-        value => value.length > 50 || 'Описнаие должна содержать более 50 символов!'
-      ],
-      extraConditions: '',
-      conditionRules: [
-       // value => !!value || 'а что он должен сюда вводит?'
-      ],
-      addressString: '',
-      address: [
-       value => !!value || 'Адрес обязателен'
-      ],
-      deposit: false,
-      minDeposit: '',
-      minimumDepositRules: [
-        value => !!value || 'Введите сумму минимального залога'
-      ],
-      price: '',
-      priceRules: [
-        value => {
-          const pattern = /^[0-9]{0,100}$/
-          return pattern.test(value) || "Цена может содержать только цифры!"
-        }
-      ],
-      categoryId: '',
-      categories: ['Автомобиль','Частный дом','Квартира','Техника','Оборудование','Кухня','Одежда','Игрушки'],
-      contractTypeId: '',
-      contracts: ['Недвижимость', 'Движимое имущество'],
-      timeunitId: '',
-      timeunit: ['Час','Сутки','Неделя','Месяц']
-    }),
+    data() {
+      return {
+        title: '',
+        titleRules: [
+          value => !!value || 'Название обязательно',
+          value => value.length < 30 || 'Название не должно быть больше 30 символов',
+          value => value.length > 3 || 'Название должно содержать хотя бы 3 букв'
+        ],
+        description: '',
+        descriptionRules: [
+          value => !!value || 'Описание обязательно',
+          value => value.length > 50 || 'Описнаие должна содержать более 50 символов!'
+        ],
+        extraConditions: '',
+        conditionRules: [
+         // value => !!value || 'а что он должен сюда вводит?'
+        ],
+        addressString: '',
+        address: [
+         value => !!value || 'Адрес обязателен'
+        ],
+        deposit: false,
+        minDeposit: '',
+        minimumDepositRules: [
+          value => !!value || 'Введите сумму минимального залога'
+        ],
+        price: '',
+        priceRules: [
+          value => {
+            const pattern = /^[0-9]{0,100}$/
+            return pattern.test(value) || "Цена может содержать только цифры!"
+          }
+        ],
+        categoryId: '',
+        categories: ['Автомобиль','Частный дом','Квартира','Техника','Оборудование','Кухня','Одежда','Игрушки'],
+        contractTypeId: '',
+        contracts: ['Недвижимость', 'Движимое имущество'],
+        timeunitId: '',
+        timeunit: ['Час','Сутки','Неделя','Месяц']
+      }
+    },
     methods: {
+      fakeData() {
+        let data = ''
+        console.log(data)
+        return data
+      },
       getData() {
-        let title = this.title;
-        console.log(title)
         let user = {
-          title: this.title,
-          description: this.description,
-          extraConditions: this.extraConditions,
-          deposit: this.deposit,
-          minDeposit: this.minDeposit,
-          price: this.price,
-          categoryId: this.categoryId,
-          contractTypeId: this.contractTypeId,
-          timeUnitId: this.timeunitId
-        };
-        console.log(user);
-        return user;
+          Title: this.title,
+          Description: this.description,
+          ExtraConditions: this.extraConditions,
+          Deposit: this.deposit,
+          MinDeposit: this.minDeposit,
+          Price: this.price,
+          CategoryId: this.categoryId,
+          ContractTypeId: this.contractTypeId,
+          TimeUnitId: this.timeunitId,
+          Form: new FormData()
+        }
+        return user
       }
     }
   }
