@@ -167,8 +167,7 @@ export default {
     repPassword: '',
     repPasswordRules: [
       value => !!value || 'Повторите пароль'
-    ],
-    response: ''
+    ]
   }),
   methods: {
     send() {
@@ -186,6 +185,7 @@ export default {
         Password: this.password,
         ConfirmPassword: this.repPassword
       }
+      console.log(vm)
 
       axios.post('http://localhost:5181/api/user/create', vm)
         .then(response => console.log(response))

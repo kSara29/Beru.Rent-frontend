@@ -25,7 +25,6 @@
         for (let file of this.loadingImage) {
           formData.append("picture", file, file.Name)
         }
-        console.log(formData.get("picture"))
       }
     }
   }
