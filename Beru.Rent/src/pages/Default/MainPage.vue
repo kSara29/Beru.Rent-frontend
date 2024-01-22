@@ -1,5 +1,5 @@
 <template>
-    <v-parallax height="600" src="https://cdn.vuetifyjs.com/images/backgrounds/vbanner.jpg">
+    <v-parallax height="600px!important" src="https://cdn.vuetifyjs.com/images/backgrounds/vbanner.jpg">
       <div class="slogan d-flex flex-column justify-center align-center text-white">
         <h1 class="text-h4 font-weight-thin mb-4">
           Взять вещи в аренду —
@@ -35,11 +35,11 @@
 
 
     <v-row>
-      <v-col cols="12" md="6" lg="4" v-for="item in paginatedItems" :key="item.id">
+      <v-col cols="12" md="6" lg="4" v-for="item in items" :key="item.id">
         <router-link :to="{ name: 'DetailPage', params: { id: item.id }}" class="no-underline">
           <v-card class="mx-auto">
             <v-img
-              :src="item.image"
+              :src="dataUrl(item.files)"
               cover
             >
             </v-img>
@@ -82,59 +82,66 @@ export default {
     return {
       items: [],
       currentPage: 1,
-      itemsPerPage: 10,
-      selectedCategory: 'All',
-      categories: ['All','Computer', 'Gloves', 'Ball', 'Soap', 'Bike', 'Table'],
-      selectedSort: 'Сначала последние',
-      sortOptions: ['Сначала последние', 'По цене (убывание)', 'По цене (возрастание)']
+      selectedCategory: 'all',
+      categories: ['all','computer', 'cat', 'Ball', 'Soap', 'Bike', 'Table'],
+      selectedSort: 'fromnew',
+      sortOptions: ['fromnew', 'fromold', 'fromhigh', 'fromlow'],
+      totalPages: 0
     };
   },
-  computed: {
-    filteredItems() {
-      if (!this.selectedCategory || this.selectedCategory === 'All') {
-        return this.items;
+  methods: {
+    fetchItems() {
+      let params = {
+        page: this.currentPage,
+        cat: this.selectedCategory
+      };
+
+      if (['fromnew', 'fromold'].includes(this.selectedSort)) {
+        params.sortdate = this.selectedSort;
+        params.sortprice = null;
+      } else if (['fromhigh', 'fromlow'].includes(this.selectedSort)) {
+        params.sortprice = this.selectedSort;
+        params.sortdate = null;
       }
-      return this.items.filter(item => item.category === this.selectedCategory);
+
+
+      axios.get('https://localhost:7196/api/ad/get', { params })
+          .then(response => {
+            this.items = response.data.mainPageDto;
+            this.totalPages = response.data.totalPage;
+            console.log(response.data)
+          })
+          .catch(error => {
+            console.error('Ошибка при загрузке данных:', error);
+          });
     },
-    sortedItems() {
-      let itemsToSort = [...this.filteredItems];
-      return itemsToSort.sort((a, b) => {
-        switch (this.selectedSort) {
-          case 'Сначала последние':
-            return new Date(b.createdAt) - new Date(a.createdAt);
-          case 'По цене (убывание)':
-            return parseFloat(b.price) - parseFloat(a.price);
-          case 'По цене (возрастание)':
-            return parseFloat(a.price) - parseFloat(b.price);
-          default:
-            return 0; // в случае отсутствия сортировки
-        }
-      });
+    dataUrl(byteArray) {
+      if (!byteArray || !Array.isArray(byteArray) || byteArray.length === 0) return '';
+
+
+      return 'data:image/jpeg;base64,' + byteArray[0];
     },
-    paginatedItems() {
-      const start = (this.currentPage - 1) * this.itemsPerPage;
-      const end = start + this.itemsPerPage;
-      return this.sortedItems.slice(start, end);
-    },
-    totalPages() {
-      return Math.ceil(this.sortedItems.length / this.itemsPerPage);
-    }
   },
   created() {
-    axios.get('https://659f92975023b02bfe89e55f.mockapi.io/api/mock/ad')
-      .then(response => {
-        this.items = response.data;
-      })
-      .catch(error => {
-        console.error('Ошибка при загрузке данных:', error);
-      });
+    this.fetchItems();
+  },
+  watch: {
+    currentPage() {
+      this.fetchItems();
+    },
+    selectedCategory() {
+      this.fetchItems();
+    },
+    selectedSort() {
+      this.fetchItems();
+    }
   }
 };
 </script>
 
 <style>
   .v-img__img{
-    height: 60%!important;
+    height: 100%!important;
   }
   .slogan{
     margin-top: 250px;
@@ -148,5 +155,8 @@ export default {
   }
   .no-underline {
     text-decoration: none;
+  }
+  .v-responsive{
+    height: 50%!important;
   }
 </style>
