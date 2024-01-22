@@ -77,6 +77,14 @@
                         hide-details="auto">
                       </v-text-field>
                     </div>
+                    <div class="form-group">
+                      <v-text-field
+                        v-model="repPassword"
+                        type="password"
+                        :rules="repPasswordRules"
+                        name="repeated password"
+                      ></v-text-field>
+                    </div>
                     <br />
                   <v-btn type="submit" @click="send" block="true" class="btn-primary">Зарегистрироваться</v-btn>
                 </v-form>
@@ -150,25 +158,34 @@ export default {
     password: '',
     passwordRule: [
       value => !!value || 'Придумайте пароль',
-      value => {
-        const pattern =
-          /^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?).{8,}$/
-        return pattern.test(value) || 'Пароль должна содержать минимум 1 большую букву и 1 цифру'
-      }
+        value => {
+          const pattern =
+            /^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?).{8,}$/
+          return pattern.test(value) || 'Пароль должна содержать минимум 1 большую букву и 1 цифру'
+        }
     ],
-    response: ''
+    repPassword: '',
+    repPasswordRules: [
+      value => !!value || 'Повторите пароль'
+    ]
   }),
   methods: {
     send() {
-      var vm = {
+      if (this.repPassword !== this.password){
+        alert('Пароли не совпадают!')
+        return;
+      }
+      let vm = {
         FirstName: this.firstName,
         LastName: this.lastName,
         UserName: this.login,
         IIN: this.iinNumber,
         Mail: this.email,
         Phone: this.phoneNumber,
-        Password: this.password
+        Password: this.password,
+        ConfirmPassword: this.repPassword
       }
+      console.log(vm)
 
       axios.post('http://localhost:5181/api/user/create', vm)
         .then(response => console.log(response))

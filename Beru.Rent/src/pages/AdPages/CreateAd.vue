@@ -1,46 +1,46 @@
-<script setup>
-
-</script>
-
 <template>
   <v-app>
     <v-container>
-      <v-sheet max-width="50%" width="50%">
-        <v-file-input
-          v-model="files"
-          color="deep-purple-accent-4"
-          counter="true"
-          label="Добавьте фото"
-          placeholder="Выбрать файлы"
-          prepend-icon="mdi-image-multiple"
-          accept="image/png, image/jpeg, image/bmp"
-          multiple="true"
-          variant="outlined"
-          :show-size="1000"
-          @change="addFiles()">
-        </v-file-input>
-        <v-carousel hide-delimiters="true">
-          <v-carousel-item
-            v-for="(item,i) in displayFiles"
-            :key="i"
-            :src="item.src"
-            cover="true">
-          </v-carousel-item>
-        </v-carousel>
-        <v-form @submit.prevent>
+      <v-sheet :width="1100">
+        <v-form ref="adForm" @submit.prevent>
+          <v-file-input
+            v-model="files"
+            color="deep-purple-accent-4"
+            counter
+            label="Добавьте фото"
+            placeholder="Выбрать файлы"
+            prepend-icon="mdi-image-multiple"
+            accept="image/png, image/jpeg, image/bmp"
+            multiple
+            variant="outlined"
+            :show-size="1000"
+            @change="addFiles()">
+          </v-file-input>
+          <v-carousel hide-delimiters="">
+            <v-carousel-item
+              v-for="(item) in displayFiles"
+              :key="item.name"
+              :src="item"
+              cover=""
+            ></v-carousel-item>
+          </v-carousel>
+          <v-btn @click="removeFile()">Удалить последнее</v-btn>
+          <br/>
+          <br/>
           <div class="form-group">
             <v-select
               variant="outlined"
               prepend-icon="mdi-go-kart"
               label="Выберите категорию"
               name="categoryId"
+              :item-props="itemProps"
               v-model="categoryId"
               :items="categories">
             </v-select>
           </div>
           <div class="form-group">
             <v-text-field
-              clearable="true"
+              clearable
               variant="outlined"
               prepend-icon="mdi-text"
               v-model="title"
@@ -50,9 +50,10 @@
               hide-details="auto">
             </v-text-field>
           </div>
+          <br/>
           <div class="form-group">
             <v-textarea
-              clearable="true"
+              clearable
               variant="outlined"
               prepend-icon="mdi-text-long"
               v-model="description"
@@ -62,9 +63,10 @@
               hide-details="auto">
             </v-textarea>
           </div>
+          <br/>
           <div class="form-group">
             <v-text-field
-              clearable="true"
+              clearable
               variant="outlined"
               prepend-icon="mdi-exclamation"
               v-model="extraConditions"
@@ -85,7 +87,7 @@
           </div>
           <div class="form-group" v-if="deposit">
             <v-text-field
-              clearable="true"
+              clearable
               variant="outlined"
               prepend-icon="mdi-cash-multiple"
               v-model="minDeposit"
@@ -94,21 +96,22 @@
               :rules="minimumDepositRules"
               hide-details="auto">
             </v-text-field>
-          </div>
+          </div><br/>
           <div class="form-group">
             <v-select
-            variant="outlined"
+              variant="outlined"
               prepend-icon="mdi-timer-sand"
               label="Минимальный промежуток времени для аренды"
               v-model="timeunitId"
               name="timeunitId"
+              :item-props="itemProps"
               :items="timeunit">
             </v-select>
           </div>
           <div class="form-group">
             <v-text-field
-            clearable="true"
-            variant="outlined"
+              clearable
+              variant="outlined"
               prepend-icon="mdi-cash-multiple"
               v-model="price"
               name="price"
@@ -117,19 +120,20 @@
               hide-details="auto">
             </v-text-field>
           </div>
+          <br/>
           <div class="form-group">
             <v-select
-            variant="outlined"
+              variant="outlined"
               prepend-icon="mdi-file-sign"
               label="Тип контракта"
-              v-model="contractTypeId"
               name="contractTypeId"
-              :items="contracts">
+              :items="contracts"
+              @update:modelValue="setContractType($event)">
             </v-select>
           </div>
           <div class="form-group">
             <v-text-field
-              clearable="true"
+              clearable
               variant="outlined"
               prepend-icon="mdi-map-marker"
               v-model="addressString"
@@ -146,15 +150,14 @@
     </v-container>
   </v-app>
 </template>
-
-
 <script>
-import axios from 'axios'
+import axios from "axios";
 export default {
   data() {
     return {
+      user: '',
       files: [],
-      displayFiles: '',
+      displayFiles: [],
       title: '',
       titleRules: [
         value => !!value || 'Название обязательно',
@@ -168,11 +171,11 @@ export default {
       ],
       extraConditions: '',
       conditionRules: [
-       // value => !!value || 'а что он должен сюда вводит?'
+        // value => !!value || 'а что он должен сюда вводит?'
       ],
       addressString: '',
       address: [
-       value => !!value || 'Адрес обязателен'
+        value => !!value || 'Адрес обязателен'
       ],
       deposit: false,
       minDeposit: '',
@@ -187,43 +190,81 @@ export default {
         }
       ],
       categoryId: '',
-      categories: ['Автомобиль','Частный дом','Квартира','Техника','Оборудование','Кухня','Одежда','Игрушки'],
+      categories: [],
       contractTypeId: '',
       contracts: ['Недвижимость', 'Движимое имущество'],
       timeunitId: '',
-      timeunit: ['Час','Сутки','Неделя','Месяц']
+      timeunit: []
     }
   },
   methods: {
-    sendForm() {
-      let user = {
-        Title: this.title,
-        Description: this.description,
-        ExtraConditions: this.extraConditions,
-        Deposit: this.deposit,
-        MinDeposit: this.minDeposit,
-        Price: this.price,
-        CategoryId: this.categoryId,
-        ContractTypeId: this.contractTypeId,
-        TimeUnitId: this.timeunitId,
-        Form: new FormData()
+    async sendForm() {
+      const ans = await this.$refs.adForm.validate();
+      if (ans.valid === false) {
+        alert('Форма заполнена неправильно!')
+        return 0;
       }
-      console.log(user)
-      axios.post('http://localhost:5081/api/ad/create')
+      let form = new FormData()
+      for(let i = 0; i < this.files.length; i++) {
+        form.append('files', this.files[i])
+      }
+      form.append('userId', this.user.userId);
+      form.append('title', this.title);
+      form.append('description', this.description);
+      form.append('extraConditions', this.extraConditions);
+      form.append('neededDeposit', this.deposit);
+      form.append('minDeposit', this.minDeposit);
+      form.append('price', this.price);
+      form.append('categoryId', this.categoryId);
+      form.append('timeUnitId', this.timeunitId);
+      form.append('contractTypeId', this.contractTypeId);
+      form.append('addressExtraId', 'b65e3e8c-e12e-482c-8251-158dedc0658c');
+      form.append('address', this.addressString)
+      form.append('tags', 'bestSeller')
+
+      console.log(form)
+      axios.post('http://localhost:5105/api/ad/create', form, {
+        headers: {
+          'accept': 'text/plain',
+          'Content-Type': 'multipart/form-data'
+        }
+      })
+        .then(response => console.log(response))
+    },
+    get() {
+      axios.get('http://localhost:5181/api/user/get', {params: {UserId: '7519daec-02a3-4382-970b-37704238dae9'}})
+        .then(response => this.user = response.data);
+      axios.get('http://localhost:5105/api/timeunit/get')
+        .then(response => this.timeunit = response.data.data);
+      axios.get('http://localhost:5105/api/category/get')
+        .then(response => this.categories = response.data.data);
+    },
+    removeFile() {
+      this.displayFiles.splice(-1);
+      this.files.splice(-1);
     },
     addFiles() {
       const length = this.files.length;
       for(let i = 0; i < length; i++) {
         this.displayFiles.push(URL.createObjectURL(this.files[i]))
-        this.sendingFiles.push(this.files[i])
+      }
+    },
+    setContractType(value) {
+      for (let i = 0; i < this.contracts.length; i++){
+        if(this.contracts[i] === value){
+          this.contractTypeId = i;
+        }
+      }
+    },
+    itemProps(item){
+      return {
+        title: item.title,
+        value: item.id
       }
     }
+  },
+  mounted() {
+    this.get()
   }
-}
+};
 </script>
-
-<style scoped>
-.form-group{
-  margin-top: 10px;
-}
-</style>
