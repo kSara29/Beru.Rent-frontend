@@ -205,26 +205,25 @@ export default {
         return 0;
       }
       let form = new FormData()
-      for (let file in this.files) {
-        form.append('randomFile', file);
+      for(let i = 0; i < this.files.length; i++) {
+        form.append('files', this.files[i])
       }
-      let ad = {
-        userId: this.user.userId,
-        title: this.title,
-        description: this.description,
-        extraConditions: this.extraConditions,
-        deposit: this.deposit,
-        minDeposit: this.minDeposit,
-        price: this.price,
-        categoryId: this.categoryId,
-        timeUnitId: this.timeunitId,
-        contractTypeId: this.contractTypeId,
-        addressExtraId: 'b65e3e8c-e12e-482c-8251-158dedc0658c',
-        tags: 'bestSeller',
-        files: form
-      }
-      console.log(ad)
-      axios.post('http://localhost:5105/api/ad/create', ad, {
+      form.append('userId', this.user.userId);
+      form.append('title', this.title);
+      form.append('description', this.description);
+      form.append('extraConditions', this.extraConditions);
+      form.append('neededDeposit', this.deposit);
+      form.append('minDeposit', this.minDeposit);
+      form.append('price', this.price);
+      form.append('categoryId', this.categoryId);
+      form.append('timeUnitId', this.timeunitId);
+      form.append('contractTypeId', this.contractTypeId);
+      form.append('addressExtraId', 'b65e3e8c-e12e-482c-8251-158dedc0658c');
+      form.append('address', this.addressString)
+      form.append('tags', 'bestSeller')
+
+      console.log(form)
+      axios.post('http://localhost:5105/api/ad/create', form, {
         headers: {
           'accept': 'text/plain',
           'Content-Type': 'multipart/form-data'
