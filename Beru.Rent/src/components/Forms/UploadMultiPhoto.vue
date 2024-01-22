@@ -6,9 +6,10 @@
     label="Добавьте фото"
     placeholder="Выбрать файлы"
     prepend-icon="mdi-image-multiple"
+    accept="image/png, image/jpeg, image/bmp"
     variant="outlined"
     :show-size="1000"
-    @change="onAdd()"
+    @change="$emit('addFile', files)"
   >
     <template v-slot:selection="{ fileNames }">
       <template v-for="(fileName) in fileNames" :key="fileName">
@@ -31,7 +32,7 @@
       cover=""
     ></v-carousel-item>
   </v-carousel>
-  <v-btn @click="onRemove()">Удалить последнее</v-btn>
+  <v-btn @click="$emit('removeFile', files)">Удалить последнее</v-btn>
 </template>
 <script>
   import axios from 'axios'
