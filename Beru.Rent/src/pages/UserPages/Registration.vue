@@ -95,6 +95,8 @@
 </template>
 
 <script>
+
+import authMixin from '@/scripts/authMixin';
 import axios from 'axios'
 export default {
 
@@ -190,7 +192,16 @@ export default {
       axios.post('http://localhost:5181/api/user/create', vm)
         .then(response => console.log(response))
     }
-  }
+  },
+  mixins: [authMixin],
+  fetchData() {
+      if (this.userManager && this.userManager.getUser()) {
+        // Perform authorized actions here
+      } else {
+        this.login();
+      }
+    },
+
 }
 </script>
 

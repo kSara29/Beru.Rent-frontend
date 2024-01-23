@@ -27,7 +27,11 @@ const routes = [
     path: '/createad',
     name: 'создать объявление',
     component: () => import('@/pages/AdPages/CreateAd.vue'),
-  }
+  },
+  { 
+    path: '/callback', 
+    name: 'callback', 
+    component: () => import('@/components/Callback.vue'), },
 ]
 
 const router = createRouter({
