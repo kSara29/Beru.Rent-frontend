@@ -52,6 +52,19 @@
   <v-btn stacked outlined class="ml-3" >
     <router-link to="/profile" style="text-decoration: none; color: inherit">Личный кабинет</router-link>
   </v-btn>
+  <v-btn stacked outlined class="ml-3" >
+    <router-link to="/test" style="text-decoration: none; color: inherit">Логин</router-link>
+  </v-btn>
+
+  <div>
+    <div v-if="user">
+      <p>Привет, {{ user.profile.name }}!</p>
+      <button @click="logout">Выйти</button>
+    </div>
+    <div v-else>
+      <p><button @click="login">Войти</button></p>
+    </div>
+  </div>
 
   <!-- Выход из аккаунт(после входа в аккаунт появляется) -->
   <v-btn stacked>
@@ -66,6 +79,15 @@
 
 <script>
 export default {
+  computed: {
+    user() {
+      return this.$store.getters.getUser;
+  
+    },
+    logout() {
+      this.$userManager.signoutRedirect();
+    },
+  },
 
 }
 </script>

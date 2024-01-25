@@ -4,15 +4,17 @@
     </div>
   </template>
 
-  <script>
-  import userManager from '@/scripts/oidcConfig';
+<script>
 
-  export default {
-    name: 'Callback',
-    mounted() {
-      userManager.signinRedirectCallback().then(() => {
-        this.$router.replace({ path: '/' }); // Redirect to home or desired route
-      });
-    },
-  };
-  </script>
+export default {
+  created() {
+ 
+    this.$userManager.signinRedirectCallback().then(user => {
+      if (user) {
+        console.log('Redirect callback successful. User:', user);
+        this.$router.push('/'); 
+      }
+    });
+  },
+};
+</script>

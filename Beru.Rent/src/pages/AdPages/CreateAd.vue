@@ -153,9 +153,14 @@
 <script>
 import axios from "axios";
 export default {
+  computed:{
+    user() {
+      return this.$store.getters.getUser;
+
+    }
+  },
   data() {
     return {
-      user: '',
       files: [],
       displayFiles: [],
       title: '',
@@ -223,20 +228,19 @@ export default {
       form.append('tags', 'bestSeller')
 
       console.log(form)
-      axios.post('http://localhost:5105/api/ad/create', form, {
+      axios.post('https://localhost:7196/api/ad/create', form, {
         headers: {
           'accept': 'text/plain',
-          'Content-Type': 'multipart/form-data'
+          'Content-Type': 'multipart/form-data',
+          'Authorization': `Bearer ${this.user.access_token}`
         }
       })
         .then(response => console.log(response))
     },
     get() {
-      axios.get('http://localhost:5181/api/user/get', {params: {UserId: '7519daec-02a3-4382-970b-37704238dae9'}})
-        .then(response => this.user = response.data);
-      axios.get('http://localhost:5105/api/timeunit/get')
+      axios.get('https://localhost:7196/api/timeunit/get')
         .then(response => this.timeunit = response.data.data);
-      axios.get('http://localhost:5105/api/category/get')
+      axios.get('https://localhost:7196/api/category/get')
         .then(response => this.categories = response.data.data);
     },
     removeFile() {
@@ -265,6 +269,7 @@ export default {
   },
   mounted() {
     this.get()
-  }
+  },
+  
 };
 </script>
