@@ -141,14 +141,11 @@
         isAddressLoading: false,
       };
     },
-    created() {
-      this.itemId = this.$route.params.id;
-      this.fetchItemData();
-    },
     methods: {
       fetchItemData() {
         const itemId = this.$route.params.id;
-        axios.get(`https://localhost:7196/api/ad/get/${itemId}`)
+        console.log(itemId);
+        axios.get(`http://localhost:5105/api/ad/get/${itemId}`)
           .then(response => {
             this.itemData = response.data.data;
             this.prepareCarouselImages(this.itemData.files);
@@ -168,7 +165,7 @@
 
         if (this.addressInput) {
           this.isAddressLoading = true;
-          axios.post('https://localhost:7196/api/address/suggestion', { query: this.addressInput })
+          axios.post('http://localhost:5105/api/address/suggestion', { query: this.addressInput })
             .then(response => {
               this.addressSuggestions = response.data.suggestions;
               this.isAddressLoading = false;
@@ -180,7 +177,11 @@
             });
         }
       }
-    }
+    },
+    mounted() {
+      this.itemId = this.$route.params.id;
+      this.fetchItemData();
+    },
   };
 </script>
 
