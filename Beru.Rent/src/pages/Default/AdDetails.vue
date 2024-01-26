@@ -45,9 +45,6 @@
               </template>
 
               <template v-else>
-<!--                <v-container>
-                  <DadataView/>
-                </v-container>-->
                 <v-container style="padding: 0px">
                   <DadataView/>
                   <v-text-field variant="solo"></v-text-field>
