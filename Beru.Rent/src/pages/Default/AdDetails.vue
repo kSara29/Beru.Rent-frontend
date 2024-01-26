@@ -157,9 +157,9 @@ export default {
       }, 500);
     }
   },
-  mounted() {
+/*  mounted() {
     this.initYandexMap();
-  },
+  },*/
   methods: {
     fetchItemData() {
       const itemId = this.$route.params.id;
@@ -168,6 +168,15 @@ export default {
           this.itemData = response.data.data;
           this.prepareCarouselImages(this.itemData.files);
           console.log(response.data.data)
+          console.log(this.itemData.addressExtra)
+
+          ymaps.ready(() => {
+            // eslint-disable-next-line no-unused-vars
+            var map = new ymaps.Map("yandexMap", {
+              center: [this.itemData.addressExtra.latitude, this.itemData.addressExtra.longitude], // Координаты центра карты
+              zoom: 16 // Уровень масштабирования
+            });
+          });
         })
         .catch(error => {
           console.error('Ошибка при загрузке данных товара:', error);
@@ -185,15 +194,15 @@ export default {
           console.error('Ошибка при отправке данных:', error);
         });
     },
-    initYandexMap() {
+/*    initYandexMap() {
       ymaps.ready(() => {
         // eslint-disable-next-line no-unused-vars
         var map = new ymaps.Map("yandexMap", {
-          center: [43.23705165489142, 76.93197233222034], // Координаты центра карты
+          center: [this.itemData.addressExtra.latitude, this.itemData.addressExtra.longitude], // Координаты центра карты
           zoom: 16 // Уровень масштабирования
         });
 
-    /*    const address = "Сатпаева 22"; // Пример адреса
+    /!*    const address = "Сатпаева 22"; // Пример адреса
         this.geocodeAddress(address).then((coordinates) => {
           map.setCenter(coordinates, 16); // Обновление центра карты и масштаба
 
@@ -203,10 +212,10 @@ export default {
           });
 
           map.geoObjects.add(placemark); // Добавление метки на карту
-        });*/
+        });*!/
 
       });
-    },
+    },*/
 /*    geocodeAddress(address) {
       return new Promise((resolve, reject) => {
         ymaps.geocode(address).then(response => {
