@@ -109,22 +109,8 @@
           </v-container>
         </v-container>
       </v-col>
-
-
-<!--
-      <v-container style="width: 100%" id="app">
-&lt;!&ndash;        <input v-model="userInput">&ndash;&gt;
-        <v-text-field v-model="userInput" label="Адрес доставки" ></v-text-field>
-      </v-container>
--->
-
-
       <div id="yandexMap" style="width: 100%; height: 60%"></div>
     </v-row>
-<!--
-    <v-col cols="4">
-      <div id="yandexMap" style="width: 100%; height: 100%"></div>
-    </v-col>-->
   </v-container>
 </template>
 
@@ -157,9 +143,6 @@ export default {
       }, 500);
     }
   },
-/*  mounted() {
-    this.initYandexMap();
-  },*/
   methods: {
     fetchItemData() {
       const itemId = this.$route.params.id;
@@ -194,37 +177,6 @@ export default {
           console.error('Ошибка при отправке данных:', error);
         });
     },
-/*    initYandexMap() {
-      ymaps.ready(() => {
-        // eslint-disable-next-line no-unused-vars
-        var map = new ymaps.Map("yandexMap", {
-          center: [this.itemData.addressExtra.latitude, this.itemData.addressExtra.longitude], // Координаты центра карты
-          zoom: 16 // Уровень масштабирования
-        });
-
-    /!*    const address = "Сатпаева 22"; // Пример адреса
-        this.geocodeAddress(address).then((coordinates) => {
-          map.setCenter(coordinates, 16); // Обновление центра карты и масштаба
-
-          const placemark = new ymaps.Placemark(coordinates, {
-            hintContent: address,
-            balloonContent: address
-          });
-
-          map.geoObjects.add(placemark); // Добавление метки на карту
-        });*!/
-
-      });
-    },*/
-/*    geocodeAddress(address) {
-      return new Promise((resolve, reject) => {
-        ymaps.geocode(address).then(response => {
-          const firstGeoObject = response.geoObjects.get(0);
-          const coordinates = firstGeoObject.geometry.getCoordinates();
-          resolve(coordinates);
-        }, reject);
-      });
-    }*/
   }
 };
 
