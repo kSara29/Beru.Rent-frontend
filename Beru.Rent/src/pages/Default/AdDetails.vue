@@ -41,16 +41,15 @@
 
             <v-container class="d-flex rentDatePeriod">
               <template v-if="!switchValue">
-                <v-text-field variant="solo"></v-text-field>
-                <v-text-field variant="solo"></v-text-field>
+                <DadataView/>
               </template>
 
               <template v-else>
-                <v-container>
-                  <v-text-field variant="solo"></v-text-field>
-                  <v-text-field variant="solo"></v-text-field>
-                </v-container>
-                <v-container>
+<!--                <v-container>
+                  <DadataView/>
+                </v-container>-->
+                <v-container style="padding: 0px">
+                  <DadataView/>
                   <v-text-field variant="solo"></v-text-field>
                   <v-text-field variant="solo"></v-text-field>
                 </v-container>
@@ -98,26 +97,20 @@
           </v-container>
         </v-container>
 
-        <v-container v-if="itemData">
-          <v-container style="background-color: #803306; border-radius: 15px;
-          padding: 5px; color: white">
-            <p class="display-6">Итого {{itemData.price}}</p>
-          </v-container>
-          <v-container>
-            <v-btn size="x-large" style="background-color: #ed68a4; border-radius: 15px">
-              Запросить аренду</v-btn>
-          </v-container>
-        </v-container>
       </v-col>
-      <div id="yandexMap" style="width: 100%; height: 60%"></div>
+      <div id="yandexMap" style="width: 100%; height: 50%"></div>
     </v-row>
   </v-container>
 </template>
 
 <script>
 import axios from "axios";
+import DadataView from "@/components/AddressSuggestions/DadataView.vue";
 
 export default {
+  components:{
+    DadataView
+  },
   data() {
     return {
       itemData: null,
@@ -127,7 +120,8 @@ export default {
       menu: false,
       switchValueDelivery: false,
       userInput: '',
-      inputTimeout: null
+      inputTimeout: null,
+      date: new Date('2018-03-02'),
     };
   },
   created() {
@@ -157,7 +151,7 @@ export default {
             // eslint-disable-next-line no-unused-vars
             var map = new ymaps.Map("yandexMap", {
               center: [this.itemData.addressExtra.latitude, this.itemData.addressExtra.longitude], // Координаты центра карты
-              zoom: 16 // Уровень масштабирования
+              zoom: 17 // Уровень масштабирования
             });
           });
         })

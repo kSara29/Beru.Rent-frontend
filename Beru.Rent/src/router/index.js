@@ -28,6 +28,12 @@ const routes = [
     name: 'создать объявление',
     component: () => import('@/pages/AdPages/CreateAd.vue'),
   }
+/*  ,
+  {
+    path: '/test',
+    name: 'test',
+    component: () => import('@/components/AddressSuggestions/DadataView.vue'),
+  }*/
 ]
 
 const router = createRouter({
