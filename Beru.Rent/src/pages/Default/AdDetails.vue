@@ -86,7 +86,7 @@
               <template v-else>
                 <v-container>
                   <v-container style="padding: 0px">
-                    <v-text-field label="Адрес доставки" variant="solo"></v-text-field>
+                    <v-text-field v-model="userInput" label="Адрес доставки" variant="solo"></v-text-field>
                   </v-container>
                   <v-container style="padding: 0px">
                     <v-text-field label="Подъезд" variant="solo"></v-text-field>
@@ -110,84 +110,121 @@
         </v-container>
       </v-col>
 
+
+<!--
+      <v-container style="width: 100%" id="app">
+&lt;!&ndash;        <input v-model="userInput">&ndash;&gt;
+        <v-text-field v-model="userInput" label="Адрес доставки" ></v-text-field>
+      </v-container>
+-->
+
+
+      <div id="yandexMap" style="width: 100%; height: 60%"></div>
     </v-row>
+<!--
+    <v-col cols="4">
+      <div id="yandexMap" style="width: 100%; height: 100%"></div>
+    </v-col>-->
   </v-container>
-
-  <v-autocomplete
-    v-model="addressInput"
-    :items="addressSuggestions"
-    :loading="isAddressLoading"
-    label="Введите адрес"
-    clearable
-    @input="fetchAddressSuggestions"
-  ></v-autocomplete>
-
 </template>
 
 <script>
-  import axios from "axios";
+import axios from "axios";
 
-  export default {
-    data() {
-      return {
-        itemData: null,
-        itemId: null,
-        carouselImages: [],
-        switchValue: false,
-        menu: false,
-        switchValueDelivery: false,
-        addressInput: 'астана',
-        addressSuggestions: [],
-        isAddressLoading: false,
-      };
+export default {
+  data() {
+    return {
+      itemData: null,
+      itemId: null,
+      carouselImages: [],
+      switchValue: false,
+      menu: false,
+      switchValueDelivery: false,
+      userInput: '',
+      inputTimeout: null
+    };
+  },
+  created() {
+    this.itemId = this.$route.params.id;
+    this.fetchItemData();
+  },
+  watch: {
+    userInput(newValue) {
+      if (this.inputTimeout) clearTimeout(this.inputTimeout);
+
+      this.inputTimeout = setTimeout(() => {
+        this.sendDataToBackend(newValue);
+      }, 500);
+    }
+  },
+  mounted() {
+    this.initYandexMap();
+  },
+  methods: {
+    fetchItemData() {
+      const itemId = this.$route.params.id;
+      axios.get(`https://localhost:7196/api/ad/get/${itemId}`)
+        .then(response => {
+          this.itemData = response.data.data;
+          this.prepareCarouselImages(this.itemData.files);
+          console.log(response.data.data)
+        })
+        .catch(error => {
+          console.error('Ошибка при загрузке данных товара:', error);
+        });
     },
-    created() {
-      this.itemId = this.$route.params.id;
-      this.fetchItemData();
+    prepareCarouselImages(byteArray) {
+      this.carouselImages = byteArray.map(byteArray => `data:image/jpeg;base64,${byteArray}`);
     },
-    methods: {
-      fetchItemData() {
-        const itemId = this.$route.params.id;
-        axios.get(`https://localhost:7196/api/ad/get/${itemId}`)
-          .then(response => {
-            this.itemData = response.data.data;
-            this.prepareCarouselImages(this.itemData.files);
-            console.log(response.data.data)
-          })
-          .catch(error => {
-            console.error('Ошибка при загрузке данных товара:', error);
-          });
-      },
-      prepareCarouselImages(byteArray) {
-        this.carouselImages = byteArray.map(byteArray => `data:image/jpeg;base64,${byteArray}`);
-      },
-      fetchAddressSuggestions() {
-        this.$nextTick(() => {
-          console.log(this.addressInput);
+    sendDataToBackend(query) {
+      axios.post('https://localhost:7196/api/address/suggestions', { Query: query })
+        .then(response => {
+          console.log('Response from backend:', response.data);
+        })
+        .catch(error => {
+          console.error('Ошибка при отправке данных:', error);
+        });
+    },
+    initYandexMap() {
+      ymaps.ready(() => {
+        // eslint-disable-next-line no-unused-vars
+        var map = new ymaps.Map("yandexMap", {
+          center: [43.23705165489142, 76.93197233222034], // Координаты центра карты
+          zoom: 16 // Уровень масштабирования
         });
 
-        if (this.addressInput) {
-          this.isAddressLoading = true;
-          axios.post('https://localhost:7196/api/address/suggestion', { query: this.addressInput })
-            .then(response => {
-              this.addressSuggestions = response.data.suggestions;
-              this.isAddressLoading = false;
-              console.log(response.data)
-            })
-            .catch(error => {
-              console.error('Ошибка при получении подсказок адресов:', error);
-              this.isAddressLoading = false;
-            });
-        }
-      }
-    }
-  };
+    /*    const address = "Сатпаева 22"; // Пример адреса
+        this.geocodeAddress(address).then((coordinates) => {
+          map.setCenter(coordinates, 16); // Обновление центра карты и масштаба
+
+          const placemark = new ymaps.Placemark(coordinates, {
+            hintContent: address,
+            balloonContent: address
+          });
+
+          map.geoObjects.add(placemark); // Добавление метки на карту
+        });*/
+
+      });
+    },
+/*    geocodeAddress(address) {
+      return new Promise((resolve, reject) => {
+        ymaps.geocode(address).then(response => {
+          const firstGeoObject = response.geoObjects.get(0);
+          const coordinates = firstGeoObject.geometry.getCoordinates();
+          resolve(coordinates);
+        }, reject);
+      });
+    }*/
+  }
+};
+
 </script>
 
 <style scoped>
-  .v-carousel__controls {
-    top: 50%; /* Центрируем по вертикали */
-    transform: translateY(-50%)
+.v-carousel__controls {
+  top: 50%; /* Центрируем по вертикали */
+  transform: translateY(-50%)
   }
   .d-flex{
     margin-top: 50px;
