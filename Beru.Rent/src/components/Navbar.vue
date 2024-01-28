@@ -56,10 +56,16 @@
     <router-link to="/test" style="text-decoration: none; color: inherit">Логин</router-link>
   </v-btn>
 
+
+
   <div>
     <div v-if="user">
       <p>Привет, {{ user.profile.name }}!</p>
-      <button @click="logout">Выйти</button>
+      <!--button @click="logout">Выйти</button-->
+      <v-btn stacked outlined class="ml-3" >
+    <router-link to="/logout" style="text-decoration: none; color: inherit">Выйти</router-link>
+  </v-btn>
+
     </div>
     <div v-else>
       <p><button @click="login">Войти</button></p>
@@ -82,13 +88,8 @@ export default {
   computed: {
     user() {
       return this.$store.getters.getUser;
-  
     },
-    logout() {
-      this.$userManager.signoutRedirect();
-    },
-  },
-
+  }
 }
 </script>
 

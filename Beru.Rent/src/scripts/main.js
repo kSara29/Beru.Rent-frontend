@@ -17,9 +17,10 @@ const userManager = new UserManager({
     client_id: 'client_id_vue',
     redirect_uri: 'https://localhost:3000/callback',
     response_type: 'code',
-    scope: 'openid profile',
-   // silent_redirect_uri: 'https://localhost:3000/silent-refresh.html', // Указать URL silent-refresh.html и на ней userManager.signinSilentCallback(); // Обработка тихого обновления в случае наличия кода в URL
-//посмотреть как делать рефреш  
+    scope: 'openid profile offline_access',
+    silent_redirect_uri: 'https://localhost:3000/silent-refresh',
+    post_logout_redirect_uri: 'https://localhost:3000/'
+   
 });
 
 

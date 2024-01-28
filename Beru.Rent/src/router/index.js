@@ -36,10 +36,22 @@ const routes = [
     component: () => import('@/components/Callback.vue'), },
 
    { 
-      path: '/test', 
-      name: 'test',
-      component:()=> import('@/pages/Test.vue')
-      },
+    path: '/test', 
+    name: 'test',
+    component:()=> import('@/pages/Test.vue')
+  },
+  { 
+    path: '/silent-refresh', 
+    name: 'silent-refresh',
+    component:()=> import('@/components/Silent-refresh.vue')
+},
+{
+  path: '/logout',
+  name: 'Logout',
+  component: ()=> import('@/components/Logout.vue')
+}
+
+
 ]
 
 const router = createRouter({
