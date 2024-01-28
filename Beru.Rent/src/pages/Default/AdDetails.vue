@@ -1,7 +1,7 @@
 <template>
   <v-container class="d-flex">
     <v-row>
-      <v-col cols="12" md="8">
+      <v-col cols="12" md="7">
         <v-container v-if="itemData">
           <p class="display-6">{{itemData.title }}</p>
         </v-container>
@@ -25,7 +25,7 @@
         </v-container>
       </v-col>
 
-      <v-col cols="12" md="4">
+      <v-col cols="12" md="5">
         <v-container>
           <p>Выберите период аренды:</p>
           <v-container class="rentPeriod align-center" style="padding: 0px">
@@ -41,12 +41,12 @@
 
             <v-container class="d-flex rentDatePeriod">
               <template v-if="!switchValue">
-                <DadataView/>
+                <DadataView :key="`dadata-${reRenderTrigger}`" :myParam="parentData"/>
               </template>
 
               <template v-else>
                 <v-container style="padding: 0px">
-                  <DadataView/>
+                  <DadataView :key="`dadata-${reRenderTrigger}`" :myParam="parentData"/>
                   <v-text-field variant="solo"></v-text-field>
                   <v-text-field variant="solo"></v-text-field>
                 </v-container>
@@ -119,6 +119,9 @@ export default {
       userInput: '',
       inputTimeout: null,
       date: new Date('2018-03-02'),
+      parentData: '',
+      dadataKey: 0,
+      reRenderTrigger: 0,
     };
   },
   created() {
@@ -132,7 +135,12 @@ export default {
       this.inputTimeout = setTimeout(() => {
         this.sendDataToBackend(newValue);
       }, 500);
-    }
+    },
+    switchValue(newValue, oldValue) {
+      if (newValue !== oldValue) {
+        this.dadataKey++; // Увеличиваем ключ для перерисовки компонента DadataView
+      }
+    },
   },
   methods: {
     fetchItemData() {
@@ -141,8 +149,10 @@ export default {
         .then(response => {
           this.itemData = response.data.data;
           this.prepareCarouselImages(this.itemData.files);
-          console.log(response.data.data)
-          console.log(this.itemData.addressExtra)
+          this.parentData = response.data.data.id
+         /* console.log(response.data.data)
+          console.log(this.itemData.addressExtra)*/
+          console.log(this.parentData)
 
           ymaps.ready(() => {
             // eslint-disable-next-line no-unused-vars
@@ -167,6 +177,11 @@ export default {
         .catch(error => {
           console.error('Ошибка при отправке данных:', error);
         });
+    },
+    toggleSwitch() {
+      this.switchValue = !this.switchValue; // или каким-то другим образом изменяете состояние свитча
+      this.dadataKey++; // увеличиваем ключ для перерисовки
+      this.reRenderTrigger++;
     },
   }
 };
