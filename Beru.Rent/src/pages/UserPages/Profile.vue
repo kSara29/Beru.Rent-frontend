@@ -8,7 +8,9 @@
         <div class="profile-main">
           <v-img :src=this.avatar alt="Фото Юзера" width="200px" height="200px"></v-img>
           <p class="user-info">{{ user.firstName }} {{ user.lastName }} </p>
-          <v-btn v-if="isUser"><router-link style="text-decoration: none; color: inherit;" :to="'/profile/notifications/' + this.user.userId">Посмотреть мои уведомления</router-link></v-btn>
+          <v-btn v-if="isUser" :to="'/profile/notifications/' + this.user.userId">
+            <router-link style="text-decoration: none; color: inherit;" :to="'/profile/notifications/' + this.user.userId">Посмотреть мои уведомления</router-link>
+          </v-btn>
         </div>
         <div class="contacts">
           <h4>Контактная информация:</h4>
@@ -41,8 +43,8 @@ export default{
     isUser: true
   }),
   methods: {
-    get() {
-      axios.get(`http://localhost:5181/api/user/getById?id=18f363a3-1684-4323-a8c4-722a6c233f47`, {headers: {
+    async get() {
+      await axios.get(`http://localhost:5181/api/user/getById?id=18f363a3-1684-4323-a8c4-722a6c233f47`, {headers: {
           'accept': 'application/json',
           'Content-Type': '*/*'
         }})

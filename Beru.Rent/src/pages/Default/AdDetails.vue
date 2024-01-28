@@ -128,8 +128,7 @@
   import axios from "axios";
 
   export default {
-    data() {
-      return {
+    data:() => ({
         itemData: null,
         itemId: null,
         carouselImages: [],
@@ -139,13 +138,12 @@
         addressInput: 'астана',
         addressSuggestions: [],
         isAddressLoading: false,
-      };
-    },
+    }),
     methods: {
-      fetchItemData() {
+      async fetchItemData() {
         const itemId = this.$route.params.id;
         console.log(itemId);
-        axios.get(`http://localhost:5105/api/ad/get/${itemId}`)
+        await axios.get(`http://localhost:5105/api/ad/get/${itemId}`)
           .then(response => {
             this.itemData = response.data.data;
             this.prepareCarouselImages(this.itemData.files);
@@ -158,14 +156,14 @@
       prepareCarouselImages(byteArray) {
         this.carouselImages = byteArray.map(byteArray => `data:image/jpeg;base64,${byteArray}`);
       },
-      fetchAddressSuggestions() {
+      async fetchAddressSuggestions() {
         this.$nextTick(() => {
           console.log(this.addressInput);
         });
 
         if (this.addressInput) {
           this.isAddressLoading = true;
-          axios.post('http://localhost:5105/api/address/suggestion', { query: this.addressInput })
+          await axios.post('http://localhost:5105/api/address/suggestion', { query: this.addressInput })
             .then(response => {
               this.addressSuggestions = response.data.suggestions;
               this.isAddressLoading = false;

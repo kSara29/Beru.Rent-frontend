@@ -153,50 +153,48 @@
 <script>
 import axios from "axios";
 export default {
-  data() {
-    return {
-      user: '',
-      files: [],
-      displayFiles: [],
-      title: '',
-      titleRules: [
-        value => !!value || 'Название обязательно',
-        value => value.length < 30 || 'Название не должно быть больше 30 символов',
-        value => value.length > 3 || 'Название должно содержать хотя бы 3 букв'
-      ],
-      description: '',
-      descriptionRules: [
-        value => !!value || 'Описание обязательно',
-        value => value.length > 50 || 'Описнаие должна содержать более 50 символов!'
-      ],
-      extraConditions: '',
-      conditionRules: [
-        // value => !!value || 'а что он должен сюда вводит?'
-      ],
-      addressString: '',
-      address: [
-        value => !!value || 'Адрес обязателен'
-      ],
-      deposit: false,
-      minDeposit: '',
-      minimumDepositRules: [
-        value => !!value || 'Введите сумму минимального залога'
-      ],
-      price: '',
-      priceRules: [
-        value => {
-          const pattern = /^[0-9]{0,100}$/
-          return pattern.test(value) || "Цена может содержать только цифры!"
-        }
-      ],
-      categoryId: '',
-      categories: [],
-      contractTypeId: '',
-      contracts: ['Недвижимость', 'Движимое имущество'],
-      timeunitId: '',
-      timeunit: []
-    }
-  },
+  data:() => ({
+    user: '',
+    files: [],
+    displayFiles: [],
+    title: '',
+    titleRules: [
+      value => !!value || 'Название обязательно',
+      value => value.length < 30 || 'Название не должно быть больше 30 символов',
+      value => value.length > 3 || 'Название должно содержать хотя бы 3 букв'
+    ],
+    description: '',
+    descriptionRules: [
+      value => !!value || 'Описание обязательно',
+      value => value.length > 50 || 'Описнаие должна содержать более 50 символов!'
+    ],
+    extraConditions: '',
+    conditionRules: [
+      // value => !!value || 'а что он должен сюда вводит?'
+    ],
+    addressString: '',
+    address: [
+      value => !!value || 'Адрес обязателен'
+    ],
+    deposit: false,
+    minDeposit: '',
+    minimumDepositRules: [
+      value => !!value || 'Введите сумму минимального залога'
+    ],
+    price: '',
+    priceRules: [
+      value => {
+        const pattern = /^[0-9]{0,100}$/
+        return pattern.test(value) || "Цена может содержать только цифры!"
+      }
+    ],
+    categoryId: '',
+    categories: [],
+    contractTypeId: '',
+    contracts: ['Недвижимость', 'Движимое имущество'],
+    timeunitId: '',
+    timeunit: []
+  }),
   methods: {
     async sendForm() {
       const ans = await this.$refs.adForm.validate();
@@ -231,12 +229,15 @@ export default {
       })
         .then(response => console.log(response))
     },
-    get() {
-      axios.get('http://localhost:5181/api/user/get', {params: {UserId: '7519daec-02a3-4382-970b-37704238dae9'}})
+    async get() {
+      await axios.get('http://localhost:5181/api/user/getById?id=18f363a3-1684-4323-a8c4-722a6c233f47', {headers: {
+          'accept': 'application/json',
+          'Content-Type': '*/*'
+        }})
         .then(response => this.user = response.data);
-      axios.get('http://localhost:5105/api/timeunit/get')
+      await axios.get('http://localhost:5105/api/timeunit/get')
         .then(response => this.timeunit = response.data.data);
-      axios.get('http://localhost:5105/api/category/get')
+      await axios.get('http://localhost:5105/api/category/get')
         .then(response => this.categories = response.data.data);
     },
     removeFile() {
