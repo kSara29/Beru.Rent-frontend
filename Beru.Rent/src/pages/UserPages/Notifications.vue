@@ -26,10 +26,10 @@
     <br/><br/><br/><br/><br/><br/><br/><br/><br/>
     <v-btn :width="350" stacked outlined class="ml-3">Подтвердить</v-btn> <br/> <br/>
     <v-btn :width="350" stacked outlined class="ml-3">Отказать</v-btn> <br/> <br/>
-    <v-btn :width="350" stacked outlined class="ml-3">
-      <router-link to="/profile/" style="text-decoration: none; color: red;">Перейти к профилью пользователья</router-link>
+    <v-btn to="/profile/" :width="350" stacked outlined class="ml-3">
+      <router-link to="/profile/" style="text-decoration: none; color: red; text-align: center">Перейти к профилью пользователья</router-link>
     </v-btn> <br/> <br/>
-    <v-btn :width="350" stacked outlined class="ml-3">
+    <v-btn :to="'/details/' + this.ad.id" :width="350" stacked outlined class="ml-3">
       <router-link :to="'/details/' + this.ad.id" style="text-decoration: none; color: red;">Перейти к объявлению</router-link>
     </v-btn>
   </v-navigation-drawer>
@@ -49,8 +49,8 @@ export default {
     }
   },
   methods: {
-    getAllNotifications(userId) {
-      axios.post('http://localhost:5080/api/booking/getbookings/{id}', userId.toString(), {
+    async getAllNotifications(userId) {
+      await axios.post('http://localhost:5080/api/booking/getbookings/{id}', userId.toString(), {
         headers: {
           'accept': 'text/plain',
           'Content-Type': 'application/json'
@@ -58,15 +58,14 @@ export default {
       })
         .then(response => this.notifications = response.data);
 
-      axios.get(`http://localhost:5181/api/user/getById`, {params:{id: userId}, headers: {
+      await axios.get(`http://localhost:5181/api/user/getById`, {params:{id: userId}, headers: {
           'accept': 'application/json',
           'Content-Type': '*/*'
         }})
         .then(response => this.user = response.data);
     },
-    getAd(adId){
-      console.log(this.ad)
-      axios.get(`http://localhost:5105/api/ad/get/${adId}`, {headers: {
+    async getAd(adId){
+      await axios.get(`http://localhost:5105/api/ad/get/${adId}`, {headers: {
           'accept': 'application/json',
           'Content-Type': '*/*'
         }})
