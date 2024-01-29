@@ -148,7 +148,7 @@ export default {
     },
     switchValue(newValue, oldValue) {
       if (newValue !== oldValue) {
-        this.dadataKey++; // Увеличиваем ключ для перерисовки компонента DadataView
+        this.dadataKey++;
       }
     },
   },
@@ -161,15 +161,12 @@ export default {
           this.itemData = response.data.data;
           this.prepareCarouselImages(this.itemData.files);
           this.parentData = response.data.data.id
-         /* console.log(response.data.data)
-          console.log(this.itemData.addressExtra)*/
-          /*console.log('??' + this.parentData)*/
 
           ymaps.ready(() => {
             // eslint-disable-next-line no-unused-vars
             var map = new ymaps.Map("yandexMap", {
-              center: [this.itemData.addressExtra.latitude, this.itemData.addressExtra.longitude], // Координаты центра карты
-              zoom: 17 // Уровень масштабирования
+              center: [this.itemData.addressExtra.latitude, this.itemData.addressExtra.longitude],
+              zoom: 17
             });
           });
         })
