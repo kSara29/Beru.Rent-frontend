@@ -12,10 +12,14 @@
     "@mdi/font": "7.0.96",
     "axios": "^1.6.5",
     "core-js": "^3.29.0",
+    "install": "^0.13.0",
+    "npm": "^10.4.0",
+    "primevue": "^3.47.2",
     "roboto-fontface": "*",
     "vue": "^3.2.0",
     "vue-dadata": "^3.0.0-beta.13",
     "vue-router": "^4.0.0",
+    "vue-simple-suggest": "^1.11.2",
     "vuetify": "^3.4.10"
   },
   "devDependencies": {

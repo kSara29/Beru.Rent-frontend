@@ -82,7 +82,10 @@
               <template v-else>
                 <v-container>
                   <v-container style="padding: 0px">
-                    <v-text-field v-model="userInput" label="Адрес доставки" variant="solo"></v-text-field>
+<!--                    <v-text-field v-model="userInput" label="Адрес доставки" variant="solo"></v-text-field>-->
+                    <div>
+                      <AutocompleteComponent/>
+                    </div>
                   </v-container>
                   <v-container style="padding: 0px">
                     <v-text-field label="Подъезд" variant="solo"></v-text-field>
@@ -98,15 +101,20 @@
       <div id="yandexMap" style="width: 100%; height: 50%"></div>
     </v-row>
   </v-container>
+
+  <AutoComplete v-model="userInput" :suggestions="suggestions" @complete="search" />
+
 </template>
 
 <script>
 import axios from "axios";
 import DadataView from "@/components/AddressSuggestions/DadataView.vue";
+import AutocompleteComponent from "@/components/Autocomplete/AutocompleteComponent.vue";
 
 export default {
   components:{
-    DadataView
+    DadataView,
+    AutocompleteComponent
   },
   data() {
     return {
@@ -122,6 +130,8 @@ export default {
       parentData: '',
       dadataKey: 0,
       reRenderTrigger: 0,
+      chosen: '',
+      suggestions: []
     };
   },
   created() {
@@ -172,7 +182,8 @@ export default {
     sendDataToBackend(query) {
       axios.post('https://localhost:7196/api/address/suggestions', { Query: query })
         .then(response => {
-          console.log('Response from backend:', response.data);
+          this.suggestions = response.data;
+          console.log('Response from backend:', this.suggestions);
         })
         .catch(error => {
           console.error('Ошибка при отправке данных:', error);
