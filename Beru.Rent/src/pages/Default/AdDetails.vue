@@ -1,7 +1,7 @@
 <template>
   <v-container class="d-flex">
     <v-row>
-      <v-col cols="12" md="8">
+      <v-col cols="12" md="7">
         <v-container v-if="itemData">
           <p class="display-6">{{itemData.title }}</p>
         </v-container>
@@ -25,7 +25,7 @@
         </v-container>
       </v-col>
 
-      <v-col cols="12" md="4">
+      <v-col cols="12" md="5">
         <v-container>
           <p>Выберите период аренды:</p>
           <v-container class="rentPeriod align-center" style="padding: 0px">
@@ -41,16 +41,12 @@
 
             <v-container class="d-flex rentDatePeriod">
               <template v-if="!switchValue">
-                <v-text-field variant="solo"></v-text-field>
-                <v-text-field variant="solo"></v-text-field>
+                <DadataView :key="`dadata-${reRenderTrigger}`" :myParam="parentData"/>
               </template>
 
               <template v-else>
-                <v-container>
-                  <v-text-field variant="solo"></v-text-field>
-                  <v-text-field variant="solo"></v-text-field>
-                </v-container>
-                <v-container>
+                <v-container style="padding: 0px">
+                  <DadataView :key="`dadata-${reRenderTrigger}`" :myParam="parentData"/>
                   <v-text-field variant="solo"></v-text-field>
                   <v-text-field variant="solo"></v-text-field>
                 </v-container>
@@ -86,7 +82,10 @@
               <template v-else>
                 <v-container>
                   <v-container style="padding: 0px">
-                    <v-text-field label="Адрес доставки" variant="solo"></v-text-field>
+<!--                    <v-text-field v-model="userInput" label="Адрес доставки" variant="solo"></v-text-field>-->
+                    <div>
+                      <AutocompleteComponent/>
+                    </div>
                   </v-container>
                   <v-container style="padding: 0px">
                     <v-text-field label="Подъезд" variant="solo"></v-text-field>
@@ -98,95 +97,113 @@
           </v-container>
         </v-container>
 
-        <v-container v-if="itemData">
-          <v-container style="background-color: #803306; border-radius: 15px;
-          padding: 5px; color: white">
-            <p class="display-6">Итого {{itemData.price}}</p>
-          </v-container>
-          <v-container>
-            <v-btn size="x-large" style="background-color: #ed68a4; border-radius: 15px">
-              Запросить аренду</v-btn>
-          </v-container>
-        </v-container>
       </v-col>
-
+      <div id="yandexMap" style="width: 100%; height: 50%"></div>
     </v-row>
   </v-container>
 
-  <v-autocomplete
-    v-model="addressInput"
-    :items="addressSuggestions"
-    :loading="isAddressLoading"
-    label="Введите адрес"
-    clearable
-    @input="fetchAddressSuggestions"
-  ></v-autocomplete>
+  <AutoComplete v-model="userInput" :suggestions="suggestions" @complete="search" />
 
 </template>
 
 <script>
-  import axios from "axios";
+import axios from "axios";
+import DadataView from "@/components/AddressSuggestions/DadataView.vue";
+import AutocompleteComponent from "@/components/Autocomplete/AutocompleteComponent.vue";
 
-  export default {
-    data:() => ({
-        itemData: null,
-        itemId: null,
-        carouselImages: [],
-        switchValue: false,
-        menu: false,
-        switchValueDelivery: false,
-        addressInput: 'астана',
-        addressSuggestions: [],
-        isAddressLoading: false,
-    }),
-    methods: {
-      async fetchItemData() {
-        const itemId = this.$route.params.id;
-        console.log(itemId);
-        await axios.get(`http://localhost:5105/api/ad/get/${itemId}`)
-          .then(response => {
-            this.itemData = response.data.data;
-            this.prepareCarouselImages(this.itemData.files);
-            console.log(response.data.data)
-          })
-          .catch(error => {
-            console.error('Ошибка при загрузке данных товара:', error);
-          });
-      },
-      prepareCarouselImages(byteArray) {
-        this.carouselImages = byteArray.map(byteArray => `data:image/jpeg;base64,${byteArray}`);
-      },
-      async fetchAddressSuggestions() {
-        this.$nextTick(() => {
-          console.log(this.addressInput);
-        });
+export default {
+  components:{
+    DadataView,
+    AutocompleteComponent
+  },
+  data() {
+    return {
+      itemData: null,
+      itemId: null,
+      carouselImages: [],
+      switchValue: false,
+      menu: false,
+      switchValueDelivery: false,
+      userInput: '',
+      inputTimeout: null,
+      date: new Date('2018-03-02'),
+      parentData: '',
+      dadataKey: 0,
+      reRenderTrigger: 0,
+      chosen: '',
+      suggestions: []
+    };
+  },
+  created() {
+    this.itemId = this.$route.params.id;
+    this.fetchItemData();
+  },
+  watch: {
+    userInput(newValue) {
+      if (this.inputTimeout) clearTimeout(this.inputTimeout);
 
-        if (this.addressInput) {
-          this.isAddressLoading = true;
-          await axios.post('http://localhost:5105/api/address/suggestion', { query: this.addressInput })
-            .then(response => {
-              this.addressSuggestions = response.data.suggestions;
-              this.isAddressLoading = false;
-              console.log(response.data)
-            })
-            .catch(error => {
-              console.error('Ошибка при получении подсказок адресов:', error);
-              this.isAddressLoading = false;
-            });
-        }
+      this.inputTimeout = setTimeout(() => {
+        this.sendDataToBackend(newValue);
+      }, 500);
+    },
+    switchValue(newValue, oldValue) {
+      if (newValue !== oldValue) {
+        this.dadataKey++; // Увеличиваем ключ для перерисовки компонента DadataView
       }
     },
-    mounted() {
-      this.itemId = this.$route.params.id;
-      this.fetchItemData();
+  },
+  methods: {
+    fetchItemData() {
+      const itemId = this.$route.params.id;
+      console.log('??' + itemId);
+      axios.get(`http://localhost:5105/api/ad/get/${itemId}`)
+        .then(response => {
+          this.itemData = response.data.data;
+          this.prepareCarouselImages(this.itemData.files);
+          this.parentData = response.data.data.id
+         /* console.log(response.data.data)
+          console.log(this.itemData.addressExtra)*/
+          /*console.log('??' + this.parentData)*/
+
+          ymaps.ready(() => {
+            // eslint-disable-next-line no-unused-vars
+            var map = new ymaps.Map("yandexMap", {
+              center: [this.itemData.addressExtra.latitude, this.itemData.addressExtra.longitude], // Координаты центра карты
+              zoom: 17 // Уровень масштабирования
+            });
+          });
+        })
+        .catch(error => {
+          console.error('Ошибка при загрузке данных товара:', error);
+        });
     },
-  };
+    prepareCarouselImages(byteArray) {
+      this.carouselImages = byteArray.map(byteArray => `data:image/jpeg;base64,${byteArray}`);
+    },
+    sendDataToBackend(query) {
+      axios.post('http://localhost:5105/api/address/suggestions', { Query: query })
+        .then(response => {
+          this.suggestions = response.data;
+          console.log('Response from backend:', this.suggestions);
+        })
+        .catch(error => {
+          console.error('Ошибка при отправке данных:', error);
+        });
+    },
+    toggleSwitch() {
+      this.switchValue = !this.switchValue; // или каким-то другим образом изменяете состояние свитча
+      this.dadataKey++; // увеличиваем ключ для перерисовки
+      this.reRenderTrigger++;
+    },
+  }
+};
+
 </script>
 
 <style scoped>
-  .v-carousel__controls {
-    top: 50%; /* Центрируем по вертикали */
-    transform: translateY(-50%)
+.v-carousel__controls {
+  top: 50%; /* Центрируем по вертикали */
+  transform: translateY(-50%)
   }
   .d-flex{
     margin-top: 50px;

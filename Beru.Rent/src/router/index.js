@@ -33,6 +33,12 @@ const routes = [
     name: 'уведомления',
     component: () => import('@/pages/UserPages/Notifications.vue')
   }
+  ,
+  {
+    path: '/test',
+    name: 'test',
+    component: () => import('@/components/Autocomplete/AutocompleteComponent.vue'),
+  }
 ]
 
 const router = createRouter({
