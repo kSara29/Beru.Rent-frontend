@@ -25,8 +25,7 @@ export default {
   },
   methods: {
     search(query) {
-      console.log(query.query)
-      axios.post('https://localhost:7196/api/address/suggestions', { Query: query.query }).then(response => {
+      axios.post('http://localhost:5105/api/address/suggestions', { Query: query.query }).then(response => {
         this.suggestions = response.data;
         console.log(this.suggestions);
       }).catch(error => {

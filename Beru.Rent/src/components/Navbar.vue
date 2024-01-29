@@ -13,8 +13,8 @@
   </template>
 
   <v-app-bar-title>
-    <v-btn prepend-icon="$vuetify">
-      <router-link to="/" style="text-decoration: none; color: inherit">Beru-Rent</router-link>
+    <v-btn to="/" prepend-icon="$vuetify">
+      <router-link class="router-link-btn" to="/">Beru-Rent</router-link>
     </v-btn>
   </v-app-bar-title>
 
@@ -40,17 +40,17 @@
   <v-spacer></v-spacer>
 
   <!-- Создание объявления -->
-  <v-btn stacked outlined class="ml-3" >
-    <router-link to="/createad" style="text-decoration: none; color: inherit" >Создание объявления</router-link>
+  <v-btn to="/createad" stacked outlined class="ml-3" >
+    <router-link class="router-link-btn" to="/createad">Создание объявления</router-link>
   </v-btn>
 
   <!-- Регистрация -->
-  <v-btn  stacked outlined class="ml-3" >
-    <router-link to="/register" style="text-decoration: none; color: inherit" >Регистрация</router-link>
+  <v-btn to="/register" stacked outlined class="ml-3" >
+    <router-link class="router-link-btn" to="/register">Регистрация</router-link>
   </v-btn>
 
-  <v-btn stacked outlined class="ml-3" >
-    <router-link to="/profile" style="text-decoration: none; color: inherit">Личный кабинет</router-link>
+  <v-btn to="/profile" stacked outlined class="ml-3" >
+    <router-link class="router-link-btn" to="/profile">Личный кабинет</router-link>
   </v-btn>
 
   <!-- Выход из аккаунт(после входа в аккаунт появляется) -->
@@ -71,5 +71,8 @@ export default {
 </script>
 
 <style scoped>
-
+ .router-link-btn{
+   text-decoration: none;
+   color: inherit;
+ }
 </style>

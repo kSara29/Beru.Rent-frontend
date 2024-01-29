@@ -155,14 +155,15 @@ export default {
   methods: {
     fetchItemData() {
       const itemId = this.$route.params.id;
-      axios.get(`https://localhost:7196/api/ad/get/${itemId}`)
+      console.log('??' + itemId);
+      axios.get(`http://localhost:5105/api/ad/get/${itemId}`)
         .then(response => {
           this.itemData = response.data.data;
           this.prepareCarouselImages(this.itemData.files);
           this.parentData = response.data.data.id
          /* console.log(response.data.data)
           console.log(this.itemData.addressExtra)*/
-          console.log(this.parentData)
+          /*console.log('??' + this.parentData)*/
 
           ymaps.ready(() => {
             // eslint-disable-next-line no-unused-vars
@@ -180,7 +181,7 @@ export default {
       this.carouselImages = byteArray.map(byteArray => `data:image/jpeg;base64,${byteArray}`);
     },
     sendDataToBackend(query) {
-      axios.post('https://localhost:7196/api/address/suggestions', { Query: query })
+      axios.post('http://localhost:5105/api/address/suggestions', { Query: query })
         .then(response => {
           this.suggestions = response.data;
           console.log('Response from backend:', this.suggestions);

@@ -38,6 +38,7 @@ onMounted(fetchData);
 
 async function fetchData() {
   try {
+    /*console.log('!!' + props.myParam);*/
     const response = await axios.get(`https://localhost:7296/api/booking/getAllBookingsById?Id=${props.myParam}`);
     dateRanges.value = response.data.map(d => ({
       from: new Date(d.from).setHours(0, 0, 0, 0),
