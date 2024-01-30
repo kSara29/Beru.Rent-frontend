@@ -238,9 +238,9 @@ export default {
         .then(response => console.log(response))
     },
     get() {
-      axios.get('https://localhost:7196/api/timeunit/get')
+      axios.get('http://localhost:7105/api/timeunit/get')
         .then(response => this.timeunit = response.data.data);
-      axios.get('https://localhost:7196/api/category/get')
+      axios.get('http://localhost:7105/api/category/get')
         .then(response => this.categories = response.data.data);
     },
     removeFile() {

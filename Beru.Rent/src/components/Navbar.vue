@@ -39,44 +39,36 @@
 
   <v-spacer></v-spacer>
 
-  <!-- Создание объявления -->
-  <v-btn stacked outlined class="ml-3" >
-    <router-link to="/createad" style="text-decoration: none; color: inherit" >Создание объявления</router-link>
-  </v-btn>
-
+  <div v-if="!user" class="ml-3">
   <!-- Регистрация -->
   <v-btn  stacked outlined class="ml-3" >
     <router-link to="/register" style="text-decoration: none; color: inherit" >Регистрация</router-link>
   </v-btn>
 
+ <!-- Логин -->
+  <v-btn stacked outlined class="ml-3" >
+    <!--router-link to="/login" style="text-decoration: none; color: inherit">Логин</router-link-->
+    <button style="text-decoration: none; color: inherit" @click="login">ВОЙТИ</button>
+  </v-btn>
+</div>
+
+  <div v-if="user" class="ml-3">
+  <!-- Создание объявления -->
+  <v-btn stacked outlined class="ml-3" >
+    <router-link to="/createad" style="text-decoration: none; color: inherit">Создать объявление</router-link>
+  </v-btn>
+  <!--button @click="logout">Выйти</button-->
+  <v-btn stacked outlined class="ml-3" >
+    <router-link to="/logout" style="text-decoration: none; color: inherit">
+      <v-icon icon="mdi-login"></v-icon>
+      Выйти</router-link>
+  </v-btn>
+  <!-- Личный кабинет -->
   <v-btn stacked outlined class="ml-3" >
     <router-link to="/profile" style="text-decoration: none; color: inherit">Личный кабинет</router-link>
   </v-btn>
-  <v-btn stacked outlined class="ml-3" >
-    <router-link to="/test" style="text-decoration: none; color: inherit">Логин</router-link>
-  </v-btn>
 
-
-
-  <div>
-    <div v-if="user">
-      <p>Привет, {{ user.profile.name }}!</p>
-      <!--button @click="logout">Выйти</button-->
-      <v-btn stacked outlined class="ml-3" >
-    <router-link to="/logout" style="text-decoration: none; color: inherit">Выйти</router-link>
-  </v-btn>
-
-    </div>
-    <div v-else>
-      <p><button @click="login">Войти</button></p>
-    </div>
   </div>
-
-  <!-- Выход из аккаунт(после входа в аккаунт появляется) -->
-  <v-btn stacked>
-    <v-icon icon="mdi-login"></v-icon>
-    Выход
-  </v-btn>
 
 </v-app-bar>
 </v-container>
@@ -85,6 +77,10 @@
 
 <script>
 export default {
+  methods:{
+  login() {
+      this.$userManager.signinRedirect();
+    },},
   computed: {
     user() {
       return this.$store.getters.getUser;
