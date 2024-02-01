@@ -1,0 +1,86 @@
+<template>
+  <v-container>
+    <v-card>
+      <v-card-title>Чат</v-card-title>
+      <v-card-text style="height: 300px; overflow-y: auto;">
+        <div v-for="message in messages" :key="message.id">
+          <v-chip :color="getColor(message.sender)" label>{{ message.sender }}</v-chip>
+          {{ message.text }}
+        </div>
+      </v-card-text>
+      <v-card-actions>
+        <v-text-field
+          label="Сообщение"
+          v-model="newMessage"
+          @keyup.enter="sendMessage"
+        ></v-text-field>
+        <v-btn color="primary" @click="sendMessage">Отправить</v-btn>
+      </v-card-actions>
+    </v-card>
+  </v-container>
+</template>
+
+<script>
+import * as signalR from '@microsoft/signalr';
+import axios from "axios";
+
+export default {
+  data() {
+    return {
+      hubConnection: null,
+      messages: [],
+      newMessage: '',
+    };
+  },
+  methods: {
+    getColor(senderId) {
+      const currentUserId = 'dd0c7db7-5a96-4be8-b33f-46f1d3e0e94b';
+      return senderId === currentUserId ? 'blue' : 'green';
+    },
+    async sendMessage() {
+      console.log(this.newMessage);
+      if (this.newMessage.trim() === '') {
+        return;
+      }
+
+      await axios.post('https://localhost:7290/api/chat/send', {
+        message: this.newMessage,
+        chatId: 'bb77d75f-128a-458a-92ed-a325dc00e0cf',
+      });
+
+
+      this.newMessage = '';
+    },
+    receiveMessage(user, message) {
+      this.messages.push({
+        sender: user,
+        text: message,
+      });
+    },
+    setupSignalR() {
+      this.hubConnection = new signalR.HubConnectionBuilder()
+        .withUrl('https://localhost:7290/chatHub')
+        .build();
+
+      this.hubConnection.on('ReceiveMessage', this.receiveMessage);
+
+      this.hubConnection.start()
+        .then(() => console.log('Connection started!'))
+        .catch(err => console.error('SignalR Connection Error: ', err));
+    },
+    async loadChatHistory(chatId) {
+      try {
+        const response = await axios.get(`https://localhost:7290/api/chat/history/${chatId}`);
+        this.messages = response.data;
+      } catch (error) {
+        console.error('Ошибка при загрузке истории чата:', error);
+      }
+    },
+  },
+  mounted() {
+    this.setupSignalR();
+    const chatId = 'bb77d75f-128a-458a-92ed-a325dc00e0cf';
+    this.loadChatHistory(chatId);
+  },
+};
+</script>

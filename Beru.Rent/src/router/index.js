@@ -27,6 +27,17 @@ const routes = [
     path: '/createad',
     name: 'создать объявление',
     component: () => import('@/pages/AdPages/CreateAd.vue'),
+  },
+  {
+    path: '/profile/notifications/:id',
+    name: 'уведомления',
+    component: () => import('@/pages/UserPages/Notifications.vue')
+  }
+  ,
+  {
+    path: '/test',
+    name: 'test',
+    component: () => import('@/pages/Chat/Chat.vue'),
   }
 ]
 

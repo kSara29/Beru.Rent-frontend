@@ -78,17 +78,15 @@
 <script>
 import axios from 'axios'
 export default {
-  data() {
-    return {
-      items: [],
-      currentPage: 1,
-      selectedCategory: 'all',
-      categories: ['all','computer', 'cat', 'Ball', 'Soap', 'Bike', 'Table'],
-      selectedSort: 'fromnew',
-      sortOptions: ['fromnew', 'fromold', 'fromhigh', 'fromlow'],
-      totalPages: 0
-    };
-  },
+  data:() => ({
+    items: [],
+    currentPage: 1,
+    selectedCategory: 'all',
+    categories: ['all','computer', 'cat', 'Ball', 'Soap', 'Bike', 'Table'],
+    selectedSort: 'fromnew',
+    sortOptions: ['fromnew', 'fromold', 'fromhigh', 'fromlow'],
+    totalPages: 0
+  }),
   methods: {
     fetchItems() {
       let params = {
@@ -105,14 +103,14 @@ export default {
       }
 
 
-      axios.get('https://localhost:7196/api/ad/get', { params })
+      axios.get('http://localhost:5105/api/ad/get', { params })
           .then(response => {
             this.items = response.data.mainPageDto;
             this.totalPages = response.data.totalPage;
             console.log(response.data)
           })
           .catch(error => {
-            console.error('Ошибка при загрузке данных:', error);
+            console.error('Ошибка при загруз ке данных:', error);
           });
     },
     dataUrl(byteArray) {
