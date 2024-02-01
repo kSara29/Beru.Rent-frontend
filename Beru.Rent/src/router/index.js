@@ -45,6 +45,15 @@ const routes = [
    { 
     path: '/test', 
     name: 'test',
+    component: () => import('@/pages/Chat/Chat.vue'),
+  },
+  {
+    path: '/user/deal/:id',
+    name: 'deal',
+    component:() => import('@/pages/UserPages/DealPage.vue')
+  },{ 
+    path: '/test', 
+    name: 'test',
     component:()=> import('@/pages/Test.vue')
   },
   { 
@@ -57,8 +66,6 @@ const routes = [
   name: 'Logout',
   component: ()=> import('@/components/Logout.vue')
 }
-
-
 ]
 
 const router = createRouter({

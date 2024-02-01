@@ -237,10 +237,15 @@ export default {
       })
         .then(response => console.log(response))
     },
-    get() {
-      axios.get('http://localhost:7105/api/timeunit/get')
+    async get() {
+      await axios.get(`http://localhost:5174/bff/user/getById?id=c698dfc2-61a9-46eb-bf7f-0ffb2067b9bd`, {headers: {
+          'accept': 'application/json',
+          'Content-Type': '*/*'
+        }})
+        .then(response => this.user = response.data.data);
+      await axios.get('http://localhost:5174/bff/timeunit/get')
         .then(response => this.timeunit = response.data.data);
-      axios.get('http://localhost:7105/api/category/get')
+      await axios.get('http://localhost:5174/bff/category/get')
         .then(response => this.categories = response.data.data);
     },
     removeFile() {

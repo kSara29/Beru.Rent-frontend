@@ -50,7 +50,7 @@ export default {
   },
   methods: {
     async getAllNotifications(userId) {
-      await axios.post('http://localhost:5080/api/booking/getbookings/{id}', userId.toString(), {
+      await axios.get(`http://localhost:5174/bff/booking/getallbookings/${userId}`, {
         headers: {
           'accept': 'text/plain',
           'Content-Type': 'application/json'
@@ -58,14 +58,14 @@ export default {
       })
         .then(response => this.notifications = response.data);
 
-      await axios.get(`http://localhost:5181/api/user/getById`, {params:{id: userId}, headers: {
+      await axios.get(`http://localhost:5174/bff/user/getById?id=c698dfc2-61a9-46eb-bf7f-0ffb2067b9bd`, {headers: {
           'accept': 'application/json',
           'Content-Type': '*/*'
         }})
-        .then(response => this.user = response.data);
+        .then(response => this.user = response.data.data);
     },
     async getAd(adId){
-      await axios.get(`http://localhost:5105/api/ad/get/${adId}`, {headers: {
+      await axios.get(`http://localhost:5174/api/ad/getById?id=${adId}`, {headers: {
           'accept': 'application/json',
           'Content-Type': '*/*'
         }})
