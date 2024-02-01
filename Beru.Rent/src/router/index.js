@@ -37,7 +37,7 @@ const routes = [
   {
     path: '/test',
     name: 'test',
-    component: () => import('@/components/Autocomplete/AutocompleteComponent.vue'),
+    component: () => import('@/pages/Chat/Chat.vue'),
   }
 ]
 
