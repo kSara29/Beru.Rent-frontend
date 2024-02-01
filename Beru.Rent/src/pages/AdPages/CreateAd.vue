@@ -230,14 +230,14 @@ export default {
         .then(response => console.log(response))
     },
     async get() {
-      await axios.get('http://localhost:5181/api/user/getById?id=18f363a3-1684-4323-a8c4-722a6c233f47', {headers: {
+      await axios.get(`http://localhost:5174/bff/user/getById?id=c698dfc2-61a9-46eb-bf7f-0ffb2067b9bd`, {headers: {
           'accept': 'application/json',
           'Content-Type': '*/*'
         }})
-        .then(response => this.user = response.data);
-      await axios.get('http://localhost:5105/api/timeunit/get')
+        .then(response => this.user = response.data.data);
+      await axios.get('http://localhost:5174/bff/timeunit/get')
         .then(response => this.timeunit = response.data.data);
-      await axios.get('http://localhost:5105/api/category/get')
+      await axios.get('http://localhost:5174/bff/category/get')
         .then(response => this.categories = response.data.data);
     },
     removeFile() {
