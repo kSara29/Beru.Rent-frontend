@@ -1,18 +1,15 @@
-//import Vue from 'vue';
+
+// Composables
 import App from '../App.vue'
+import { createApp } from 'vue'
+
+//import PrimeVue from 'primevue/config';
 import { UserManager } from 'oidc-client';
 import { registerPlugins } from '@/plugins'
 import store from './store';
-
-// Components
-
-// Composables
-import { createApp } from 'vue'
-import App from '../App.vue'
-import PrimeVue from 'primevue/config';
 const app = createApp(App)
 
-app.use(PrimeVue);
+//app.use(PrimeVue);
 registerPlugins(app)
 
 
