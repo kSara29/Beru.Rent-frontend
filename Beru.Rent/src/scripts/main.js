@@ -8,8 +8,14 @@ import store from './store';
 
 // Composables
 import { createApp } from 'vue'
+import App from '../App.vue'
+import PrimeVue from 'primevue/config';
 const app = createApp(App)
+
+app.use(PrimeVue);
 registerPlugins(app)
+
+
 
 
 const userManager = new UserManager({
@@ -37,5 +43,5 @@ const userManager = new UserManager({
   
   app.use(store).mount('#app');
 
-//app.mount('#app')
+
 

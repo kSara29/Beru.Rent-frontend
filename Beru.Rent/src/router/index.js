@@ -30,6 +30,13 @@ const routes = [
     name: 'создать объявление',
     component: () => import('@/pages/AdPages/CreateAd.vue'),
   },
+  {
+    path: '/profile/notifications/:id',
+    name: 'уведомления',
+    component: () => import('@/pages/UserPages/Notifications.vue')
+  }
+  ,
+  
   { 
     path: '/callback', 
     name: 'callback', 

@@ -77,10 +77,12 @@
                         hide-details="auto">
                       </v-text-field>
                     </div>
+                    <br />
                     <div class="form-group">
                       <v-text-field
                         v-model="repPassword"
                         type="password"
+                        label="Повторите пароль"
                         :rules="repPasswordRules"
                         name="repeated password"
                       ></v-text-field>
@@ -172,10 +174,15 @@ export default {
     ]
   }),
   methods: {
-    send() {
-      if (this.repPassword !== this.password){
+    async send() {
+      if (this.repPassword !== this.password) {
         alert('Пароли не совпадают!')
-        return;
+        return 0;
+      }
+      const ans = await this.$refs.registrationForm.validate();
+      if (ans.valid === false) {
+        alert('Форма заполнена неправильно!')
+        return 0;
       }
       let vm = {
         FirstName: this.firstName,
