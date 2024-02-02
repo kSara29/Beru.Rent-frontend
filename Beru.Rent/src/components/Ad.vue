@@ -5,14 +5,14 @@
 <template>
   <v-card width="30%" class="ad">
     <v-img
-      src="https://ir.ozone.ru/s3/multimedia-f/c1000/6326194971.jpg"
+      :src="'data:image/jpeg;base64,' + this.ad.files[0]"
       aspect-ratio="1"
     ></v-img>
 
     <v-card-title primary-title>
       <div>
-        <h3 class="headline mb-0">рандомная вещь</h3>
-        <div> Крутая вещь </div>
+        <h3 class="headline mb-0">{{ad.title}}</h3>
+        <div> {{ ad.price }}₸/{{ad.timeUnit.title}} </div>
       </div>
     </v-card-title>
 
@@ -29,9 +29,16 @@
 
 <script>
   export default {
+    props: [
+      'ad'
+    ],
     data:() => ({
-      adId: 'hello world'
-    })
+      adId: 'hello world',
+      file: '',
+    }),
+    mounted() {
+      console.log(this.ad)
+    }
   }
 </script>
 
