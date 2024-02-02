@@ -77,10 +77,11 @@ export default {
         params.sortdate = null;
       }
 
-
+      console.log(params);
       axios.get('http://localhost:5174/bff/ad/getMainPageAds', { params })
           .then(response => {
             this.items = response.data.data.mainPageDto;
+            console.log(this.items);
             this.totalPages = response.data.data.totalPage;
             console.log(response.data.data)
           })

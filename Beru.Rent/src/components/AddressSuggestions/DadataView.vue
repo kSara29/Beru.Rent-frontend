@@ -39,10 +39,11 @@ onMounted(fetchData);
 async function fetchData() {
   try {
     /*console.log('!!' + props.myParam);*/
-    const response = await axios.get(`https://localhost:7296/api/booking/getAllBookingsById?Id=${props.myParam}`);
-    dateRanges.value = response.data.map(d => ({
-      from: new Date(d.from).setHours(0, 0, 0, 0),
-      to: new Date(d.to).setHours(0, 0, 0, 0)
+    const response = await axios.get(`http://localhost:5174/bff/booking/getbookingdates/${props.myParam}`);
+    console.log('!!!  ' + `http://localhost:5174/bff/booking/getbookingdates/${props.myParam}`);
+    dateRanges.value = response.data.data.map(d => ({
+      from: new Date(d.Dbeg).setHours(0, 0, 0, 0),
+      to: new Date(d.Dend).setHours(0, 0, 0, 0)
     }));
   } catch (error) {
     console.log('Ошибка при получении данных с сервера');
