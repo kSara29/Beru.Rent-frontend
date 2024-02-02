@@ -25,11 +25,11 @@ export default {
   },
   methods: {
     search(query) {
-      axios.post('http://localhost:5105/api/address/suggestions', { Query: query.query }).then(response => {
-        this.suggestions = response.data;
+      axios.post('http://localhost:5174/bff/address/suggestions', { Query: query.query }).then(response => {
+        this.suggestions = response.data.data;
         console.log(this.suggestions);
       }).catch(error => {
-        console.error('Ошибка при загрузке данных:', error);
+        console.error('ERROR:', error);
       });
     }
   }
