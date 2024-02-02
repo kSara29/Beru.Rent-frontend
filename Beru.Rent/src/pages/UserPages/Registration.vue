@@ -88,7 +88,7 @@
                       ></v-text-field>
                     </div>
                     <br />
-                  <v-btn type="submit" @click="send" block="true" class="btn-primary">Зарегистрироваться</v-btn>
+                  <v-btn type="submit" @click="send" block class="btn-primary">Зарегистрироваться</v-btn>
                 </v-form>
             </div>
             <div class="col-md-3"></div>
@@ -153,7 +153,7 @@ export default {
     phoneRule: [
       value => {
         const pattern =
-          /^[+][0-9]{3}[)]?[-\s.]?[0-9]{3}[-\s.]?[0-9]{4,6}$/
+          /^[+7]{3}[)]?[-\s.]?[0-9]{3}[-\s.]?[0-9]{4,6}$/
         return pattern.test(value) || 'Введите номер телефона начиная с +7'
       }
     ],
@@ -194,7 +194,7 @@ export default {
       }
       console.log(vm)
 
-      axios.post('http://localhost:5181/api/user/create', vm)
+      axios.post('http://localhost:5174/bff/user/createUser', vm)
         .then(response => console.log(response))
     }
   }

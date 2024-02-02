@@ -35,34 +35,8 @@
 
 
     <v-row>
-      <v-col cols="12" md="6" lg="4" v-for="item in items" :key="item.id">
-        <router-link :to="{ name: 'DetailPage', params: { id: item.id }}" class="no-underline">
-          <v-card class="mx-auto">
-            <v-img
-              :src="dataUrl(item.files)"
-              cover
-            >
-            </v-img>
-
-            <v-card-title>
-              {{ item.title }}
-            </v-card-title>
-
-            <v-card-subtitle>
-              {{ item.city }}
-            </v-card-subtitle>
-
-            <v-card-text>
-              {{ item.description }}
-            </v-card-text>
-            <v-card-text>
-              {{ item.price }}
-            </v-card-text>
-            <v-card-text>
-              {{ item.category }}
-            </v-card-text>
-          </v-card>
-        </router-link>
+      <v-col cols="12" md="6" lg="4" v-for="(item, index) in items" :key="index">
+        <Ad :ad="item" />
       </v-col>
     </v-row>
 
@@ -77,6 +51,7 @@
 
 <script>
 import axios from 'axios'
+import Ad from '@/components/Ad.vue'
 export default {
   data:() => ({
     items: [],
@@ -103,11 +78,11 @@ export default {
       }
 
 
-      axios.get('http://localhost:5105/api/ad/get', { params })
+      axios.get('http://localhost:5174/bff/ad/getMainPageAds', { params })
           .then(response => {
-            this.items = response.data.mainPageDto;
-            this.totalPages = response.data.totalPage;
-            console.log(response.data)
+            this.items = response.data.data.mainPageDto;
+            this.totalPages = response.data.data.totalPage;
+            console.log(response.data.data)
           })
           .catch(error => {
             console.error('Ошибка при загруз ке данных:', error);
@@ -133,6 +108,9 @@ export default {
     selectedSort() {
       this.fetchItems();
     }
+  },
+  components: {
+    Ad
   }
 };
 </script>
