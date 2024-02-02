@@ -35,6 +35,8 @@ export default {
   methods: {
     getColor(senderId) {
       const currentUserId = 'dd0c7db7-5a96-4be8-b33f-46f1d3e0e94b';
+      //console.log(senderId + ' != ' + currentUserId);
+      senderId = 'dd0c7db7-5a96-4be8-b33f-46f1d3e0e90b';
       return senderId === currentUserId ? 'blue' : 'green';
     },
     async sendMessage() {
@@ -43,11 +45,10 @@ export default {
         return;
       }
 
-      await axios.post('https://localhost:7290/api/chat/send', {
-        message: this.newMessage,
-        chatId: 'bb77d75f-128a-458a-92ed-a325dc00e0cf',
+      await axios.post('https://localhost:7105//bff/chat/sendMessageByChatId', {
+        Message: this.newMessage,
+        ChatId: '1bdc988b-6310-46db-ad86-097fa7430c6e',
       });
-
 
       this.newMessage = '';
     },
@@ -59,7 +60,7 @@ export default {
     },
     setupSignalR() {
       this.hubConnection = new signalR.HubConnectionBuilder()
-        .withUrl('https://localhost:7290/chatHub')
+        .withUrl('http://localhost:5027/chatHub')
         .build();
 
       this.hubConnection.on('ReceiveMessage', this.receiveMessage);
@@ -70,7 +71,7 @@ export default {
     },
     async loadChatHistory(chatId) {
       try {
-        const response = await axios.get(`https://localhost:7290/api/chat/history/${chatId}`);
+        const response = await axios.get(`https://localhost:7105/bff/chat/loahChatHistoryById?Id=${chatId}`);
         this.messages = response.data;
       } catch (error) {
         console.error('Ошибка при загрузке истории чата:', error);
@@ -79,8 +80,11 @@ export default {
   },
   mounted() {
     this.setupSignalR();
-    const chatId = 'bb77d75f-128a-458a-92ed-a325dc00e0cf';
+    const chatId = '1bdc988b-6310-46db-ad86-097fa7430c6e';
     this.loadChatHistory(chatId);
   },
 };
 </script>
+
+
+?
