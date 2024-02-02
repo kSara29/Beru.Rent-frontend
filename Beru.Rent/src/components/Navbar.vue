@@ -83,8 +83,6 @@
       },},
     computed: {
       user() {
-        let userinfo = this.$store.getters.getUser
-        console.log(userinfo.profile)
         return this.$store.getters.getUser;
         
       },
