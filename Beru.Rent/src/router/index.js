@@ -35,8 +35,8 @@ const routes = [
   }
   ,
   {
-    path: '/test',
-    name: 'test',
+    path: '/chat',
+    name: 'chat',
     component: () => import('@/pages/Chat/Chat.vue'),
   },
   {
