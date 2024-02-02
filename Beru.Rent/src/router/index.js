@@ -34,9 +34,7 @@ const routes = [
     path: '/profile/notifications/:id',
     name: 'уведомления',
     component: () => import('@/pages/UserPages/Notifications.vue')
-  }
-  ,
-  
+  },
   { 
     path: '/callback', 
     name: 'callback', 
@@ -51,10 +49,6 @@ const routes = [
     path: '/user/deal/:id',
     name: 'deal',
     component:() => import('@/pages/UserPages/DealPage.vue')
-  },{ 
-    path: '/test', 
-    name: 'test',
-    component:()=> import('@/pages/Test.vue')
   },
   { 
     path: '/silent-refresh', 
