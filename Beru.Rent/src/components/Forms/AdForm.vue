@@ -209,7 +209,7 @@ export default {
         Form: new FormData()
       }
       console.log(user)
-      axios.post('http://localhost:5081/api/ad/create')
+      axios.post('http://localhost:5174/bff/ad/create')
     },
     addFiles() {
       const length = this.files.length;

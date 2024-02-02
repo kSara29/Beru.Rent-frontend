@@ -153,48 +153,55 @@
 <script>
 import axios from "axios";
 export default {
-  data:() => ({
-    user: '',
-    files: [],
-    displayFiles: [],
-    title: '',
-    titleRules: [
-      value => !!value || 'Название обязательно',
-      value => value.length < 30 || 'Название не должно быть больше 30 символов',
-      value => value.length > 3 || 'Название должно содержать хотя бы 3 букв'
-    ],
-    description: '',
-    descriptionRules: [
-      value => !!value || 'Описание обязательно',
-      value => value.length > 50 || 'Описнаие должна содержать более 50 символов!'
-    ],
-    extraConditions: '',
-    conditionRules: [
-      // value => !!value || 'а что он должен сюда вводит?'
-    ],
-    addressString: '',
-    address: [
-      value => !!value || 'Адрес обязателен'
-    ],
-    deposit: false,
-    minDeposit: '',
-    minimumDepositRules: [
-      value => !!value || 'Введите сумму минимального залога'
-    ],
-    price: '',
-    priceRules: [
-      value => {
-        const pattern = /^[0-9]{0,100}$/
-        return pattern.test(value) || "Цена может содержать только цифры!"
-      }
-    ],
-    categoryId: '',
-    categories: [],
-    contractTypeId: '',
-    contracts: ['Недвижимость', 'Движимое имущество'],
-    timeunitId: '',
-    timeunit: []
-  }),
+  computed:{
+    user() {
+      return this.$store.getters.getUser;
+
+    }
+  },
+  data() {
+    return {
+      files: [],
+      displayFiles: [],
+      title: '',
+      titleRules: [
+        value => !!value || 'Название обязательно',
+        value => value.length < 30 || 'Название не должно быть больше 30 символов',
+        value => value.length > 3 || 'Название должно содержать хотя бы 3 букв'
+      ],
+      description: '',
+      descriptionRules: [
+        value => !!value || 'Описание обязательно',
+        value => value.length > 50 || 'Описнаие должна содержать более 50 символов!'
+      ],
+      extraConditions: '',
+      conditionRules: [
+        // value => !!value || 'а что он должен сюда вводит?'
+      ],
+      addressString: '',
+      address: [
+        value => !!value || 'Адрес обязателен'
+      ],
+      deposit: false,
+      minDeposit: '',
+      minimumDepositRules: [
+        value => !!value || 'Введите сумму минимального залога'
+      ],
+      price: '',
+      priceRules: [
+        value => {
+          const pattern = /^[0-9]{0,100}$/
+          return pattern.test(value) || "Цена может содержать только цифры!"
+        }
+      ],
+      categoryId: '',
+      categories: [],
+      contractTypeId: '',
+      contracts: ['Недвижимость', 'Движимое имущество'],
+      timeunitId: '',
+      timeunit: []
+    }
+  },
   methods: {
     async sendForm() {
       const ans = await this.$refs.adForm.validate();
@@ -221,10 +228,11 @@ export default {
       form.append('tags', 'bestSeller')
 
       console.log(form)
-      axios.post('http://localhost:5105/api/ad/create', form, {
+      axios.post('https://localhost:7196/api/ad/create', form, {
         headers: {
           'accept': 'text/plain',
-          'Content-Type': 'multipart/form-data'
+          'Content-Type': 'multipart/form-data',
+          'Authorization': `Bearer ${this.user.access_token}`
         }
       })
         .then(response => console.log(response))
@@ -266,6 +274,7 @@ export default {
   },
   mounted() {
     this.get()
-  }
+  },
+  
 };
 </script>
