@@ -19,6 +19,7 @@ export default createStore({
   actions: {
     setUser({ commit }, user) {
       commit('setUser', user);
+  
     },
   },
   getters: {

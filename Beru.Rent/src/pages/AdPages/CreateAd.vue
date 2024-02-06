@@ -17,11 +17,12 @@
             @change="addFiles()">
           </v-file-input>
           <v-carousel hide-delimiters="">
-            <v-carousel-item
+            <v-carousel-item 
               v-for="(item) in displayFiles"
               :key="item.name"
               :src="item"
               cover=""
+              height="200"
             ></v-carousel-item>
           </v-carousel>
           <v-btn @click="removeFile()">Удалить последнее</v-btn>
@@ -213,7 +214,7 @@ export default {
       for(let i = 0; i < this.files.length; i++) {
         form.append('files', this.files[i])
       }
-      form.append('userId', this.user.userId);
+      form.append('userId', null);
       form.append('title', this.title);
       form.append('description', this.description);
       form.append('extraConditions', this.extraConditions);
@@ -228,7 +229,7 @@ export default {
       form.append('tags', 'bestSeller')
 
       console.log(form)
-      axios.post('https://localhost:7196/api/ad/create', form, {
+      axios.post('http://localhost:5174/bff/ad/create', form, {
         headers: {
           'accept': 'text/plain',
           'Content-Type': 'multipart/form-data',
@@ -238,11 +239,6 @@ export default {
         .then(response => console.log(response))
     },
     async get() {
-      await axios.get(`http://localhost:5174/bff/user/getById?id=c698dfc2-61a9-46eb-bf7f-0ffb2067b9bd`, {headers: {
-          'accept': 'application/json',
-          'Content-Type': '*/*'
-        }})
-        .then(response => this.user = response.data.data);
       await axios.get('http://localhost:5174/bff/timeunit/get')
         .then(response => this.timeunit = response.data.data);
       await axios.get('http://localhost:5174/bff/category/get')

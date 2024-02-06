@@ -41,8 +41,8 @@ const routes = [
     component: () => import('@/components/Callback.vue'), },
 
    { 
-    path: '/test', 
-    name: 'test',
+    path: '/chat', 
+    name: 'chat',
     component: () => import('@/pages/Chat/Chat.vue'),
   },
   {
@@ -59,6 +59,11 @@ const routes = [
   path: '/logout',
   name: 'Logout',
   component: ()=> import('@/components/Logout.vue')
+},
+{
+  path: '/deal-detail',
+  name: 'deal-detail',
+  component: ()=> import('@/pages/DealPages/DealDetail.vue')
 }
 ]
 
