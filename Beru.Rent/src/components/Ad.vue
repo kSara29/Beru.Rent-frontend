@@ -27,7 +27,7 @@
   </v-card>
 </template>
 
-<script>
+<!--<script>
   export default {
     props: [
       'ad'
@@ -40,6 +40,23 @@
       console.log(this.ad)
     }
   }
+</script>-->
+
+<script>
+export default {
+  props: [
+    'ad'
+  ],
+  data: () => ({
+    adId: '', // Инициализация без значения
+    file: '',
+  }),
+  mounted() {
+    // Установка значения adId из пропса ad при монтировании компонента
+    this.adId = this.ad.id; // Предполагая, что у ad есть поле id
+    console.log(this.ad)
+  }
+}
 </script>
 
 <style scoped>
