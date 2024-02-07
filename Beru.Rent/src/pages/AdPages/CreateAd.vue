@@ -205,38 +205,42 @@ export default {
   },
   methods: {
     async sendForm() {
-      const ans = await this.$refs.adForm.validate();
-      if (ans.valid === false) {
-        alert('Форма заполнена неправильно!')
-        return 0;
-      }
-      let form = new FormData()
-      for(let i = 0; i < this.files.length; i++) {
-        form.append('files', this.files[i])
-      }
-      form.append('userId', null);
-      form.append('title', this.title);
-      form.append('description', this.description);
-      form.append('extraConditions', this.extraConditions);
-      form.append('neededDeposit', this.deposit);
-      form.append('minDeposit', this.minDeposit);
-      form.append('price', this.price);
-      form.append('categoryId', this.categoryId);
-      form.append('timeUnitId', this.timeunitId);
-      form.append('contractTypeId', this.contractTypeId);
-      form.append('addressExtraId', 'b65e3e8c-e12e-482c-8251-158dedc0658c');
-      form.append('address', this.addressString)
-      form.append('tags', 'bestSeller')
+  const ans = await this.$refs.adForm.validate();
+  if (ans.valid === false) {
+    alert('Форма заполнена неправильно!');
+    return;
+  }
 
-      console.log(form)
-      axios.post('http://localhost:5174/bff/ad/create', form, {
-        headers: {
-          'accept': 'text/plain',
-          'Content-Type': 'multipart/form-data',
-          'Authorization': `Bearer ${this.user.access_token}`
-        }
-      })
-        .then(response => console.log(response))
+  const requestBody = {
+    userId: null,
+    title: this.title,
+    description: this.description,
+    extraConditions: this.extraConditions,
+    neededDeposit: this.deposit,
+    minDeposit: parseInt(this.minDeposit),
+    price: parseInt(this.price),
+    categoryId: this.categoryId,
+    timeUnitId: this.timeunitId,
+    contractTypeId: parseInt(this.contractTypeId),
+    addressExtraId: '3fa85f64-5717-4562-b3fc-2c963f66afa6', // Необходимо установить правильное значение
+    addressExtra: this.addressString,
+    tags: 'bestSeller',
+    //files: []
+  };
+
+  for (let i = 0; i < this.files.length; i++) {
+    requestBody.files.push(this.files[i]);
+  }
+
+  console.log(requestBody);
+
+  axios.post('http://localhost:5174/bff/ad/create', requestBody, {
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${this.user.access_token}`
+    }
+  }).then(response => console.log(response));
+
     },
     async get() {
       await axios.get('http://localhost:5174/bff/timeunit/get')
