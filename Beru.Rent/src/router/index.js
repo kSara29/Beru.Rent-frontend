@@ -64,6 +64,11 @@ const routes = [
   path: '/deal-detail',
   name: 'deal-detail',
   component: ()=> import('@/pages/DealPages/DealDetail.vue')
+},
+{
+  path: '/create-category',
+  name: 'create-category',
+  component: ()=> import('@/pages/AdPages/CreateCategory.vue')
 }
 ]
 
