@@ -190,7 +190,7 @@ export default {
         UserName: this.login,
         IIN: this.iinNumber,
         Mail: this.email,
-        Phone: this.phoneNumber,
+        Phone: this.phoneNumber.slice(-10),
         Password: this.password,
         ConfirmPassword: this.repPassword
       }
