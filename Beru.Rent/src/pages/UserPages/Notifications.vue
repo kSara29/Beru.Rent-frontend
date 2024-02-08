@@ -9,19 +9,19 @@
     <div class="collapse" id="to-me" style="">
       <v-list class="list-unstyled fw-normal pb-1 small">
         <v-icon icon=""></v-icon>
-        <v-list-item class="align-items-center rounded" link v-for="not in myNotifications" prepend-icon="mdi-exclamation" :title="'От: ' + not.tenantName" :subtitle="'Сумма: '
+        <v-list-item class="align-items-center rounded invisible-item" link v-for="not in myNotifications" prepend-icon="mdi-exclamation" :title="'От: ' + not.tenantName" :subtitle="'Сумма: '
         + not.cost" @click="getAd(not)"></v-list-item>
       </v-list>
     </div>
 
     <!-- Заявки на бронирование от юзера -->
     <button @click="rotate('icon-arrow-from-me')" class="d-inline-flex align-items-center rounded my-btn" data-bs-toggle="collapse" data-bs-target="#from-me" aria-expanded="false" aria-current="false">
-      <v-icon id="icon-arrow-from-me" icon="mdi-arrow-right-bold"></v-icon> Предложения ко мне
+      <v-icon id="icon-arrow-from-me" icon="mdi-arrow-right-bold"></v-icon> Предложения от меня
     </button>
     <div class="collapse" id="from-me" style="">
       <v-list class="list-unstyled fw-normal pb-1 small">
         <v-icon icon=""></v-icon>
-        <v-list-item class="align-items-center rounded" link v-for="not in notifications" prepend-icon="mdi-exclamation" :title="'От: ' + user.username" :subtitle="'Сумма: '
+        <v-list-item class="align-items-center rounded invisible-item" link v-for="not in notifications" prepend-icon="mdi-exclamation" :title="'От: ' + user.username" :subtitle="'Сумма: '
         + not.cost" @click="getAd(not)"></v-list-item>
       </v-list>
     </div>
