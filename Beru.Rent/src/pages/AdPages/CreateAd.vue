@@ -157,7 +157,6 @@ export default {
   computed:{
     user() {
       return this.$store.getters.getUser;
-
     }
   },
   data() {
@@ -200,7 +199,8 @@ export default {
       contractTypeId: '',
       contracts: ['Недвижимость', 'Движимое имущество'],
       timeunitId: '',
-      timeunit: []
+      timeunit: [],
+      user: ''
     }
   },
   methods: {
@@ -275,6 +275,6 @@ export default {
   mounted() {
     this.get()
   },
-  
+
 };
 </script>

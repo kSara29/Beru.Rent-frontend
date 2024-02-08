@@ -35,41 +35,45 @@ const routes = [
     name: 'уведомления',
     component: () => import('@/pages/UserPages/Notifications.vue')
   },
+  {
+    path: '/callback',
+    name: 'callback',
+    component: () => import('@/components/Callback.vue'), 
+  },
+  {
+  path: '/test',
+  name: 'test',
+  },
   { 
-    path: '/callback', 
-    name: 'callback', 
-    component: () => import('@/components/Callback.vue'), },
-
-   { 
     path: '/chat', 
     name: 'chat',
     component: () => import('@/pages/Chat/Chat.vue'),
   },
   {
-    path: '/user/deal/:id',
-    name: 'deal',
+    path: '/user/deals',
+    name: 'сделки',
     component:() => import('@/pages/UserPages/DealPage.vue')
   },
-  { 
-    path: '/silent-refresh', 
+  {
+    path: '/silent-refresh',
     name: 'silent-refresh',
     component:()=> import('@/components/Silent-refresh.vue')
-},
-{
-  path: '/logout',
-  name: 'Logout',
-  component: ()=> import('@/components/Logout.vue')
-},
-{
-  path: '/deal-detail',
-  name: 'deal-detail',
-  component: ()=> import('@/pages/DealPages/DealDetail.vue')
-},
-{
-  path: '/create-category',
-  name: 'create-category',
-  component: ()=> import('@/pages/AdPages/CreateCategory.vue')
-}
+  },
+  {
+    path: '/logout',
+    name: 'Logout',
+    component: ()=> import('@/components/Logout.vue')
+  },
+  {
+    path: '/deal-detail',
+    name: 'deal-detail',
+    component: ()=> import('@/pages/DealPages/DealDetail.vue')
+  },
+  {
+    path: '/create-category',
+    name: 'create-category',
+    component: ()=> import('@/pages/AdPages/CreateCategory.vue')
+  }
 ]
 
 const router = createRouter({
