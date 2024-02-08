@@ -98,7 +98,6 @@
 
 <script>
 
-import authMixin from '@/scripts/authMixin';
 import axios from 'axios'
 export default {
 
@@ -200,14 +199,6 @@ export default {
         .then(response => console.log(response))
     }
   },
-  mixins: [authMixin],
-  fetchData() {
-      if (this.userManager && this.userManager.getUser()) {
-        // Perform authorized actions here
-      } else {
-        this.login();
-      }
-    },
 
 }
 </script>
