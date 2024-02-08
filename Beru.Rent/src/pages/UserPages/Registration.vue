@@ -98,7 +98,7 @@
 
 <script>
 
-import authMixin from '@/scripts/authMixin';
+import authMixin from '@/scripts/auth.service';
 import axios from 'axios'
 export default {
 

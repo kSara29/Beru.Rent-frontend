@@ -156,7 +156,6 @@ export default {
   computed:{
     user() {
       return this.$store.getters.getUser;
-
     }
   },
   data() {
@@ -199,7 +198,8 @@ export default {
       contractTypeId: '',
       contracts: ['Недвижимость', 'Движимое имущество'],
       timeunitId: '',
-      timeunit: []
+      timeunit: [],
+      user: ''
     }
   },
   methods: {
@@ -213,7 +213,7 @@ export default {
       for(let i = 0; i < this.files.length; i++) {
         form.append('files', this.files[i])
       }
-      form.append('userId', this.user.userId);
+      form.append('userId', this.user.userid);
       form.append('title', this.title);
       form.append('description', this.description);
       form.append('extraConditions', this.extraConditions);
@@ -224,15 +224,14 @@ export default {
       form.append('timeUnitId', this.timeunitId);
       form.append('contractTypeId', this.contractTypeId);
       form.append('addressExtraId', 'b65e3e8c-e12e-482c-8251-158dedc0658c');
-      form.append('address', this.addressString)
+      form.append('addressExtra', this.addressString)
       form.append('tags', 'bestSeller')
 
       console.log(form)
-      axios.post('https://localhost:7196/api/ad/create', form, {
+      axios.post('http://localhost:5174/bff/ad/create', form, {
         headers: {
           'accept': 'text/plain',
-          'Content-Type': 'multipart/form-data',
-          'Authorization': `Bearer ${this.user.access_token}`
+          'Content-Type': 'multipart/form-data'
         }
       })
         .then(response => console.log(response))
@@ -275,6 +274,6 @@ export default {
   mounted() {
     this.get()
   },
-  
+
 };
 </script>

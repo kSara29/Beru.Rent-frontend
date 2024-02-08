@@ -35,23 +35,23 @@ const routes = [
     name: 'уведомления',
     component: () => import('@/pages/UserPages/Notifications.vue')
   },
-  { 
-    path: '/callback', 
-    name: 'callback', 
+  {
+    path: '/callback',
+    name: 'callback',
     component: () => import('@/components/Callback.vue'), },
 
-   { 
-    path: '/test', 
+   {
+    path: '/test',
     name: 'test',
     component: () => import('@/pages/Chat/Chat.vue'),
   },
   {
-    path: '/user/deal/:id',
-    name: 'deal',
+    path: '/user/deals',
+    name: 'сделки',
     component:() => import('@/pages/UserPages/DealPage.vue')
   },
-  { 
-    path: '/silent-refresh', 
+  {
+    path: '/silent-refresh',
     name: 'silent-refresh',
     component:()=> import('@/components/Silent-refresh.vue')
 },
