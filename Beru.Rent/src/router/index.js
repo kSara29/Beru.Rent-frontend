@@ -38,11 +38,15 @@ const routes = [
   {
     path: '/callback',
     name: 'callback',
-    component: () => import('@/components/Callback.vue'), },
-
-   {
-    path: '/test',
-    name: 'test',
+    component: () => import('@/components/Callback.vue'), 
+  },
+  {
+  path: '/test',
+  name: 'test',
+  },
+  { 
+    path: '/chat', 
+    name: 'chat',
     component: () => import('@/pages/Chat/Chat.vue'),
   },
   {
@@ -54,12 +58,22 @@ const routes = [
     path: '/silent-refresh',
     name: 'silent-refresh',
     component:()=> import('@/components/Silent-refresh.vue')
-},
-{
-  path: '/logout',
-  name: 'Logout',
-  component: ()=> import('@/components/Logout.vue')
-}
+  },
+  {
+    path: '/logout',
+    name: 'Logout',
+    component: ()=> import('@/components/Logout.vue')
+  },
+  {
+    path: '/deal-detail',
+    name: 'deal-detail',
+    component: ()=> import('@/pages/DealPages/DealDetail.vue')
+  },
+  {
+    path: '/create-category',
+    name: 'create-category',
+    component: ()=> import('@/pages/AdPages/CreateCategory.vue')
+  }
 ]
 
 const router = createRouter({

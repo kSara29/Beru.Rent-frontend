@@ -98,7 +98,6 @@
 
 <script>
 
-import authMixin from '@/scripts/auth.service';
 import axios from 'axios'
 export default {
 
@@ -190,7 +189,7 @@ export default {
         UserName: this.login,
         IIN: this.iinNumber,
         Mail: this.email,
-        Phone: this.phoneNumber,
+        Phone: this.phoneNumber.slice(-10),
         Password: this.password,
         ConfirmPassword: this.repPassword
       }
@@ -200,14 +199,6 @@ export default {
         .then(response => console.log(response))
     }
   },
-  mixins: [authMixin],
-  fetchData() {
-      if (this.userManager && this.userManager.getUser()) {
-        // Perform authorized actions here
-      } else {
-        this.login();
-      }
-    },
 
 }
 </script>
