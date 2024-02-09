@@ -1,4 +1,7 @@
 module.exports = {
+  globals: {
+    ymaps: "readonly"
+  },
   root: true,
   env: {
     node: true,
