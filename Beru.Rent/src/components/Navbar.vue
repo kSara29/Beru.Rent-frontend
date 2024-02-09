@@ -39,7 +39,7 @@
 
     <v-spacer></v-spacer>
 
-    <div v-if="user" class="ml-3">
+    <div v-if="!user" class="ml-3">
 
     <!-- Регистрация -->
     <v-btn to="/register" stacked outlined class="ml-3" >
@@ -53,7 +53,7 @@
     </v-btn>
   </div>
 
-    <div v-if="!user" class="ml-3">
+    <div v-if="user" class="ml-3">
     <!-- Список уведомлении -->
     <v-btn to="/profile/notifications/c698dfc2-61a9-46eb-bf7f-0ffb2067b9bd">
       <v-icon icon="mdi-bell" style="text-decoration: none; color: inherit"></v-icon>

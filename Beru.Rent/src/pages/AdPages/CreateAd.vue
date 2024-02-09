@@ -156,6 +156,7 @@ import axios from "axios";
 export default {
   computed:{
     user() {
+      console.log(this.$store.getters.getUser);
       return this.$store.getters.getUser;
     }
   },
@@ -225,7 +226,7 @@ export default {
     addressExtraId: '3fa85f64-5717-4562-b3fc-2c963f66afa6', // Необходимо установить правильное значение
     addressExtra: this.addressString,
     tags: 'bestSeller',
-    //files: []
+    files: []
   };
 
   for (let i = 0; i < this.files.length; i++) {
@@ -234,9 +235,10 @@ export default {
 
   console.log(requestBody);
 
-  axios.post('http://localhost:5174/bff/ad/create', requestBody, {
+  axios.post('http://localhost:5105/api/ad/create', requestBody, {
+
     headers: {
-      'Content-Type': 'application/json',
+      'Content-Type': 'multipart/form-data',
       'Authorization': `Bearer ${this.user.access_token}`
     }
   }).then(response => console.log(response));
