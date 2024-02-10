@@ -25,7 +25,7 @@
               height="200"
             ></v-carousel-item>
           </v-carousel>
-          <v-btn @click="removeFile()">Удалить последнее</v-btn>
+          <v-btn @click="removeFile()">Удалить последнее фото</v-btn>
           <br/>
           <br/>
           <div class="form-group">
@@ -232,13 +232,13 @@ export default {
       });
 
       // Now you can send this formData in your HTTP request
-      axios.post('http://localhost:5174/bff/ad/create', formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-          'Authorization': `Bearer ${this.user.access_token}`
-        }
-      }).then(response => console.log(response))
-        .catch(error => console.error(error));
+      axios.post('http://localhost:5174/bff/ad/create', formData,  {
+          headers: {
+            'Content-Type': 'multipart/form-data',
+            'Authorization': `Bearer ${this.user.access_token}`
+          }
+        }).then(response => console.log(response))
+        .catch(error => console.error(error))
     },
     async get() {
       await axios.get('http://localhost:5174/bff/timeunit/get')
