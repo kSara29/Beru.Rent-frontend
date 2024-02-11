@@ -133,16 +133,42 @@
             </v-select>
           </div>
           <div class="form-group">
-            <v-text-field
-              clearable
-              variant="outlined"
-              prepend-icon="mdi-map-marker"
-              v-model="addressString"
-              name="addressString"
-              label="Введите адрес одной строкой"
-              :rules="address"
-              hide-details="auto">
-            </v-text-field>
+            <div class="autocomplete-wrapper v-field__input">
+    <v-text-field
+      clearable
+      variant="outlined"
+      prepend-icon="mdi-map-marker"
+      v-model="searchQuery"
+      name="searchQuery"
+      label="Введите адрес одной строкой"
+      :rules="address"
+      hide-details="auto"
+      @input="handleInput"
+      placeholder="Введите адрес"
+    ></v-text-field>
+
+    <ul v-if="showSuggestions" class="suggestions-list">
+      <li v-for="(suggestion, index) in suggestions" :key="index" @click="selectSuggestion(suggestion)">
+        {{ suggestion.title.text }}, {{ suggestion.subtitle.text }}
+      </li>
+    </ul>
+
+
+    <!-- Display address information -->
+    <v-card v-if="addressInfo" class="mt-4">
+      <v-card-title>Информация об адресе</v-card-title>
+      <v-card-text>
+        <div>Страна: {{ addressInfo.country }}</div>
+        <div>Регион: {{ addressInfo.region }}</div>
+        <div>Город: {{ addressInfo.city }}</div>
+        <div>Улица: {{ addressInfo.street }}</div>
+        <div>Здание: {{ addressInfo.building }}</div>
+        <div>Почтовый: {{ addressInfo.postindex }}</div>
+        <div>Latitude: {{ addressInfo.lat }}</div>
+        <div>Longitude: {{ addressInfo.lon }}</div>
+      </v-card-text>
+    </v-card>
+  </div>
           </div>
           <br />
           <v-btn @click="sendForm()" type="submit">Создать объявление</v-btn>
@@ -161,6 +187,13 @@ export default {
   },
   data() {
     return {
+      searchQuery: '',
+      suggestions: [],
+      showSuggestions: false,
+      typingTimeout: null,
+      selectedSuggestion: null,
+      addressInfo: null,
+
       files: [],
       displayFiles: [],
       title: '',
@@ -201,6 +234,64 @@ export default {
     }
   },
   methods: {
+    handleInput() {
+      clearTimeout(this.typingTimeout);
+      if (this.searchQuery.length >= 5) {
+        this.typingTimeout = setTimeout(this.fetchSuggestions, 2000);
+      } else {
+        this.suggestions = [];
+        this.showSuggestions = false;
+      }
+    },
+    fetchSuggestions() {
+      const apiUrl = `https://suggest-maps.yandex.ru/v1/suggest?apikey=8abf69e1-ed41-498f-af8e-e2f3b86fadc4&text=${encodeURIComponent(this.searchQuery)}`;
+      axios.get(apiUrl)
+        .then(response => {
+          this.suggestions = response.data.results;
+          this.showSuggestions = true;
+        })
+        .catch(error => {
+          console.error('Error fetching address suggestions:', error);
+        });
+    },
+    selectSuggestion(suggestion) {
+      this.searchQuery = suggestion.title.text;
+      this.selectedSuggestion = suggestion;
+      this.suggestions = [];
+      this.showSuggestions = false;
+      this.submitAddress(suggestion.title.text); // Pass the selected address to submitAddress method
+    },
+    submitAddress(address) {
+      const apiUrl = `https://geocode-maps.yandex.ru/1.x/?apikey=5570fbc5-a3de-4dd6-9158-221866f70379&geocode=${address}`;
+
+      axios.get(apiUrl)
+        .then(response => {
+          const parser = new DOMParser();
+          const xmlDoc = parser.parseFromString(response.data, 'text/xml');
+
+          const country = xmlDoc.getElementsByTagName('CountryName')[0].textContent;
+          const region = xmlDoc.getElementsByTagName('AdministrativeAreaName')[0].textContent;
+          const city = xmlDoc.getElementsByTagName('LocalityName')[0].textContent;
+          const street = xmlDoc.getElementsByTagName('ThoroughfareName')[0].textContent;
+          const building = xmlDoc.getElementsByTagName('PremiseNumber')[0].textContent;
+          const postindex = xmlDoc.getElementsByTagName('postal_code')[0].textContent;
+          const pos = xmlDoc.getElementsByTagName('pos')[0].textContent.split(' ');
+
+          this.addressInfo = {
+            country: country,
+            region: region,
+            city: city,
+            street: street,
+            building: building,
+            postindex: postindex,
+            lat: pos[1],
+            lon: pos[0]
+          };
+        })
+        .catch(error => {
+          console.error('Error fetching address information:', error);
+        });
+    },
     async sendForm() {
       const ans = await this.$refs.adForm.validate();
       if (ans.valid === false) {
