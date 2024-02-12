@@ -293,44 +293,52 @@ export default {
         });
     },
     async sendForm() {
-      const ans = await this.$refs.adForm.validate();
-      if (ans.valid === false) {
-        alert('Форма заполнена неправильно!');
-        return;
-      }
+  const ans = await this.$refs.adForm.validate();
+  if (ans.valid === false) {
+    alert('Форма заполнена неправильно!');
+    return;
+  }
 
-      // Create a new FormData object
-      const formData = new FormData();
+  // Create a new FormData object
+  const formData = new FormData();
 
-      // Append fields to the FormData object
-      formData.append('userId', this.user.id);
-      formData.append('title', this.title);
-      formData.append('description', this.description);
-      formData.append('extraConditions', this.extraConditions);
-      formData.append('neededDeposit', this.deposit);
-      formData.append('minDeposit', parseInt(this.minDeposit));
-      formData.append('price', parseInt(this.price));
-      formData.append('categoryId', this.categoryId);
-      formData.append('timeUnitId', this.timeunitId);
-      formData.append('contractTypeId', parseInt(this.contractTypeId));
-      formData.append('addressExtraId', '3fa85f64-5717-4562-b3fc-2c963f66afa6'); // Ensure correct value
-      formData.append('addressExtra', this.addressString);
-      formData.append('tags', 'bestSeller');
+  // Append fields to the FormData object
+  formData.append('userId', null);
+  formData.append('title', this.title);
+  formData.append('description', this.description);
+  formData.append('extraConditions', this.extraConditions);
+  formData.append('neededDeposit', this.deposit);
+  formData.append('minDeposit', parseInt(this.minDeposit));
+  formData.append('price', parseInt(this.price));
+  formData.append('categoryId', this.categoryId);
+  formData.append('timeUnitId', this.timeunitId);
+  formData.append('contractTypeId', parseInt(this.contractTypeId));
+  formData.append('tags', 'bestSeller');
 
-      // Append files to the FormData object
-      this.files.forEach(file => {
-        formData.append('files[]', file); // Assuming this.files is an array of File objects
-      });
+  // Append files to the FormData object
+  this.files.forEach(file => {
+    formData.append('files', file); // Assuming this.files is an array of File objects
+  });
 
-      // Now you can send this formData in your HTTP request
-      axios.post('http://localhost:5174/bff/ad/create', formData,  {
-          headers: {
-            'Content-Type': 'multipart/form-data',
-            'Authorization': `Bearer ${this.user.access_token}`
-          }
-        }).then(response => console.log(response))
-        .catch(error => console.error(error))
-    },
+  // Append address details to the FormData object
+  formData.append('street', this.addressInfo.street);
+  formData.append('house', this.addressInfo.building);
+  formData.append('country', this.addressInfo.country);
+  formData.append('city', this.addressInfo.city);
+  formData.append('region', this.addressInfo.region);
+  formData.append('postindex', this.addressInfo.postindex);
+  formData.append('lat', this.addressInfo.lat);
+  formData.append('lon', this.addressInfo.lon);
+
+  // Now you can send this formData in your HTTP request
+  axios.post('http://localhost:5174/bff/ad/create', formData, {
+    headers: {
+      'Content-Type': 'multipart/form-data',
+      'Authorization': `Bearer ${this.user.access_token}`
+    }
+  }).then(response => console.log(response))
+    .catch(error => console.error(error))
+},
     async get() {
       await axios.get('http://localhost:5174/bff/timeunit/get')
         .then(response => this.timeunit = response.data.data);
