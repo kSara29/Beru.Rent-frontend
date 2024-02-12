@@ -25,6 +25,11 @@ import * as signalR from '@microsoft/signalr';
 import axios from "axios";
 
 export default {
+  computed:{
+    user() {
+      return this.$store.getters.getUser;
+    }
+  },
   data() {
     return {
       hubConnection: null,
@@ -47,8 +52,16 @@ export default {
 
       await axios.post('https://localhost:7105//bff/chat/sendMessageByChatId', {
         Message: this.newMessage,
-        ChatId: '1bdc988b-6310-46db-ad86-097fa7430c6e',
-      });
+        ChatId: '1bdc988b-6310-46db-ad86-097fa7430c6e'},
+        {
+          headers: {
+            'accept': 'text/plain',
+            'Content-Type': 'multipart/form-data',
+            'Authorization': `Bearer ${this.user.access_token}`
+          }
+        }
+      ).then(console.log(this.user.access_token));
+
 
       this.newMessage = '';
     },
