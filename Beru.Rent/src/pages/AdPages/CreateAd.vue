@@ -169,9 +169,23 @@
       </v-card-text>
     </v-card>
   </div>
+  <br>
+          </div>
+          <div class="form-group">
+            <v-text-field
+              clearable
+              variant="outlined"
+              prepend-icon="mdi-pound-box"
+              v-model="tags"
+              name="tags"
+              label="Тэги, через запятую"
+              hide-details="auto">
+            </v-text-field>
           </div>
           <br />
           <v-btn @click="sendForm()" type="submit">Создать объявление</v-btn>
+
+          
         </v-form>
       </v-sheet>
     </v-container>
@@ -230,7 +244,8 @@ export default {
       contractTypeId: '',
       contracts: ['Недвижимость', 'Движимое имущество'],
       timeunitId: '',
-      timeunit: ''
+      timeunit: '',
+      tags:''
     }
   },
   methods: {
@@ -313,7 +328,7 @@ export default {
   formData.append('categoryId', this.categoryId);
   formData.append('timeUnitId', this.timeunitId);
   formData.append('contractTypeId', parseInt(this.contractTypeId));
-  formData.append('tags', 'bestSeller');
+  formData.append('tags', this.tags);
 
   // Append files to the FormData object
   this.files.forEach(file => {
@@ -329,6 +344,8 @@ export default {
   formData.append('postindex', this.addressInfo.postindex);
   formData.append('latitude', this.addressInfo.lat);
   formData.append('longitude', this.addressInfo.lon);
+  formData.append('tags', this.addressInfo.lon);
+
 
   // Now you can send this formData in your HTTP request
   axios.post('http://localhost:5174/bff/ad/create', formData, {
