@@ -205,7 +205,7 @@ export default {
       description: '',
       descriptionRules: [
         value => !!value || 'Описание обязательно',
-        value => value.length > 50 || 'Описнаие должна содержать более 50 символов!'
+        value => value.length > 5 || 'Описание должно содержать более 50 символов!'
       ],
       extraConditions: '',
       conditionRules: [],
@@ -327,8 +327,8 @@ export default {
   formData.append('city', this.addressInfo.city);
   formData.append('region', this.addressInfo.region);
   formData.append('postindex', this.addressInfo.postindex);
-  formData.append('lat', this.addressInfo.lat);
-  formData.append('lon', this.addressInfo.lon);
+  formData.append('latitude', this.addressInfo.lat);
+  formData.append('longitude', this.addressInfo.lon);
 
   // Now you can send this formData in your HTTP request
   axios.post('http://localhost:5174/bff/ad/create', formData, {
