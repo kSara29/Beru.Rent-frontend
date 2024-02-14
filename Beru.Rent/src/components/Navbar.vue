@@ -88,7 +88,6 @@
       },},
     computed: {
       user() {
-        console.log("вытащила юзер айди "+this.$store.getters.getUserId)
         return this.$store.getters.getUser;
       },
       log() {

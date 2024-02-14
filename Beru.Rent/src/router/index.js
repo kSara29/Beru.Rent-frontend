@@ -40,9 +40,9 @@ const routes = [
     name: 'callback',
     component: () => import('@/components/Callback.vue'),
   },
-  {
-    path: '/test',
-    name: 'test',
+  { 
+    path: '/chat', 
+    name: 'chat',
     component: () => import('@/pages/Chat/Chat.vue'),
   },
   {

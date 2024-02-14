@@ -1,6 +1,6 @@
 <template>
     <div>
-      <p>Completing login...</p>
+      <p>Завершаем логин...</p>
     </div>
   </template>
 
