@@ -97,6 +97,7 @@
 </template>
 
 <script>
+
 import axios from 'axios'
 export default {
 
@@ -188,7 +189,7 @@ export default {
         UserName: this.login,
         IIN: this.iinNumber,
         Mail: this.email,
-        Phone: this.phoneNumber,
+        Phone: this.phoneNumber.slice(-10),
         Password: this.password,
         ConfirmPassword: this.repPassword
       }
@@ -197,7 +198,8 @@ export default {
       axios.post('http://localhost:5174/bff/user/createUser', vm)
         .then(response => console.log(response))
     }
-  }
+  },
+
 }
 </script>
 

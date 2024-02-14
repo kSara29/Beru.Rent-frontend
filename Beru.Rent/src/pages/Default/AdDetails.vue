@@ -156,8 +156,9 @@ export default {
     fetchItemData() {
       const itemId = this.$route.params.id;
       console.log('??' + itemId);
-      axios.get(`http://localhost:5105/api/ad/get/${itemId}`)
+      axios.get(`http://localhost:5174/bff/ad/getById?Id=${itemId}`)
         .then(response => {
+          console.log(response.data.data);
           this.itemData = response.data.data;
           this.prepareCarouselImages(this.itemData.files);
           this.parentData = response.data.data.id
@@ -178,7 +179,7 @@ export default {
       this.carouselImages = byteArray.map(byteArray => `data:image/jpeg;base64,${byteArray}`);
     },
     sendDataToBackend(query) {
-      axios.post('http://localhost:5105/api/address/suggestions', { Query: query })
+      axios.post('http://localhost:5174/bff/address/suggestions', { Query: query })
         .then(response => {
           this.suggestions = response.data;
           console.log('Response from backend:', this.suggestions);

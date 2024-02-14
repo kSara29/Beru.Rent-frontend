@@ -32,7 +32,6 @@
 <script>
 import axios from 'axios'
 import Ad from '@/components/Ad.vue'
-import Notifications from '@/pages/UserPages/Notifications.vue'
 export default{
   data:() => ({
     user: '',
@@ -59,8 +58,7 @@ export default{
     this.get();
   },
   components: {
-    Ad,
-    Notifications
+    Ad
   }
 }
 </script>

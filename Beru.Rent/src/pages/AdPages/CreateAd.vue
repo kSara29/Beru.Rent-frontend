@@ -17,11 +17,12 @@
             @change="addFiles()">
           </v-file-input>
           <v-carousel hide-delimiters="">
-            <v-carousel-item
+            <v-carousel-item 
               v-for="(item) in displayFiles"
               :key="item.name"
               :src="item"
               cover=""
+              height="200"
             ></v-carousel-item>
           </v-carousel>
           <v-btn @click="removeFile()">Удалить последнее</v-btn>
@@ -153,88 +154,93 @@
 <script>
 import axios from "axios";
 export default {
-  data:() => ({
-    user: '',
-    files: [],
-    displayFiles: [],
-    title: '',
-    titleRules: [
-      value => !!value || 'Название обязательно',
-      value => value.length < 30 || 'Название не должно быть больше 30 символов',
-      value => value.length > 3 || 'Название должно содержать хотя бы 3 букв'
-    ],
-    description: '',
-    descriptionRules: [
-      value => !!value || 'Описание обязательно',
-      value => value.length > 50 || 'Описнаие должна содержать более 50 символов!'
-    ],
-    extraConditions: '',
-    conditionRules: [
-      // value => !!value || 'а что он должен сюда вводит?'
-    ],
-    addressString: '',
-    address: [
-      value => !!value || 'Адрес обязателен'
-    ],
-    deposit: false,
-    minDeposit: '',
-    minimumDepositRules: [
-      value => !!value || 'Введите сумму минимального залога'
-    ],
-    price: '',
-    priceRules: [
-      value => {
-        const pattern = /^[0-9]{0,100}$/
-        return pattern.test(value) || "Цена может содержать только цифры!"
-      }
-    ],
-    categoryId: '',
-    categories: [],
-    contractTypeId: '',
-    contracts: ['Недвижимость', 'Движимое имущество'],
-    timeunitId: '',
-    timeunit: []
-  }),
+  computed: {
+    user() {
+      return this.$store.getters.getUser;
+    }
+  },
+  data() {
+    return {
+      files: [],
+      displayFiles: [],
+      title: '',
+      titleRules: [
+        value => !!value || 'Название обязательно',
+        value => value.length < 30 || 'Название не должно быть больше 30 символов',
+        value => value.length > 3 || 'Название должно содержать хотя бы 3 букв'
+      ],
+      description: '',
+      descriptionRules: [
+        value => !!value || 'Описание обязательно',
+        value => value.length > 50 || 'Описнаие должна содержать более 50 символов!'
+      ],
+      extraConditions: '',
+      conditionRules: [],
+      addressString: '',
+      address: [
+        value => !!value || 'Адрес обязателен'
+      ],
+      deposit: false,
+      minDeposit: '',
+      minimumDepositRules: [
+        value => !!value || 'Введите сумму минимального залога'
+      ],
+      price: '',
+      priceRules: [
+        value => {
+          const pattern = /^[0-9]{0,100}$/
+          return pattern.test(value) || "Цена может содержать только цифры!"
+        }
+      ],
+      categoryId: '',
+      categories: [],
+      contractTypeId: '',
+      contracts: ['Недвижимость', 'Движимое имущество'],
+      timeunitId: '',
+      timeunit: ''
+    }
+  },
   methods: {
     async sendForm() {
       const ans = await this.$refs.adForm.validate();
       if (ans.valid === false) {
-        alert('Форма заполнена неправильно!')
-        return 0;
+        alert('Форма заполнена неправильно!');
+        return;
       }
-      let form = new FormData()
-      for(let i = 0; i < this.files.length; i++) {
-        form.append('files', this.files[i])
-      }
-      form.append('userId', this.user.userId);
-      form.append('title', this.title);
-      form.append('description', this.description);
-      form.append('extraConditions', this.extraConditions);
-      form.append('neededDeposit', this.deposit);
-      form.append('minDeposit', this.minDeposit);
-      form.append('price', this.price);
-      form.append('categoryId', this.categoryId);
-      form.append('timeUnitId', this.timeunitId);
-      form.append('contractTypeId', this.contractTypeId);
-      form.append('addressExtraId', 'b65e3e8c-e12e-482c-8251-158dedc0658c');
-      form.append('address', this.addressString)
-      form.append('tags', 'bestSeller')
 
-      console.log(form)
-      axios.post('http://localhost:5105/api/ad/create', form, {
+      // Create a new FormData object
+      const formData = new FormData();
+
+      // Append fields to the FormData object
+      formData.append('userId', this.user.id);
+      formData.append('title', this.title);
+      formData.append('description', this.description);
+      formData.append('extraConditions', this.extraConditions);
+      formData.append('neededDeposit', this.deposit);
+      formData.append('minDeposit', parseInt(this.minDeposit));
+      formData.append('price', parseInt(this.price));
+      formData.append('categoryId', this.categoryId);
+      formData.append('timeUnitId', this.timeunitId);
+      formData.append('contractTypeId', parseInt(this.contractTypeId));
+      formData.append('addressExtraId', '3fa85f64-5717-4562-b3fc-2c963f66afa6'); // Ensure correct value
+      formData.append('addressExtra', this.addressString);
+      formData.append('tags', 'bestSeller');
+
+      // Append files to the FormData object
+      this.files.forEach(file => {
+        formData.append('files[]', file); // Assuming this.files is an array of File objects
+      });
+
+      // Now you can send this formData in your HTTP request
+      axios.post('http://localhost:5174/bff/ad/create', formData, {
         headers: {
-          'accept': 'text/plain',
-          'Content-Type': 'multipart/form-data'
+          'Content-Type': 'multipart/form-data',
+          'Authorization': `Bearer ${this.user.access_token}`
         }
-      })
-        .then(response => console.log(response))
+      }).then(response => console.log(response))
+        .catch(error => console.error(error));
     },
     async get() {
-      await axios.get(`http://localhost:5174/bff/user/getById?id=c698dfc2-61a9-46eb-bf7f-0ffb2067b9bd`, {headers: {
-          'accept': 'application/json',
-          'Content-Type': '*/*'
-        }})
-        .then(response => this.user = response.data.data);
       await axios.get('http://localhost:5174/bff/timeunit/get')
         .then(response => this.timeunit = response.data.data);
       await axios.get('http://localhost:5174/bff/category/get')
@@ -246,18 +252,18 @@ export default {
     },
     addFiles() {
       const length = this.files.length;
-      for(let i = 0; i < length; i++) {
+      for (let i = 0; i < length; i++) {
         this.displayFiles.push(URL.createObjectURL(this.files[i]))
       }
     },
     setContractType(value) {
-      for (let i = 0; i < this.contracts.length; i++){
-        if(this.contracts[i] === value){
+      for (let i = 0; i < this.contracts.length; i++) {
+        if (this.contracts[i] === value) {
           this.contractTypeId = i;
         }
       }
     },
-    itemProps(item){
+    itemProps(item) {
       return {
         title: item.title,
         value: item.id
@@ -266,6 +272,7 @@ export default {
   },
   mounted() {
     this.get()
-  }
+  },
 };
 </script>
+
