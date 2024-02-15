@@ -49,7 +49,6 @@
 
    <!-- Логин -->
     <v-btn stacked outlined class="ml-3" >
-      <!--router-link to="/login" style="text-decoration: none; color: inherit">Логин</router-link-->
       <button style="text-decoration: none; color: inherit" @click="login">ВОЙТИ</button>
     </v-btn>
   </div>

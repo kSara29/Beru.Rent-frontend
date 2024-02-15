@@ -38,7 +38,7 @@ const routes = [
   {
     path: '/callback',
     name: 'callback',
-    component: () => import('@/components/Callback.vue'), 
+    component: () => import('@/components/Callback.vue'),
   },
   { 
     path: '/chat', 
