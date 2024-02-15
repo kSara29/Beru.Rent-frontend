@@ -31,16 +31,16 @@
       submitForm() {
         const requestBody = {
           title: this.title,
-          parentId: this.parentId
+          parentId: null
         };
-  
+  console.log(requestBody);
         axios.post('http://localhost:5174/bff/category/create', requestBody, {
           headers: {
             'Content-Type': 'application/json',
             'Authorization': `Bearer ${this.user.access_token}`
           }
         }).then(response => console.log(response))
-        .catch(error => console.error(error));
+        .catch(error => console.error(error))
       }
     }
   };
