@@ -2,9 +2,10 @@
   <v-container>
     <v-card>
       <v-card-title>Чат</v-card-title>
-      <v-card-text style="height: 300px; overflow-y: auto;">
-        <div v-for="message in messages" :key="message.id">
-          <v-chip :color="getColor(message.sender)" label>{{ message.sender }}</v-chip>
+      <v-card-text style="height: auto; overflow-y: auto; display: grid">
+        <div v-for="message in messages" :key="message.messageId"
+             class="message-bubble"
+             :class="{'message-right': message.senderId === currentUserId, 'message-left': message.senderId !== currentUserId}">
           {{ message.text }}
         </div>
       </v-card-text>
@@ -25,29 +26,46 @@ import * as signalR from '@microsoft/signalr';
 import axios from "axios";
 
 export default {
+  computed:{
+    user() {
+      return this.$store.getters.getUser;
+    }
+  },
   data() {
     return {
       hubConnection: null,
       messages: [],
       newMessage: '',
+      currentUserId: ''
     };
   },
   methods: {
-    getColor(senderId) {
-      const currentUserId = 'dd0c7db7-5a96-4be8-b33f-46f1d3e0e94b';
-      return senderId === currentUserId ? 'blue' : 'green';
-    },
     async sendMessage() {
-      console.log(this.newMessage);
       if (this.newMessage.trim() === '') {
         return;
       }
 
-      await axios.post('https://localhost:7290/api/chat/send', {
-        message: this.newMessage,
-        chatId: 'bb77d75f-128a-458a-92ed-a325dc00e0cf',
-      });
+      const messageToSend = {
+        text: this.newMessage,
+        senderId: this.currentUserId, // Используйте текущий ID пользователя
+      };
 
+      await axios.post('http://localhost:5174/bff/chat/sendMessageByChatId', {
+        message: this.newMessage,
+        chatId: '17b2f1df-c94a-4fd2-b9eb-1972c3150dc2'
+      }, {
+        headers: {
+          'accept': 'text/plain',
+          'Authorization': `Bearer ${this.user.access_token}`
+        }
+      })
+        .then(response => {
+          this.messages.push(messageToSend);
+          console.log(response);
+        })
+        .catch(error => {
+          console.error("Произошла ошибка при выполнении запроса:", error);
+        });
 
       this.newMessage = '';
     },
@@ -59,7 +77,7 @@ export default {
     },
     setupSignalR() {
       this.hubConnection = new signalR.HubConnectionBuilder()
-        .withUrl('https://localhost:7290/chatHub')
+        .withUrl('http://localhost:5027/chatHub')
         .build();
 
       this.hubConnection.on('ReceiveMessage', this.receiveMessage);
@@ -70,8 +88,13 @@ export default {
     },
     async loadChatHistory(chatId) {
       try {
-        const response = await axios.get(`https://localhost:7290/api/chat/history/${chatId}`);
-        this.messages = response.data;
+        const response = await axios.get(`http://localhost:5174/bff/chat/loadChatHistoryById?Id=${chatId}`,{
+          headers: {
+            'Authorization': `Bearer ${this.user.access_token}`
+          }
+        });
+        this.messages = response.data.data;
+        console.log(this.messages.senderId);
       } catch (error) {
         console.error('Ошибка при загрузке истории чата:', error);
       }
@@ -79,8 +102,34 @@ export default {
   },
   mounted() {
     this.setupSignalR();
-    const chatId = 'bb77d75f-128a-458a-92ed-a325dc00e0cf';
+    const chatId = '17b2f1df-c94a-4fd2-b9eb-1972c3150dc2';
     this.loadChatHistory(chatId);
+    this.currentUserId = this.user.profile.sub;
   },
 };
 </script>
+
+<style>
+  .message-bubble {
+    padding: 10px 20px;
+    border-radius: 20px;
+    margin-bottom: 5px;
+    display: block;
+    max-width: 80%;
+    word-wrap: break-word;
+  }
+
+  .message-left {
+    background-color: #CAF0F8;
+    text-align: left;
+    margin-left: 0;
+    margin-right: auto;
+  }
+
+  .message-right {
+    background-color: #D1FAE5;
+    text-align: right;
+    margin-right: 0;
+    margin-left: auto;
+  }
+</style>

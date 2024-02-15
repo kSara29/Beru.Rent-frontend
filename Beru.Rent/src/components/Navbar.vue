@@ -48,8 +48,7 @@
     </v-btn>
 
    <!-- Логин -->
-    <v-btn to="/register" stacked outlined class="ml-3" >
-      <!--router-link to="/login" style="text-decoration: none; color: inherit">Логин</router-link-->
+    <v-btn stacked outlined class="ml-3" >
       <button style="text-decoration: none; color: inherit" @click="login">ВОЙТИ</button>
     </v-btn>
   </div>
@@ -89,7 +88,6 @@
       },},
     computed: {
       user() {
-        console.log("вытащила юзер айди "+this.$store.getters.getUserId)
         return this.$store.getters.getUser;
       },
       log() {
