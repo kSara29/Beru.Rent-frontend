@@ -21,6 +21,7 @@
   </v-container>
 </template>
 
+
 <script>
 import * as signalR from '@microsoft/signalr';
 import axios from "axios";
