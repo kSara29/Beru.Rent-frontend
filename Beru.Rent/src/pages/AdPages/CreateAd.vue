@@ -219,7 +219,7 @@ export default {
       description: '',
       descriptionRules: [
         value => !!value || 'Описание обязательно',
-        value => value.length > 5 || 'Описание должно содержать более 50 символов!'
+        value => value.length > 50 || `Описание должно содержать более 50 символов! У вас ${value.length}/50`
       ],
       extraConditions: '',
       conditionRules: [],

@@ -90,7 +90,7 @@ export default {
       this.currentNot = not;
     },
     async getAllNotifications(userId) {
-      await axios.get(`http://localhost:5174/bff/booking/getallbookings/?id=${userId}&page=1`, {
+      await axios.get(`http://localhost:5174/bff/booking/getalltenantbookings/?id=${userId}&page=1`, {
         headers: {
           'accept': 'text/plain',
           'Content-Type': 'application/json'
@@ -101,7 +101,7 @@ export default {
           this.getAd(response.data.data.dealPageDto[0])
         });
 
-      await axios.get(`http://localhost:5174/bff/user/getById?id=c698dfc2-61a9-46eb-bf7f-0ffb2067b9bd`, {headers: {
+      await axios.get(`http://localhost:5174/bff/user/getById?id=3feb2167-257f-4bcd-8df1-85a407b2756b`, {headers: {
           'accept': 'application/json',
           'Content-Type': '*/*'
         }})
@@ -125,7 +125,7 @@ export default {
     }
   },
   mounted() {
-    this.getAllNotifications("c698dfc2-61a9-46eb-bf7f-0ffb2067b9bd");
+    this.getAllNotifications("3feb2167-257f-4bcd-8df1-85a407b2756b");
   }
 }
 </script>

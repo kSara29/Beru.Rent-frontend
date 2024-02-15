@@ -35,7 +35,7 @@
       <v-select
         clearable
         label="Категория"
-        :items="['Спорт', 'Электроника', 'Инструменты', 'Спецтехника', 'Транспорт', 'Недвижимость']"
+        :items="categories"
         v-model="category"
       ></v-select>
     </v-app-bar-title>
@@ -83,17 +83,34 @@
   </template>
 
   <script>
+  import axios from "axios";
+
   export default {
     data:() => ({
       searchItem: '',
-      category: ''
+      category: '',
+      categories: []
     }),
     methods:{
       login() {
         this.$userManager.signinRedirect();
       },
       search(){
-        window.location.href = `https://localhost:3000/search/${this.category}/${this.searchItem}`
+        if (this.category !== '' && this.searchItem !== ''){
+          window.location.href = `https://localhost:3000/search/${this.category}/${this.searchItem}`
+        }
+        else if (this.searchItem !== '' && this.category === '') {
+          window.location.href = `https://localhost:3000/searchItem/${this.searchItem}`
+        }
+        else if (this.searchItem === '' && this.category !== ''){
+          window.location.href = `https://localhost:3000/searchCategory/${this.category}`
+        } else {
+          window.location.href = `https://localhost:3000/`
+        }
+      },
+      get() {
+        axios.get('http://localhost:5174/bff/category/get')
+          .then(response => this.categories = response.data.data);
       }
     },
     computed: {
@@ -103,6 +120,9 @@
       log() {
         console.log(this.$user)
       }
+    },
+    mounted() {
+      this.get()
     }
   }
   </script>

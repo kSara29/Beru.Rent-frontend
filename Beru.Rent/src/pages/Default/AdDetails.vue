@@ -22,6 +22,7 @@
         <v-container>
           <v-btn style="background-color: darkslategrey; color: white">Показать номер</v-btn>
           <v-btn style="background-color: #0d194d; color: white; margin-left: 30px">Написать</v-btn>
+          <v-btn @click="book()" style="background-color: #0d194d; color: white; margin-left: 0px; margin-top: 20px;">Оставить заявку на бронирование.</v-btn>
         </v-container>
       </v-col>
 
@@ -41,15 +42,15 @@
 
             <v-container class="d-flex rentDatePeriod">
               <template v-if="!switchValue">
-                <DadataView :key="`dadata-${reRenderTrigger}`" :myParam="parentData"/>
+                <DadataView @update:date="handleDateUpdate($event)" :key="`dadata-${reRenderTrigger}`" :myParam="parentData"/>
               </template>
 
               <template v-else>
                 <v-container style="padding: 0px">
-                  <DadataView :key="`dadata-${reRenderTrigger}`" :myParam="parentData"/>
+                  <DadataView @update:date="handleDateUpdate($event)" :key="`dadata-${reRenderTrigger}`" :myParam="parentData"/>
                   <v-text-field variant="solo"></v-text-field>
                   <v-text-field variant="solo"></v-text-field>
-                </v-container>
+                </v-container>x
               </template>
             </v-container>
 
@@ -112,6 +113,11 @@ import DadataView from "@/components/AddressSuggestions/DadataView.vue";
 import AutocompleteComponent from "@/components/Autocomplete/AutocompleteComponent.vue";
 
 export default {
+  computed: {
+    user() {
+      return this.$store.getters.getUser;
+    }
+  },
   components:{
     DadataView,
     AutocompleteComponent
@@ -131,7 +137,9 @@ export default {
       dadataKey: 0,
       reRenderTrigger: 0,
       chosen: '',
-      suggestions: []
+      suggestions: [],
+      dBeg: new Date(),
+      dEnd: new Date()
     };
   },
   created() {
@@ -158,7 +166,6 @@ export default {
       console.log('??' + itemId);
       axios.get(`http://localhost:5174/bff/ad/getById?Id=${itemId}`)
         .then(response => {
-          console.log(response.data.data);
           this.itemData = response.data.data;
           this.prepareCarouselImages(this.itemData.files);
           this.parentData = response.data.data.id
@@ -193,6 +200,29 @@ export default {
       this.dadataKey++; // увеличиваем ключ для перерисовки
       this.reRenderTrigger++;
     },
+    handleDateUpdate(event) {
+      event.sort( function(row1, row2) {
+        let k1 = row1, k2 = row2;
+        return (k1 > k2) ? 1 : ( (k2 > k1) ? -1 : 0 );
+      });
+      this.dBeg = event[0].toJSON();
+      this.dEnd = event[event.length - 1].toJSON();
+    },
+    book(){
+      console.log(this.itemData)
+      axios.post(`http://localhost:5174/bff/booking/create`,
+        {
+          adId: this.itemId,
+          ownerId: this.itemData.userId,
+          dBeg: this.dBeg,
+          dEnd: this.dEnd
+        }, {
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${this.user.access_token}`
+        }})
+        .then(result => console.log(result))
+    }
   }
 };
 

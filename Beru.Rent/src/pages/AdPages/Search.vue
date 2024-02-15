@@ -17,25 +17,24 @@
     }),
     methods: {
       getAds(item, category){
-        if (item !== '' && category !== '') {
-          axios.get(`http://localhost:5174/bff/ad/getMainPageFindAds?finder=${item}&categoryName=${category}`)
+        if (item !== undefined && category !== undefined) {
+          axios.get(`http://localhost:5174/bff/ad/getMainPageFindAds?finder=${item}&categoryName=${category}&page=1`)
             .then((response) => {
-              console.log(response.data.data);
-              this.ads = response.data;
-              console.log(this.ads);
+              this.ads = response.data.mainPageDto;
             })
-        } else if (item !== '' && category !== ''){
-          axios.get(`http://localhost:5174/bff/ad/getMainPageFindAds?finder=${item}`)
-            .then(response => this.ads = response.data.data);
+        } else if (item !== undefined && category === undefined){
+          axios.get(`http://localhost:5174/bff/ad/getMainPageFindAds?finder=${item}&page=1`)
+            .then((response) => {
+              this.ads = response.data.data.mainPageDto;
+            });
         } else {
-          axios.get(`http://localhost:5174/bff/ad/getMainPageFindAds?categoryName=${category}`)
-            .then(response => this.ads = response.data.data);
+          axios.get(`http://localhost:5174/bff/ad/getMainPageFindAds?categoryName=${category}&page=1`)
+            .then(response => this.ads = response.data.data.mainPageDto);
         }
       }
     },
     mounted() {
-      console.log(this.$route.query.finder);
-      console.log(this.$route.query.categoryName);
+
         this.getAds(this.$route.query.finder);
     }
   }

@@ -41,8 +41,8 @@ const routes = [
     component: () => import('@/components/Callback.vue'),
   },
   {
-  path: '/test',
-  name: 'test',
+    path: '/test',
+    name: 'test',
   },
   {
     path: '/chat',
@@ -78,6 +78,18 @@ const routes = [
     path: '/search/:category/:searchItem',
     redirect: to => {
       return { path: '/search', query: { finder: to.params.searchItem, categoryName: to.params.category } }
+    }
+  },
+  {
+    path: '/searchItem/:searchItem',
+    redirect: to => {
+      return { path: '/search', query: { finder: to.params.searchItem } }
+    }
+  },
+  {
+    path: '/searchCategory/:category',
+    redirect: to => {
+      return { path: '/search', query: { categoryName: to.params.category } }
     }
   },
   {
