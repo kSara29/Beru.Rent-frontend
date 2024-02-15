@@ -17,7 +17,7 @@
             @change="addFiles()">
           </v-file-input>
           <v-carousel hide-delimiters="">
-            <v-carousel-item 
+            <v-carousel-item
               v-for="(item) in displayFiles"
               :key="item.name"
               :src="item"
@@ -172,7 +172,7 @@ export default {
       description: '',
       descriptionRules: [
         value => !!value || 'Описание обязательно',
-        value => value.length > 50 || 'Описнаие должна содержать более 50 символов!'
+        value => value.length > 50 || `Описнаие должна содержать более 50 символов! У вас только ${value.length} символов!  `
       ],
       extraConditions: '',
       conditionRules: [
@@ -225,7 +225,7 @@ export default {
     addressExtraId: '3fa85f64-5717-4562-b3fc-2c963f66afa6', // Необходимо установить правильное значение
     addressExtra: this.addressString,
     tags: 'bestSeller',
-    //files: []
+    files: []
   };
 
   for (let i = 0; i < this.files.length; i++) {

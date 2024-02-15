@@ -38,14 +38,14 @@ const routes = [
   {
     path: '/callback',
     name: 'callback',
-    component: () => import('@/components/Callback.vue'), 
+    component: () => import('@/components/Callback.vue'),
   },
   {
   path: '/test',
   name: 'test',
   },
-  { 
-    path: '/chat', 
+  {
+    path: '/chat',
     name: 'chat',
     component: () => import('@/pages/Chat/Chat.vue'),
   },
@@ -73,6 +73,17 @@ const routes = [
     path: '/create-category',
     name: 'create-category',
     component: ()=> import('@/pages/AdPages/CreateCategory.vue')
+  },
+  {
+    path: '/search/:category/:searchItem',
+    redirect: to => {
+      return { path: '/search', query: { finder: to.params.searchItem, categoryName: to.params.category } }
+    }
+  },
+  {
+    path: '/search/',
+    name: 'Поиск',
+    component: () => import('@/pages/AdPages/Search.vue')
   }
 ]
 

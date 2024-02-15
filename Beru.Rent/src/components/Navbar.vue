@@ -20,12 +20,13 @@
 
     <!-- Поисковик -->
     <v-btn icon>
-      <v-icon>mdi-magnify</v-icon>
+      <v-icon @click="search()">mdi-magnify</v-icon>
     </v-btn>
 
     <v-text-field
       hide-details
       single-line
+      v-model="searchItem"
     ></v-text-field>
 
     <!-- Категория -->
@@ -34,12 +35,13 @@
         clearable
         label="Категория"
         :items="['Спорт', 'Электроника', 'Инструменты', 'Спецтехника', 'Транспорт', 'Недвижимость']"
+        v-model="category"
       ></v-select>
     </v-app-bar-title>
 
     <v-spacer></v-spacer>
 
-    <div v-if="user" class="ml-3">
+    <div v-if="!user" class="ml-3">
 
     <!-- Регистрация -->
     <v-btn to="/register" stacked outlined class="ml-3" >
@@ -53,7 +55,7 @@
     </v-btn>
   </div>
 
-    <div v-if="!user" class="ml-3">
+    <div v-if="user" class="ml-3">
     <!-- Список уведомлении -->
     <v-btn to="/profile/notifications/c698dfc2-61a9-46eb-bf7f-0ffb2067b9bd">
       <v-icon icon="mdi-bell" style="text-decoration: none; color: inherit"></v-icon>
@@ -82,10 +84,18 @@
 
   <script>
   export default {
+    data:() => ({
+      searchItem: '',
+      category: ''
+    }),
     methods:{
-    login() {
+      login() {
         this.$userManager.signinRedirect();
-      },},
+      },
+      search(){
+        window.location.href = `https://localhost:3000/search/${this.category}/${this.searchItem}`
+      }
+    },
     computed: {
       user() {
         console.log("вытащила юзер айди "+this.$store.getters.getUserId)

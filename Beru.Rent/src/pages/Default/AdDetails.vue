@@ -101,7 +101,7 @@
       <div id="yandexMap" style="width: 100%; height: 50%"></div>
     </v-row>
   </v-container>
-
+  <v-btn></v-btn>
   <AutoComplete v-model="userInput" :suggestions="suggestions" @complete="search" />
 
 </template>
