@@ -40,10 +40,15 @@ const routes = [
     name: 'callback',
     component: () => import('@/components/Callback.vue'),
   },
-  { 
-    path: '/chat', 
+  {
+    path: '/chat',
     name: 'chat',
     component: () => import('@/pages/Chat/Chat.vue'),
+  },
+  {
+    path: '/allChats',
+    name: 'allChats',
+    component: () => import('@/pages/Chat/AllChats.vue'),
   },
   {
     path: '/user/deals',
