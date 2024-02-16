@@ -74,6 +74,11 @@ const routes = [
     path: '/create-category',
     name: 'create-category',
     component: ()=> import('@/pages/AdPages/CreateCategory.vue')
+  },
+  {
+    path: '/doc/:id',
+    name: 'скачать договор1',
+    component: () => import('@/pages/Doc.vue'),
   }
 ]
 
