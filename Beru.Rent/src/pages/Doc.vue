@@ -97,7 +97,9 @@ export default {
   },
   methods: {
     fetchDocumentData() {
-      const getUri = `http://localhost:5174/bff/deal/generateDoc/?id=b1bd54d3-2265-498f-b9f4-27b49ea72ea6`;
+      const itemId = this.$route.params.id;
+      console.log('??' + itemId);
+      const getUri = `http://localhost:5174/bff/deal/generateDoc/?id=${itemId}`;
       axios.get(getUri)
         .then(response => {
           this.documentData = response.data.data;
