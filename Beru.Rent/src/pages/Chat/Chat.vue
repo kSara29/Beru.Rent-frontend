@@ -2,7 +2,7 @@
   <v-container>
     <v-card>
       <v-card-title>Чат</v-card-title>
-      <v-card-text style="height: 700px; overflow-y: auto; display: grid">
+      <v-card-text style="height: 656px; overflow-y: auto; display: grid">
         <div v-for="message in messages" :key="message.messageId"
              class="message-bubble"
              :class="{'message-right': message.senderId === currentUserId, 'message-left': message.senderId !== currentUserId}">
