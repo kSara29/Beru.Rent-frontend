@@ -1,10 +1,11 @@
 <template>
   <div id="app" ref="document">
-    <button @click="exportToPDF">Export to PDF</button>
+    <v-btn prepend-icon="mdi-file-download" variant="outlined" @click="exportToPDF">Скачать договор в PDF</v-btn>
+    <hr>
  <div id="element-to-convert">
       
         <p style="padding-top: 30px;text-align: center;">
-          ДОГОВОР ПРОКАТА №{{ documentData.docNumber }}
+          <b>ДОГОВОР ПРОКАТА</b> №{{ documentData.docNumber }}
 <br>
 г. {{ documentData.docTown }}                            		                   	                 {{ documentData.todayDate }}г.
 <br>
@@ -118,7 +119,7 @@ export default {
 
 <style>
 #app {
-  margin-top: 60px;
+  margin-top: 20px;
   text-align: center;
 }
 </style>

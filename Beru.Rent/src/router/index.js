@@ -29,11 +29,6 @@ const routes = [
     component: () => import('@/pages/AdPages/CreateAd.vue'),
   },
   {
-    path: '/download',
-    name: 'скачать договор',
-    component: () => import('@/components/DownloadDoc.vue'),
-  },
-  {
     path: '/doc',
     name: 'скачать договор1',
     component: () => import('@/pages/Doc.vue'),
