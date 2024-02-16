@@ -2,7 +2,7 @@
   <v-container>
     <v-card>
       <v-card-title>Чат</v-card-title>
-      <v-card-text style="height: auto; overflow-y: auto; display: grid">
+      <v-card-text style="height: 700px; overflow-y: auto; display: grid">
         <div v-for="message in messages" :key="message.messageId"
              class="message-bubble"
              :class="{'message-right': message.senderId === currentUserId, 'message-left': message.senderId !== currentUserId}">
@@ -27,6 +27,9 @@ import * as signalR from '@microsoft/signalr';
 import axios from "axios";
 
 export default {
+  props: {
+    chatId: String
+  },
   computed:{
     user() {
       return this.$store.getters.getUser;
@@ -53,7 +56,7 @@ export default {
 
       await axios.post('http://localhost:5174/bff/chat/sendMessageByChatId', {
         message: this.newMessage,
-        chatId: '17b2f1df-c94a-4fd2-b9eb-1972c3150dc2'
+        chatId: this.chatId
       }, {
         headers: {
           'accept': 'text/plain',
@@ -103,9 +106,16 @@ export default {
   },
   mounted() {
     this.setupSignalR();
-    const chatId = '17b2f1df-c94a-4fd2-b9eb-1972c3150dc2';
-    this.loadChatHistory(chatId);
+    this.loadChatHistory(this.chatId);
     this.currentUserId = this.user.profile.sub;
+    console.log(this.currentUserId);
+  },
+  watch: {
+    chatId(newVal) {
+      if (newVal) {
+        this.loadChatHistory(newVal);
+      }
+    }
   },
 };
 </script>

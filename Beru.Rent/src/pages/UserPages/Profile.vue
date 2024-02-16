@@ -11,6 +11,9 @@
           <v-btn v-if="isUser" :to="'/profile/notifications/' + this.user.userId">
             <router-link style="text-decoration: none; color: inherit;" :to="'/profile/notifications/' + this.user.userid">Посмотреть мои уведомления</router-link>
           </v-btn>
+          <v-btn >
+            <router-link style="text-decoration: none; color: inherit;" :to="'allChats'">Мои чаты</router-link>
+          </v-btn>
         </div>
         <div class="contacts">
           <h4>Контактная информация:</h4>
