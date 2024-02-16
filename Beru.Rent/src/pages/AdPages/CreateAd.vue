@@ -17,14 +17,15 @@
             @change="addFiles()">
           </v-file-input>
           <v-carousel hide-delimiters="">
-            <v-carousel-item
+            <v-carousel-item 
               v-for="(item) in displayFiles"
               :key="item.name"
               :src="item"
               cover=""
+              height="200"
             ></v-carousel-item>
           </v-carousel>
-          <v-btn @click="removeFile()">Удалить последнее</v-btn>
+          <v-btn @click="removeFile()">Удалить последнее фото</v-btn>
           <br/>
           <br/>
           <div class="form-group">
@@ -132,19 +133,59 @@
             </v-select>
           </div>
           <div class="form-group">
+            <div class="autocomplete-wrapper v-field__input">
+    <v-text-field
+      clearable
+      variant="outlined"
+      prepend-icon="mdi-map-marker"
+      v-model="searchQuery"
+      name="searchQuery"
+      label="Введите адрес одной строкой"
+      :rules="address"
+      hide-details="auto"
+      @input="handleInput"
+      placeholder="Введите адрес"
+    ></v-text-field>
+
+    <ul v-if="showSuggestions" class="suggestions-list">
+      <li v-for="(suggestion, index) in suggestions" :key="index" @click="selectSuggestion(suggestion)">
+        {{ suggestion.title.text }}, {{ suggestion.subtitle.text }}
+      </li>
+    </ul>
+
+
+    <!-- Display address information -->
+    <v-card v-if="addressInfo" class="mt-4">
+      <v-card-title>Информация об адресе</v-card-title>
+      <v-card-text>
+        <div>Страна: {{ addressInfo.country }}</div>
+        <div>Регион: {{ addressInfo.region }}</div>
+        <div>Город: {{ addressInfo.city }}</div>
+        <div>Улица: {{ addressInfo.street }}</div>
+        <div>Здание: {{ addressInfo.building }}</div>
+        <div>Почтовый: {{ addressInfo.postindex }}</div>
+        <div>Latitude: {{ addressInfo.lat }}</div>
+        <div>Longitude: {{ addressInfo.lon }}</div>
+      </v-card-text>
+    </v-card>
+  </div>
+  <br>
+          </div>
+          <div class="form-group">
             <v-text-field
               clearable
               variant="outlined"
-              prepend-icon="mdi-map-marker"
-              v-model="addressString"
-              name="addressString"
-              label="Введите адрес одной строкой"
-              :rules="address"
+              prepend-icon="mdi-pound-box"
+              v-model="tags"
+              name="tags"
+              label="Тэги, через запятую"
               hide-details="auto">
             </v-text-field>
           </div>
           <br />
           <v-btn @click="sendForm()" type="submit">Создать объявление</v-btn>
+
+          
         </v-form>
       </v-sheet>
     </v-container>
@@ -153,9 +194,20 @@
 <script>
 import axios from "axios";
 export default {
+  computed: {
+    user() {
+      return this.$store.getters.getUser;
+    }
+  },
   data() {
     return {
-      user: '',
+      searchQuery: '',
+      suggestions: [],
+      showSuggestions: false,
+      typingTimeout: null,
+      selectedSuggestion: null,
+      addressInfo: null,
+
       files: [],
       displayFiles: [],
       title: '',
@@ -167,12 +219,10 @@ export default {
       description: '',
       descriptionRules: [
         value => !!value || 'Описание обязательно',
-        value => value.length > 50 || 'Описнаие должна содержать более 50 символов!'
+        value => value.length > 5 || 'Описание должно содержать более 50 символов!'
       ],
       extraConditions: '',
-      conditionRules: [
-        // value => !!value || 'а что он должен сюда вводит?'
-      ],
+      conditionRules: [],
       addressString: '',
       address: [
         value => !!value || 'Адрес обязателен'
@@ -194,49 +244,122 @@ export default {
       contractTypeId: '',
       contracts: ['Недвижимость', 'Движимое имущество'],
       timeunitId: '',
-      timeunit: []
+      timeunit: '',
+      tags:''
     }
   },
   methods: {
-    async sendForm() {
-      const ans = await this.$refs.adForm.validate();
-      if (ans.valid === false) {
-        alert('Форма заполнена неправильно!')
-        return 0;
+    handleInput() {
+      clearTimeout(this.typingTimeout);
+      if (this.searchQuery.length >= 5) {
+        this.typingTimeout = setTimeout(this.fetchSuggestions, 2000);
+      } else {
+        this.suggestions = [];
+        this.showSuggestions = false;
       }
-      let form = new FormData()
-      for(let i = 0; i < this.files.length; i++) {
-        form.append('files', this.files[i])
-      }
-      form.append('userId', this.user.userId);
-      form.append('title', this.title);
-      form.append('description', this.description);
-      form.append('extraConditions', this.extraConditions);
-      form.append('neededDeposit', this.deposit);
-      form.append('minDeposit', this.minDeposit);
-      form.append('price', this.price);
-      form.append('categoryId', this.categoryId);
-      form.append('timeUnitId', this.timeunitId);
-      form.append('contractTypeId', this.contractTypeId);
-      form.append('addressExtraId', 'b65e3e8c-e12e-482c-8251-158dedc0658c');
-      form.append('address', this.addressString)
-      form.append('tags', 'bestSeller')
-
-      console.log(form)
-      axios.post('http://localhost:5105/api/ad/create', form, {
-        headers: {
-          'accept': 'text/plain',
-          'Content-Type': 'multipart/form-data'
-        }
-      })
-        .then(response => console.log(response))
     },
-    get() {
-      axios.get('http://localhost:5181/api/user/get', {params: {UserId: '7519daec-02a3-4382-970b-37704238dae9'}})
-        .then(response => this.user = response.data);
-      axios.get('http://localhost:5105/api/timeunit/get')
+    fetchSuggestions() {
+      const apiUrl = `https://suggest-maps.yandex.ru/v1/suggest?apikey=8abf69e1-ed41-498f-af8e-e2f3b86fadc4&text=${encodeURIComponent(this.searchQuery)}`;
+      axios.get(apiUrl)
+        .then(response => {
+          this.suggestions = response.data.results;
+          this.showSuggestions = true;
+        })
+        .catch(error => {
+          console.error('Error fetching address suggestions:', error);
+        });
+    },
+    selectSuggestion(suggestion) {
+      this.searchQuery = suggestion.title.text;
+      this.selectedSuggestion = suggestion;
+      this.suggestions = [];
+      this.showSuggestions = false;
+      this.submitAddress(suggestion.title.text); // Pass the selected address to submitAddress method
+    },
+    submitAddress(address) {
+      const apiUrl = `https://geocode-maps.yandex.ru/1.x/?apikey=5570fbc5-a3de-4dd6-9158-221866f70379&geocode=${address}`;
+
+      axios.get(apiUrl)
+        .then(response => {
+          const parser = new DOMParser();
+          const xmlDoc = parser.parseFromString(response.data, 'text/xml');
+
+          const country = xmlDoc.getElementsByTagName('CountryName')[0].textContent;
+          const region = xmlDoc.getElementsByTagName('AdministrativeAreaName')[0].textContent;
+          const city = xmlDoc.getElementsByTagName('LocalityName')[0].textContent;
+          const street = xmlDoc.getElementsByTagName('ThoroughfareName')[0].textContent;
+          const building = xmlDoc.getElementsByTagName('PremiseNumber')[0].textContent;
+          const postindex = xmlDoc.getElementsByTagName('postal_code')[0].textContent;
+          const pos = xmlDoc.getElementsByTagName('pos')[0].textContent.split(' ');
+
+          this.addressInfo = {
+            country: country,
+            region: region,
+            city: city,
+            street: street,
+            building: building,
+            postindex: postindex,
+            lat: pos[1],
+            lon: pos[0]
+          };
+        })
+        .catch(error => {
+          console.error('Error fetching address information:', error);
+        });
+    },
+    async sendForm() {
+  const ans = await this.$refs.adForm.validate();
+  if (ans.valid === false) {
+    alert('Форма заполнена неправильно!');
+    return;
+  }
+
+  // Create a new FormData object
+  const formData = new FormData();
+
+  // Append fields to the FormData object
+  formData.append('userId', null);
+  formData.append('title', this.title);
+  formData.append('description', this.description);
+  formData.append('extraConditions', this.extraConditions);
+  formData.append('neededDeposit', this.deposit);
+  formData.append('minDeposit', parseInt(this.minDeposit));
+  formData.append('price', parseInt(this.price));
+  formData.append('categoryId', this.categoryId);
+  formData.append('timeUnitId', this.timeunitId);
+  formData.append('contractTypeId', parseInt(this.contractTypeId));
+  formData.append('tags', this.tags);
+
+  // Append files to the FormData object
+  this.files.forEach(file => {
+    formData.append('files', file); // Assuming this.files is an array of File objects
+  });
+
+  // Append address details to the FormData object
+  formData.append('street', this.addressInfo.street);
+  formData.append('house', this.addressInfo.building);
+  formData.append('country', this.addressInfo.country);
+  formData.append('city', this.addressInfo.city);
+  formData.append('region', this.addressInfo.region);
+  formData.append('postindex', this.addressInfo.postindex);
+  formData.append('latitude', this.addressInfo.lat);
+  formData.append('longitude', this.addressInfo.lon);
+  formData.append('tags', this.addressInfo.lon);
+
+
+  // Now you can send this formData in your HTTP request
+  axios.post('http://localhost:5174/bff/ad/create', formData, {
+    headers: {
+      'Content-Type': 'multipart/form-data',
+      'Authorization': `Bearer ${this.user.access_token}`
+    }
+  }).then(response => console.log(response))
+    .catch(error => console.error(error))
+},
+    async get() {
+      await axios.get('http://localhost:5174/bff/timeunit/get')
         .then(response => this.timeunit = response.data.data);
-      axios.get('http://localhost:5105/api/category/get')
+      await axios.get('http://localhost:5174/bff/category/get')
         .then(response => this.categories = response.data.data);
     },
     removeFile() {
@@ -245,18 +368,18 @@ export default {
     },
     addFiles() {
       const length = this.files.length;
-      for(let i = 0; i < length; i++) {
+      for (let i = 0; i < length; i++) {
         this.displayFiles.push(URL.createObjectURL(this.files[i]))
       }
     },
     setContractType(value) {
-      for (let i = 0; i < this.contracts.length; i++){
-        if(this.contracts[i] === value){
+      for (let i = 0; i < this.contracts.length; i++) {
+        if (this.contracts[i] === value) {
           this.contractTypeId = i;
         }
       }
     },
-    itemProps(item){
+    itemProps(item) {
       return {
         title: item.title,
         value: item.id
@@ -265,6 +388,7 @@ export default {
   },
   mounted() {
     this.get()
-  }
+  },
 };
 </script>
+

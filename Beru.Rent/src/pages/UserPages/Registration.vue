@@ -77,16 +77,18 @@
                         hide-details="auto">
                       </v-text-field>
                     </div>
+                    <br />
                     <div class="form-group">
                       <v-text-field
                         v-model="repPassword"
                         type="password"
+                        label="Повторите пароль"
                         :rules="repPasswordRules"
                         name="repeated password"
                       ></v-text-field>
                     </div>
                     <br />
-                  <v-btn type="submit" @click="send" block="true" class="btn-primary">Зарегистрироваться</v-btn>
+                  <v-btn type="submit" @click="send" block class="btn-primary">Зарегистрироваться</v-btn>
                 </v-form>
             </div>
             <div class="col-md-3"></div>
@@ -95,6 +97,7 @@
 </template>
 
 <script>
+
 import axios from 'axios'
 export default {
 
@@ -151,7 +154,7 @@ export default {
     phoneRule: [
       value => {
         const pattern =
-          /^[+][0-9]{3}[)]?[-\s.]?[0-9]{3}[-\s.]?[0-9]{4,6}$/
+          /^[+7]{3}[)]?[-\s.]?[0-9]{3}[-\s.]?[0-9]{4,6}$/
         return pattern.test(value) || 'Введите номер телефона начиная с +7'
       }
     ],
@@ -170,10 +173,15 @@ export default {
     ]
   }),
   methods: {
-    send() {
-      if (this.repPassword !== this.password){
+    async send() {
+      if (this.repPassword !== this.password) {
         alert('Пароли не совпадают!')
-        return;
+        return 0;
+      }
+      const ans = await this.$refs.registrationForm.validate();
+      if (ans.valid === false) {
+        alert('Форма заполнена неправильно!')
+        return 0;
       }
       let vm = {
         FirstName: this.firstName,
@@ -181,16 +189,17 @@ export default {
         UserName: this.login,
         IIN: this.iinNumber,
         Mail: this.email,
-        Phone: this.phoneNumber,
+        Phone: this.phoneNumber.slice(-10),
         Password: this.password,
         ConfirmPassword: this.repPassword
       }
       console.log(vm)
 
-      axios.post('http://localhost:5181/api/user/create', vm)
+      axios.post('http://localhost:5174/bff/user/createUser', vm)
         .then(response => console.log(response))
     }
-  }
+  },
+
 }
 </script>
 
