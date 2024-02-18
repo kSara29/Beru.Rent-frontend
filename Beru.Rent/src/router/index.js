@@ -76,6 +76,29 @@ const routes = [
     component: ()=> import('@/pages/AdPages/CreateCategory.vue')
   },
   {
+    path: '/search/:category/:searchItem',
+    redirect: to => {
+      return { path: '/search', query: { finder: to.params.searchItem, categoryName: to.params.category } }
+    }
+  },
+  {
+    path: '/searchItem/:searchItem',
+    redirect: to => {
+      return { path: '/search', query: { finder: to.params.searchItem } }
+    }
+  },
+  {
+    path: '/searchCategory/:category',
+    redirect: to => {
+      return { path: '/search', query: { categoryName: to.params.category } }
+    }
+  },
+  {
+    path: '/search/',
+    name: 'Поиск',
+    component: () => import('@/pages/AdPages/Search.vue')
+  },{
+
     path: '/doc/:id',
     name: 'скачать договор1',
     component: () => import('@/pages/Doc.vue'),

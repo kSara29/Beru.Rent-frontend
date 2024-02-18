@@ -12,7 +12,7 @@
     <div class="collapse" id="to-me" style="">
       <v-list class="list-styled fw-normal pb-1 small">
         <v-icon icon=""></v-icon>
-        <v-list-item @click="console.log(deal)" class="align-items-center rounded" link v-for="deal in myDeals" prepend-icon="mdi-exclamation" :title="'От: ' + deal.id" :subtitle="'Сумма: '"></v-list-item>
+        <v-list-item @click="change(deal)" class="align-items-center rounded" link v-for="deal in myDeals" prepend-icon="mdi-exclamation" :title="'От: ' + deal.id" :subtitle="'Сумма: '"></v-list-item>
       </v-list>
     </div>
 
@@ -22,12 +22,29 @@
     <div class="collapse" id="from-me" style="">
       <v-list class="list-styled fw-normal pb-1 small">
         <v-icon icon=""></v-icon>
-        <v-list-item class="align-items-center rounded" link v-for="deal in deals" prepend-icon="mdi-exclamation" :title="'От: ' + deal.id" :subtitle="'Сумма: '"></v-list-item>
+        <v-list-item @click="change(deal)" class="align-items-center rounded" link v-for="deal in deals" prepend-icon="mdi-exclamation" :title="'От: ' + deal.id" :subtitle="'Сумма: '"></v-list-item>
       </v-list>
     </div>
   </v-navigation-drawer>
   <v-navigation-drawer width="1100">
     <Chat />
+  </v-navigation-drawer>
+  <v-navigation-drawer :width="400">
+    <br/><br/><br/><br/><br/><br/><br/><br/><br/>
+    <div v-if="this.currentDeal.isMy === true">
+      <v-btn @click="action(true)" :width="250" stacked outlined class="ml-3">Закрыть сделку</v-btn> <br/> <br/>
+    </div>
+    <div v-if="this.currentDeal.isMy === false">
+      <v-btn to="" :width="250" stacked outlined class="ml-3">Прикрепить документ</v-btn> <br/> <br/>
+      <v-btn @click="suggest(false)" :width="250" stacked outlined class="ml-3">Отказаться от сделки</v-btn> <br/> <br/>
+      <v-btn @click="suggest(false)" :width="250" stacked outlined class="ml-3">Продлить сделку</v-btn> <br/> <br/>
+    </div>
+    <v-btn to="" :width="250" stacked outlined class="ml-3">
+      <router-link to="" style="text-decoration: none; color: red; text-align: center">Пожаловаться на пользователя.</router-link>
+    </v-btn> <br/> <br/>
+    <v-btn to="" :width="250" stacked outlined class="ml-3">
+      <router-link to="" style="text-decoration: none; color: red;">Перейти к профилью пользователя</router-link>
+    </v-btn>
   </v-navigation-drawer>
 </template>
 
@@ -38,18 +55,46 @@ export default {
   data:() => ({
     user: '',
     deals: [],
-    myDeals: []
+    myDeals: [],
+    currentDeal: ''
   }),
   methods: {
     async getDeals() {
       await axios.get('http://localhost:5174/bff/deal/GetAllDeals/?id=c698dfc2-61a9-46eb-bf7f-0ffb2067b9bd')
-        .then(response => this.deals = response.data.data.dealPageDto)
+        .then(response => {
+          response.data.data.dealPageDto.forEach((element) => element.isMy = false);
+          this.deals = response.data.data.dealPageDto;
+        })
       await axios.get('http://localhost:5174/bff/deal/GetAllTenantDeals/?id=c698dfc2-61a9-46eb-bf7f-0ffb2067b9bd')
-        .then(response => this.myDeals = response.data.data.dealPageDto);
+        .then(response => {
+          response.data.data.dealPageDto.forEach((element) => element.isMy = true);
+          this.myDeals = response.data.data.dealPageDto;
+          this.currentDeal = response.data.data.dealPageDto[0];
+        });
     },
     rotate(id) {
       let arrow = document.getElementById(id);
       arrow.classList.toggle('rot');
+    },
+    suggest(isTrue) {
+      if (isTrue === false) {
+
+      }
+      else {
+
+      }
+    },
+    action(isTrue) {
+      if (isTrue === false) {
+
+      } else {
+
+      }
+    },
+    change(deal) {
+      this.currentDeal = deal;
+      console.log(deal);
+      console.log(this.currentDeal);
     }
   },
   mounted() {

@@ -17,7 +17,7 @@
             @change="addFiles()">
           </v-file-input>
           <v-carousel hide-delimiters="">
-            <v-carousel-item 
+            <v-carousel-item
               v-for="(item) in displayFiles"
               :key="item.name"
               :src="item"
@@ -185,7 +185,7 @@
           <br />
           <v-btn @click="sendForm()" type="submit">Создать объявление</v-btn>
 
-          
+
         </v-form>
       </v-sheet>
     </v-container>
@@ -219,7 +219,7 @@ export default {
       description: '',
       descriptionRules: [
         value => !!value || 'Описание обязательно',
-        value => value.length > 5 || 'Описание должно содержать более 50 символов!'
+        value => value.length > 50 || `Описание должно содержать более 50 символов! У вас ${value.length}/50`
       ],
       extraConditions: '',
       conditionRules: [],
