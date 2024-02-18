@@ -41,13 +41,14 @@ const routes = [
     component: () => import('@/components/Callback.vue'),
   },
   {
-    path: '/test',
-    name: 'test',
-  },
-  {
     path: '/chat',
     name: 'chat',
     component: () => import('@/pages/Chat/Chat.vue'),
+  },
+  {
+    path: '/allChats',
+    name: 'allChats',
+    component: () => import('@/pages/Chat/AllChats.vue'),
   },
   {
     path: '/user/deals',
@@ -96,6 +97,11 @@ const routes = [
     path: '/search/',
     name: 'Поиск',
     component: () => import('@/pages/AdPages/Search.vue')
+  },{
+
+    path: '/doc/:id',
+    name: 'скачать договор1',
+    component: () => import('@/pages/Doc.vue'),
   }
 ]
 
