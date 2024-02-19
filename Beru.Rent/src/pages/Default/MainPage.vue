@@ -18,20 +18,23 @@
     <v-select
       v-model="selectedCategory"
       :items="categories"
+      item-text="title"
+      item-value="id"
       label="Выберите категорию"
       solo
       variant="outlined"
-      class="category"
-    ></v-select>
+      class="category">
+    </v-select>
 
     <v-btn
       v-for="option in sortOptions"
-      :key="option"
-      :color="selectedSort === option ? 'blue' : 'default'"
-      @click="selectedSort = option"
-    >
-      {{ option }}
+       :key="option.value"
+       :color="selectedSort === option.value ? 'blue' : 'default'"
+        @click="selectSortOption(option.value)">
+        {{ option.label }}
     </v-btn>
+
+    
 
 
     <v-row>
@@ -45,7 +48,16 @@
       :length="totalPages"
       circle
     ></v-pagination>
-
+    <v-overlay
+      :model-value="overlay"
+      class="align-center justify-center"
+    >
+      <v-progress-circular
+        color="primary"
+        indeterminate
+        size="64"
+      ></v-progress-circular>
+    </v-overlay>
   </v-container>
 </template>
 
@@ -54,15 +66,37 @@ import axios from 'axios'
 import Ad from '@/components/Ad.vue'
 export default {
   data:() => ({
+    overlay: false,
     items: [],
     currentPage: 1,
     selectedCategory: 'all',
-    categories: ['all','computer', 'cat', 'Ball', 'Soap', 'Bike', 'Table'],
+    categories: [],
     selectedSort: 'fromnew',
     sortOptions: ['fromnew', 'fromold', 'fromhigh', 'fromlow'],
-    totalPages: 0
+    totalPages: 0,
+    sortOptions: [
+    { label: 'Цена по убыванию', value: 'fromhigh' },
+    { label: 'Цена по возрастанию', value: 'fromlow' },
+    { label: 'От новых к старым', value: 'fromnew' },
+    { label: 'От старых к новым', value: 'fromold' }
+  ]
   }),
+  watch: {
+      overlay (val) {
+        val && setTimeout(() => {
+          this.overlay = false
+        }, 3000)
+      },
+    },
   methods: {
+      selectSortOption(optionValue) {
+        this.selectedSort = optionValue;
+      },
+      get() {
+        axios.get('http://localhost:5174/bff/category/get')
+          .then(response => 
+          this.categories = response.data.data);
+      },
     fetchItems() {
       let params = {
         page: this.currentPage,
@@ -78,6 +112,7 @@ export default {
       }
 
       console.log(params);
+      this.overlay = true
       axios.get('http://localhost:5174/bff/ad/getMainPageAds', { params })
           .then(response => {
             this.items = response.data.data.mainPageDto;
@@ -87,7 +122,10 @@ export default {
           })
           .catch(error => {
             console.error('Ошибка при загруз ке данных:', error);
-          });
+          })
+          .finally(() => {
+        this.overlay = false; 
+      });;
     },
     dataUrl(byteArray) {
       if (!byteArray || !Array.isArray(byteArray) || byteArray.length === 0) return '';
@@ -112,7 +150,10 @@ export default {
   },
   components: {
     Ad
-  }
+  },
+    mounted() {
+      this.get()
+    }
 };
 </script>
 
