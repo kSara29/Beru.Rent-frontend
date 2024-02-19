@@ -28,11 +28,9 @@
 
     <v-card-actions>
       <v-btn flat color="orange">
-        <router-link style="text-decoration: none; color: inherit" :to="'details/' + adId">Детальная страница</router-link>
+        <router-link style="text-decoration: none; color: inherit" :to="'details/' + adId">Смотреть</router-link>
       </v-btn>
-      <v-btn flat color="orange">
-        <router-link style="text-decoration: none; color: inherit" to="">Забронировать</router-link>
-      </v-btn>
+    
     </v-card-actions>
   </v-card>
 </template>

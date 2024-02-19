@@ -353,7 +353,17 @@ export default {
       'Content-Type': 'multipart/form-data',
       'Authorization': `Bearer ${this.user.access_token}`
     }
-  }).then(response => console.log(response))
+  }).then(response => {
+    console.log(response); 
+  if (response.status === 200 && response.data && response.data.data && response.data.data.id) {
+    const id = response.data.data.id;
+    const redirectUrl = '/details/' + id; 
+    window.location.href = redirectUrl;
+  } else {
+    // Handle the case where the response is not as expected
+    console.error('Не получилось поймать объявление ID');
+  }
+})
     .catch(error => console.error(error))
 },
     async get() {

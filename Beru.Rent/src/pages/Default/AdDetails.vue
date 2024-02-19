@@ -3,6 +3,7 @@
     <v-row>
       <v-col cols="12" md="7">
         <v-container v-if="itemData">
+          <p style="color: cadetblue; font-weight: bold;">Категория: {{itemData.category.title }}</p>
           <p class="display-6">{{itemData.title }}</p>
         </v-container>
         <v-carousel hide-delimiters style="height: 500px;">
@@ -19,13 +20,31 @@
           <p>{{ itemData.description }}</p>
         </v-container>
 
+        <v-container v-if="itemData">
+          <h5>Особые требования</h5>
+          <p>{{ itemData.extraConditions }}</p>
+        </v-container>
+        
+        <v-container v-if="itemData">
+  <h5>Нужен ли залог?</h5>
+  <p>{{ itemData.neededDeposit ? 'Да' : 'Нет' }}</p>
+</v-container>
+
+<v-container v-if="itemData && itemData.neededDeposit">
+  <h5>Стоимость залога</h5>
+  <p>{{ itemData.minDeposit }} Тенге</p>
+</v-container>
+
+        <v-container v-if="itemData">
+          <h5>Дата добавления</h5>
+          <p>{{ itemData.createdAt }}</p>
+        </v-container>
+
         <v-container>
-          <v-btn style="background-color: darkslategrey; color: white">Показать номер</v-btn>
-          <v-btn style="background-color: #0d194d; color: white; margin-left: 30px">Написать</v-btn>
-          <v-btn @click="book()" style="background-color: #0d194d; color: white; margin-left: 0px; margin-top: 20px;">Оставить заявку на бронирование.</v-btn>
+          <v-btn @click="book()" style="background-color: #0d194d; color: white; margin-left: 0px; margin-top: 20px;">Оставить заявку на бронирование</v-btn>
         </v-container>
       </v-col>
-
+<!--КАЛЕНДАРЬ-->
       <v-col cols="12" md="5">
         <v-container>
           <p>Выберите период аренды:</p>
@@ -55,21 +74,18 @@
             </v-container>
 
             <v-container v-if="itemData">
-              <p>Аренда ------------------------ {{itemData.price}}</p>
+              <p>Аренда ------------------------ {{itemData.price}} Тенге в {{ itemData.timeUnit.title }}</p>
             </v-container>
           </v-container>
+        </v-container>
+        <v-container>
+<!--КАЛЕНДАРЬ-->
         </v-container>
 
         <v-container>
           <v-container class="rentPeriod align-center" style="padding: 0px">
             <v-container class="d-flex align-center justify-content-around rentSubCon">
-              <p :class="{'text-grey': switchValueDelivery}">Самовывоз</p>
-              <v-switch
-                color="primary"
-                v-model="switchValueDelivery"
-                style="width: 50px; padding-left: 60px"
-              ></v-switch>
-              <p :class="{'text-grey': !switchValueDelivery}">Доставка</p>
+              <p :class="{'text-grey': switchValueDelivery}" prepend-icon="mdi-image-multiple">Самовывоз</p>
             </v-container>
 
             <v-container class="d-flex rentDatePeriod" v-if="itemData">
@@ -77,21 +93,6 @@
                 <v-container style="background-color: #9b9c9e; border-radius: 15px; margin-bottom: 30px">
                   <p>Адрес товара: {{itemData.addressExtra.country}}, {{itemData.addressExtra.city}}, {{itemData.addressExtra.street}},
                   {{itemData.addressExtra.house}}</p>
-                </v-container>
-              </template>
-
-              <template v-else>
-                <v-container>
-                  <v-container style="padding: 0px">
-<!--                    <v-text-field v-model="userInput" label="Адрес доставки" variant="solo"></v-text-field>-->
-                    <div>
-                      <AutocompleteComponent/>
-                    </div>
-                  </v-container>
-                  <v-container style="padding: 0px">
-                    <v-text-field label="Подъезд" variant="solo"></v-text-field>
-                    <v-text-field label="квартира" variant="solo"></v-text-field>
-                  </v-container>
                 </v-container>
               </template>
             </v-container>
@@ -104,7 +105,16 @@
   </v-container>
   <v-btn></v-btn>
   <AutoComplete v-model="userInput" :suggestions="suggestions" @complete="search" />
-
+  <v-overlay
+      :model-value="overlay"
+      class="align-center justify-center"
+    >
+      <v-progress-circular
+        color="primary"
+        indeterminate
+        size="64"
+      ></v-progress-circular>
+    </v-overlay>
 </template>
 
 <script>
@@ -124,6 +134,7 @@ export default {
   },
   data() {
     return {
+      overlay: false,
       itemData: null,
       itemId: null,
       carouselImages: [],
@@ -142,6 +153,13 @@ export default {
       dEnd: new Date()
     };
   },
+  watch: {
+      overlay (val) {
+        val && setTimeout(() => {
+          this.overlay = false
+        }, 3000)
+      },
+    },
   created() {
     this.itemId = this.$route.params.id;
     this.fetchItemData();
@@ -164,6 +182,7 @@ export default {
     fetchItemData() {
       const itemId = this.$route.params.id;
       console.log('??' + itemId);
+      this.overlay = true
       axios.get(`http://localhost:5174/bff/ad/getById?Id=${itemId}`)
         .then(response => {
           this.itemData = response.data.data;
@@ -180,7 +199,10 @@ export default {
         })
         .catch(error => {
           console.error('Ошибка при загрузке данных товара:', error);
-        });
+        })
+          .finally(() => {
+        this.overlay = false; 
+      });
     },
     prepareCarouselImages(byteArray) {
       this.carouselImages = byteArray.map(byteArray => `data:image/jpeg;base64,${byteArray}`);

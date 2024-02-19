@@ -28,7 +28,7 @@
 
     <v-btn
       v-for="option in sortOptions"
-      style="margin-bottom: 30px;"
+      style="margin-bottom: 30px; margin-right: 10px;"
        :key="option.value"
        :color="selectedSort === option.value ? 'blue' : 'default'"
         @click="selectSortOption(option.value)">
@@ -70,7 +70,7 @@ export default {
     overlay: false,
     items: [],
     currentPage: 1,
-    selectedCategory: 'all',
+    selectedCategory: '',
     categories: [],
     selectedSort: 'fromnew',
     sortOptions: ['fromnew', 'fromold', 'fromhigh', 'fromlow'],
@@ -122,11 +122,11 @@ export default {
             console.log(response.data.data)
           })
           .catch(error => {
-            console.error('Ошибка при загруз ке данных:', error);
+            console.error('Ошибка при загрузке данных:', error);
           })
           .finally(() => {
         this.overlay = false; 
-      });;
+      });
     },
     dataUrl(byteArray) {
       if (!byteArray || !Array.isArray(byteArray) || byteArray.length === 0) return '';
