@@ -20,7 +20,7 @@
           <p>{{ itemData.description }}</p>
         </v-container>
 
-        <v-container v-if="itemData">
+        <v-container v-if="itemData && itemData.extraConditions">
           <h5>Особые требования</h5>
           <p>{{ itemData.extraConditions }}</p>
         </v-container>
@@ -79,7 +79,7 @@
           </v-container>
         </v-container>
         <v-container>
-<!--КАЛЕНДАРЬ-->
+<!--КАЛЕНДАРЬ КОНЕЦ-->
         </v-container>
 
         <v-container>

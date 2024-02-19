@@ -156,7 +156,7 @@
 
     <!-- Display address information -->
     <v-card v-if="addressInfo" class="mt-4">
-      <v-card-title>Информация об адресе</v-card-title>
+      <v-card-title style="color: green;">Адрес успешно найден</v-card-title>
       <v-card-text>
         <div>Страна: {{ addressInfo.country }}</div>
         <div>Регион: {{ addressInfo.region }}</div>
@@ -188,6 +188,16 @@
 
         </v-form>
       </v-sheet>
+      <v-overlay
+      :model-value="overlay"
+      class="align-center justify-center"
+    >
+      <v-progress-circular
+        color="primary"
+        indeterminate
+        size="64"
+      ></v-progress-circular>
+    </v-overlay>
     </v-container>
   </v-app>
 </template>
@@ -201,6 +211,7 @@ export default {
   },
   data() {
     return {
+      overlay: false,
       searchQuery: '',
       suggestions: [],
       showSuggestions: false,
@@ -228,7 +239,7 @@ export default {
         value => !!value || 'Адрес обязателен'
       ],
       deposit: false,
-      minDeposit: '',
+      minDeposit: 0,
       minimumDepositRules: [
         value => !!value || 'Введите сумму минимального залога'
       ],
@@ -248,6 +259,13 @@ export default {
       tags:''
     }
   },
+  watch: {
+      overlay (val) {
+        val && setTimeout(() => {
+          this.overlay = false
+        }, 3000)
+      },
+    },
   methods: {
     handleInput() {
       clearTimeout(this.typingTimeout);
@@ -348,6 +366,7 @@ export default {
 
 
   // Now you can send this formData in your HTTP request
+  this.overlay = true
   axios.post('http://localhost:5174/bff/ad/create', formData, {
     headers: {
       'Content-Type': 'multipart/form-data',
