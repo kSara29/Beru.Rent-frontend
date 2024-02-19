@@ -28,6 +28,7 @@
 
     <v-btn
       v-for="option in sortOptions"
+      style="margin-bottom: 30px;"
        :key="option.value"
        :color="selectedSort === option.value ? 'blue' : 'default'"
         @click="selectSortOption(option.value)">
