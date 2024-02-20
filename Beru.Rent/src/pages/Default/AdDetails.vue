@@ -12,7 +12,8 @@
             :key="index"
             :src="image"
             contain
-          ></v-carousel-item>
+          >
+       </v-carousel-item>
         </v-carousel>
 
         <v-container v-if="itemData">

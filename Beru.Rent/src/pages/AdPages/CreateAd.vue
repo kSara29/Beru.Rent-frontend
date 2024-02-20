@@ -152,6 +152,9 @@
         {{ suggestion.title.text }}, {{ suggestion.subtitle.text }}
       </li>
     </ul>
+    </div>
+
+
 
 
     <!-- Display address information -->
@@ -170,7 +173,7 @@
     </v-card>
   </div>
   <br>
-          </div>
+          
           <div class="form-group">
             <v-text-field
               clearable
