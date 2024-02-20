@@ -1,4 +1,4 @@
-FROM node:lts-alpine as build-stage
+FROM node:14 as build-stage
 
 WORKDIR /app
 
@@ -24,6 +24,5 @@ COPY server.cert /etc/ssl/certificate.crt
 COPY server.key /etc/ssl/private.key
 
 EXPOSE 3000
-EXPOSE 443
 
-CMD ["npm", "run", "dev"]
+CMD [ "http-server", "-p 3000", "dist" ]
