@@ -20,6 +20,26 @@
           <h5>Описание товара</h5>
           <p>{{ itemData.description }}</p>
         </v-container>
+        <!--диалоговое окно--> 
+              <v-container>
+              
+        <div class="text-center">
+          <v-dialog
+            v-model="dialog"
+            width="auto"
+          >
+            <v-card>
+              <v-card-text>
+                Ваше бронирование успешно отправлено.
+              </v-card-text>
+              <v-card-actions>
+                <v-btn color="primary" block @click="dialog = false">Ок</v-btn>
+              </v-card-actions>
+            </v-card>
+          </v-dialog>
+        </div>
+      </v-container>
+          <!--диалоговое окно-->
 
         <v-container v-if="itemData && itemData.extraConditions">
           <h5>Особые требования</h5>
@@ -46,36 +66,28 @@
         </v-container>
       </v-col>
 <!--КАЛЕНДАРЬ-->
-      <v-col cols="12" md="5">
+
+
+          <v-col cols="12" md="5">
         <v-container>
           <p>Выберите период аренды:</p>
           <v-container class="rentPeriod align-center" style="padding: 0px">
-            <v-container class="d-flex align-center justify-content-around rentSubCon">
-              <p :class="{'text-grey': switchValue}">посуточная</p>
-              <v-switch
-                color="primary"
-                v-model="switchValue"
-                style="width: 50px; padding-left: 60px"
-              ></v-switch>
-              <p :class="{'text-grey': !switchValue}">почасовая</p>
-            </v-container>
+
 
             <v-container class="d-flex rentDatePeriod">
               <template v-if="!switchValue">
                 <DadataView @update:date="handleDateUpdate($event)" :key="`dadata-${reRenderTrigger}`" :myParam="parentData"/>
               </template>
-
-              <template v-else>
-                <v-container style="padding: 0px">
-                  <DadataView @update:date="handleDateUpdate($event)" :key="`dadata-${reRenderTrigger}`" :myParam="parentData"/>
-                  <v-text-field variant="solo"></v-text-field>
-                  <v-text-field variant="solo"></v-text-field>
-                </v-container>x
-              </template>
             </v-container>
 
             <v-container v-if="itemData">
               <p>Аренда ------------------------ {{itemData.price}} Тенге в {{ itemData.timeUnit.title }}</p>
+              <v-container v-if="dBeg && dEnd">
+                  <p>Выбранный период аренды:</p>
+                  <p>Начало: {{ dBeg }}</p>
+                  <p>Конец: {{ dEnd }}</p>
+
+              </v-container>
             </v-container>
           </v-container>
         </v-container>
@@ -116,6 +128,9 @@
         size="64"
       ></v-progress-circular>
     </v-overlay>
+
+
+
 </template>
 
 <script>
@@ -135,6 +150,7 @@ export default {
   },
   data() {
     return {
+      dialog: false,
       overlay: false,
       itemData: null,
       itemId: null,
@@ -151,7 +167,8 @@ export default {
       chosen: '',
       suggestions: [],
       dBeg: new Date(),
-      dEnd: new Date()
+      dEnd: new Date(),
+      value: ''
     };
   },
   watch: {
@@ -244,7 +261,8 @@ export default {
             'Content-Type': 'application/json',
             'Authorization': `Bearer ${this.user.access_token}`
         }})
-        .then(result => console.log(result))
+        .then(result => {console.log(result);
+          this.dialog = true})
     }
   }
 };
