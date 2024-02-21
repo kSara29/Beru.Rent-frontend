@@ -23,15 +23,14 @@ const routes = [
     path: '/details/:id',
     name: 'DetailPage',
     component: () => import('@/pages/Default/AdDetails.vue'),
-  }
-  ,
+  },
   {
     path: '/createad',
     name: 'создать объявление',
     component: () => import('@/pages/AdPages/CreateAd.vue'),
   },
   {
-    path: '/profile/notifications/:id',
+    path: '/profile/notifications',
     name: 'уведомления',
     component: () => import('@/pages/UserPages/Notifications.vue')
   },

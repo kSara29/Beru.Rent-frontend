@@ -9,7 +9,7 @@
           <v-img :src=this.avatar alt="Фото Юзера" width="200px" height="200px"></v-img>
           <p class="user-info">{{ user.firstName }} {{ user.lastName }} </p>
           <v-btn v-if="isUser" :to="'/profile/notifications/' + this.user.userId">
-            <router-link style="text-decoration: none; color: inherit;" :to="'/profile/notifications/' + this.user.userid">Посмотреть мои уведомления</router-link>
+            <router-link style="text-decoration: none; color: inherit;" to="/profile/notifications/">Посмотреть мои уведомления</router-link>
           </v-btn>
           <v-btn >
             <router-link style="text-decoration: none; color: inherit;" :to="'allChats'">Мои чаты</router-link>
@@ -37,7 +37,7 @@ import axios from 'axios'
 import Ad from '@/components/Ad.vue'
 export default{
   computed: {
-    user() {
+    userToken() {
       return this.$store.getters.getUser;
     }
   },
@@ -50,17 +50,26 @@ export default{
   }),
   methods: {
     async get() {
-      await axios.get(`http://localhost:5174/bff/user/getById?id=c698dfc2-61a9-46eb-bf7f-0ffb2067b9bd`, {headers: {
+      await axios.get(`http://localhost:5174/bff/user/getById`, {headers: {
         'accept': 'application/json',
         'Content-Type': '*/*',
-        'Authorization': `Bearer ${this.user.access_token}`
+        'Authorization': `Bearer ${this.userToken.access_token}`
       }})
-        .then(response => this.user = response.data.data);
+        .then(response => {
+          console.log(response.data)
+          if (response.data.errors !== null){
+            alert("срок вашего токена истекла");
+            window.location.href = '/logout';
+          }
+          else {
+            this.user = response.data.data
+          }
+        });
 
-      await axios.get(`http://localhost:5174/bff/ad/getAllAdsByUserId?id=c698dfc2-61a9-46eb-bf7f-0ffb2067b9bd`, {headers: {
+      await axios.get(`http://localhost:5174/bff/ad/getAllAdsByUserId?id=${this.user.userId}`, {headers: {
           'accept': 'application/json',
           'Content-Type': '*/*',
-          'Authorization': `Bearer ${this.user.access_token}`
+          'Authorization': `Bearer ${this.userToken.access_token}`
         }})
         .then(response => this.ads = response.data.data);
     }
