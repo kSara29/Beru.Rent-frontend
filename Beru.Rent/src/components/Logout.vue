@@ -27,7 +27,7 @@ export default {
 
         // Redirect the user to the login page
         // Change the route to your login page route
-        this.$router.push('/login');
+        window.location.href = "/";
 
         // Initiate signout redirect
         await this.$userManager.signoutRedirect();
