@@ -57,7 +57,7 @@
 
     <div v-if="user" class="ml-3">
     <!-- Список уведомлении -->
-    <v-btn to="/profile/notifications/c698dfc2-61a9-46eb-bf7f-0ffb2067b9bd">
+    <v-btn to="/profile/notifications/" >
       <v-icon icon="mdi-bell" style="text-decoration: none; color: inherit"></v-icon>
     </v-btn>
     <!-- Создание объявления -->
@@ -71,7 +71,7 @@
         Выйти</router-link>
     </v-btn>
     <!-- Личный кабинет -->
-    <v-btn to="/profile" stacked outlined class="ml-3" >
+    <v-btn to="/profile/" stacked outlined class="ml-3" >
       <router-link to="/profile" style="text-decoration: none; color: inherit">Личный кабинет</router-link>
     </v-btn>
 
