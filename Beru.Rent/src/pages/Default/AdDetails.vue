@@ -3,6 +3,7 @@
     <v-row>
       <v-col cols="12" md="7">
         <v-container v-if="itemData">
+          <p style="color: cadetblue; font-weight: bold;">Категория: {{itemData.category.title }}</p>
           <p class="display-6">{{itemData.title }}</p>
         </v-container>
         <v-carousel hide-delimiters style="height: 500px;">
@@ -11,65 +12,111 @@
             :key="index"
             :src="image"
             contain
-          ></v-carousel-item>
+          >
+       </v-carousel-item>
         </v-carousel>
-
+        <v-container>
+            <v-alert id="alert-error" style="display: none;"
+              density="compact"
+              type="warning"
+              title="Что-то пошло не так"
+            ></v-alert>
+        </v-container>
         <v-container v-if="itemData">
           <h5>Описание товара</h5>
           <p>{{ itemData.description }}</p>
         </v-container>
+        <!--диалоговое окно--> 
+              <v-container>
+              
+        <div class="text-center">
+          <v-dialog
+            v-model="dialog"
+            width="auto"
+          >
+            <v-card>
+              <v-card-text>
+                Ваше бронирование успешно отправлено.
+              </v-card-text>
+              <v-card-actions>
+                <v-btn color="primary" block @click="dialog = false">Ок</v-btn>
+              </v-card-actions>
+            </v-card>
+          </v-dialog>
+        </div>
+      </v-container>
+          <!--диалоговое окно-->
 
-        <v-container>
-          <v-btn style="background-color: darkslategrey; color: white">Показать номер</v-btn>
-          <v-btn style="background-color: #0d194d; color: white; margin-left: 30px">Написать</v-btn>
-          <v-btn @click="book()" style="background-color: #0d194d; color: white; margin-left: 0px; margin-top: 20px;">Оставить заявку на бронирование.</v-btn>
+        <v-container v-if="itemData && itemData.extraConditions">
+          <h5>Особые требования</h5>
+          <p>{{ itemData.extraConditions }}</p>
         </v-container>
-      </v-col>
+        
+        <v-container v-if="itemData">
+  <h5>Нужен ли залог?</h5>
+  <p>{{ itemData.neededDeposit ? 'Да' : 'Нет' }}</p>
+</v-container>
 
-      <v-col cols="12" md="5">
+<v-container v-if="itemData && itemData.neededDeposit">
+  <h5>Стоимость залога</h5>
+  <p>{{ itemData.minDeposit }} Тенге</p>
+</v-container>
+
+        <v-container v-if="itemData">
+          <h5>Дата добавления</h5>
+          <p>{{ itemData.createdAt }}</p>
+        </v-container>
+
+      </v-col>
+<!--КАЛЕНДАРЬ-->
+
+
+          <v-col cols="12" md="5">
         <v-container>
           <p>Выберите период аренды:</p>
           <v-container class="rentPeriod align-center" style="padding: 0px">
-            <v-container class="d-flex align-center justify-content-around rentSubCon">
-              <p :class="{'text-grey': switchValue}">посуточная</p>
-              <v-switch
-                color="primary"
-                v-model="switchValue"
-                style="width: 50px; padding-left: 60px"
-              ></v-switch>
-              <p :class="{'text-grey': !switchValue}">почасовая</p>
-            </v-container>
+
 
             <v-container class="d-flex rentDatePeriod">
               <template v-if="!switchValue">
                 <DadataView @update:date="handleDateUpdate($event)" :key="`dadata-${reRenderTrigger}`" :myParam="parentData"/>
               </template>
-
-              <template v-else>
-                <v-container style="padding: 0px">
-                  <DadataView @update:date="handleDateUpdate($event)" :key="`dadata-${reRenderTrigger}`" :myParam="parentData"/>
-                  <v-text-field variant="solo"></v-text-field>
-                  <v-text-field variant="solo"></v-text-field>
-                </v-container>x
-              </template>
             </v-container>
 
             <v-container v-if="itemData">
-              <p>Аренда ------------------------ {{itemData.price}}</p>
+              <p>Аренда ------------------------ {{itemData.price}} Тенге в {{ itemData.timeUnit.title }}</p>
+            
             </v-container>
+            <v-container v-if="dBeg && dEnd">
+                  <p>Выбранный период аренды:</p>
+                  
+                  <label for="timeBeg">Уточните время начала аренды:</label>
+                  <input type="time" id="timeBeg" name="timeBeg" min="09:00" max="18:00" v-model="timeBeg" @change="updateTime('begin', $event)" required />
+                  <p>Начало: {{ formatDate(dBeg) }} Время {{ timeBeg }}</p>
+                  <hr>
+                  
+                  <label for="timeEnd">Уточните время окончания аренды:</label>
+                  <input type="time" id="timeEnd" name="timeEnd" min="09:00" max="18:00" v-model="timeEnd" @change="updateTime('end', $event)" required />
+                  <p>Конец: {{ formatDate(dEnd) }} Время {{ timeEnd }}</p>
+                 <hr>
+                 <v-continer>
+                  
+                <v-btn v-if="timeEnd&&timeBeg" @click="askForCost()">Рассчитать стоимость аренды</v-btn>
+                <p v-if="bookCost"> Итоговая стоимость: {{ bookCost }} Тенге</p>
+                <v-btn  v-if="timeEnd&&timeBeg" @click="book()" style="background-color: #0d194d; color: white; margin-left: 0px; margin-top: 20px;">Оставить заявку на бронирование</v-btn>
+              </v-continer>
+              </v-container>
+              
           </v-container>
+        </v-container>
+        <v-container>
+<!--КАЛЕНДАРЬ КОНЕЦ-->
         </v-container>
 
         <v-container>
           <v-container class="rentPeriod align-center" style="padding: 0px">
             <v-container class="d-flex align-center justify-content-around rentSubCon">
-              <p :class="{'text-grey': switchValueDelivery}">Самовывоз</p>
-              <v-switch
-                color="primary"
-                v-model="switchValueDelivery"
-                style="width: 50px; padding-left: 60px"
-              ></v-switch>
-              <p :class="{'text-grey': !switchValueDelivery}">Доставка</p>
+              <p :class="{'text-grey': switchValueDelivery}" prepend-icon="mdi-image-multiple">Самовывоз</p>
             </v-container>
 
             <v-container class="d-flex rentDatePeriod" v-if="itemData">
@@ -77,21 +124,6 @@
                 <v-container style="background-color: #9b9c9e; border-radius: 15px; margin-bottom: 30px">
                   <p>Адрес товара: {{itemData.addressExtra.country}}, {{itemData.addressExtra.city}}, {{itemData.addressExtra.street}},
                   {{itemData.addressExtra.house}}</p>
-                </v-container>
-              </template>
-
-              <template v-else>
-                <v-container>
-                  <v-container style="padding: 0px">
-<!--                    <v-text-field v-model="userInput" label="Адрес доставки" variant="solo"></v-text-field>-->
-                    <div>
-                      <AutocompleteComponent/>
-                    </div>
-                  </v-container>
-                  <v-container style="padding: 0px">
-                    <v-text-field label="Подъезд" variant="solo"></v-text-field>
-                    <v-text-field label="квартира" variant="solo"></v-text-field>
-                  </v-container>
                 </v-container>
               </template>
             </v-container>
@@ -104,6 +136,18 @@
   </v-container>
   <v-btn></v-btn>
   <AutoComplete v-model="userInput" :suggestions="suggestions" @complete="search" />
+  <v-overlay
+      :model-value="overlay"
+      class="align-center justify-center"
+    >
+      <v-progress-circular
+        color="primary"
+        indeterminate
+        size="64"
+      ></v-progress-circular>
+    </v-overlay>
+
+
 
 </template>
 
@@ -124,6 +168,11 @@ export default {
   },
   data() {
     return {
+      bookCost:'',
+      timeBeg:'',
+      timeEnd: '',
+      dialog: false,
+      overlay: false,
       itemData: null,
       itemId: null,
       carouselImages: [],
@@ -139,9 +188,17 @@ export default {
       chosen: '',
       suggestions: [],
       dBeg: new Date(),
-      dEnd: new Date()
+      dEnd: new Date(),
+      value: ''
     };
   },
+  watch: {
+      overlay (val) {
+        val && setTimeout(() => {
+          this.overlay = false
+        }, 3000)
+      },
+    },
   created() {
     this.itemId = this.$route.params.id;
     this.fetchItemData();
@@ -164,6 +221,7 @@ export default {
     fetchItemData() {
       const itemId = this.$route.params.id;
       console.log('??' + itemId);
+      this.overlay = true
       axios.get(`http://localhost:5174/bff/ad/getById?Id=${itemId}`)
         .then(response => {
           this.itemData = response.data.data;
@@ -171,7 +229,6 @@ export default {
           this.parentData = response.data.data.id
 
           ymaps.ready(() => {
-            // eslint-disable-next-line no-unused-vars
             var map = new ymaps.Map("yandexMap", {
               center: [this.itemData.addressExtra.latitude, this.itemData.addressExtra.longitude],
               zoom: 17
@@ -179,7 +236,36 @@ export default {
           });
         })
         .catch(error => {
+          const element = document.getElementById('alert-error');
+          if (element) {
+             element.style.display = 'block'; 
+            }
           console.error('Ошибка при загрузке данных товара:', error);
+        })
+          .finally(() => {
+        this.overlay = false; 
+      });
+    },
+    askForCost(){
+      axios.get('http://localhost:5174/bff/ad/getAdCost/', {
+          params: {
+            adId: this.itemId,
+            dbeg: this.dBeg,
+            dend: this.dEnd
+          }
+        })
+        .then(response => {
+          // Handle successful response
+          console.log(response.data);
+          if (response.data.status === 0) {
+            this.bookCost = response.data.data.number;
+          } else {
+            console.error('Error occurred:', response.data.errors);
+          }
+        })
+        .catch(error => {
+          // Handle error
+          console.error('Error occurred:', error);
         });
     },
     prepareCarouselImages(byteArray) {
@@ -205,9 +291,35 @@ export default {
         let k1 = row1, k2 = row2;
         return (k1 > k2) ? 1 : ( (k2 > k1) ? -1 : 0 );
       });
-      this.dBeg = event[0].toJSON();
-      this.dEnd = event[event.length - 1].toJSON();
+      this.dBeg = event[0];
+      this.dEnd = event[event.length - 1];
     },
+
+
+    updateTime(type, event) {
+      if (type === 'begin') {
+        this.timeBeg = event.target.value;
+        const [hoursStr, minutesStr] = this.timeBeg.split(':');
+        const hours = parseInt(hoursStr, 10);
+        const minutes = parseInt(minutesStr, 10);
+        this.dBeg.setHours(hours);
+        this.dBeg.setMinutes(minutes);
+        this.dBeg.toJSON();
+      } else if (type === 'end') {
+        this.timeEnd = event.target.value;
+        const [hoursStr, minutesStr] = this.timeEnd.split(':');
+        const hours = parseInt(hoursStr, 10);
+        const minutes = parseInt(minutesStr, 10);
+        this.dEnd.setHours(hours);
+        this.dEnd.setMinutes(minutes);
+        this.dEnd.toJSON();
+    }
+  },
+   formatDate(date) {
+  const options = { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' };
+  const formattedDate = date.toLocaleDateString('ru-Ru', options);
+  return formattedDate;
+},
     book(){
       console.log(this.itemData)
       axios.post(`http://localhost:5174/bff/booking/create`,
@@ -221,7 +333,16 @@ export default {
             'Content-Type': 'application/json',
             'Authorization': `Bearer ${this.user.access_token}`
         }})
-        .then(result => console.log(result))
+        .then(result => {console.log(result);
+          if (result.data.data != null){
+            this.dialog = true
+          } else {
+            const element = document.getElementById('alert-error');
+          if (element) {
+             element.style.display = 'block'; 
+            }
+          }
+          })
     }
   }
 };

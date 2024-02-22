@@ -4,7 +4,7 @@
       v-model="searchQuery"
       :suggestions="suggestions"
       @complete="search"
-      placeholder="Адрес доставки"
+      placeholder="Введите адрес"
     />
   </div>
 </template>
