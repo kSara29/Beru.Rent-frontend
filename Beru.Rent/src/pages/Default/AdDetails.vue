@@ -1,6 +1,6 @@
 <template>
   <v-container>
-  <v-alert
+  <v-alert id="alert-error" style="display: none;"
     density="compact"
     type="warning"
     title="Что-то пошло не так"
@@ -176,7 +176,6 @@ export default {
       timeBeg:'',
       timeEnd: '',
       dialog: false,
-      alert:false,
       overlay: false,
       itemData: null,
       itemId: null,
@@ -234,7 +233,6 @@ export default {
           this.parentData = response.data.data.id
 
           ymaps.ready(() => {
-            // eslint-disable-next-line no-unused-vars
             var map = new ymaps.Map("yandexMap", {
               center: [this.itemData.addressExtra.latitude, this.itemData.addressExtra.longitude],
               zoom: 17
@@ -242,7 +240,10 @@ export default {
           });
         })
         .catch(error => {
-          this.alert=true;
+          const element = document.getElementById('alert-error');
+          if (element) {
+             element.style.display = 'block'; 
+            }
           console.error('Ошибка при загрузке данных товара:', error);
         })
           .finally(() => {
