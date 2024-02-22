@@ -153,7 +153,7 @@
       </li>
     </ul>
     </div>
-
+<AutocompleteComponent />
 
 
 
@@ -191,6 +191,8 @@
 
         </v-form>
       </v-sheet>
+
+
       <v-overlay
       :model-value="overlay"
       class="align-center justify-center"
@@ -206,221 +208,218 @@
 </template>
 <script>
 import axios from "axios";
+import AutocompleteComponent from "@/components/Autocomplete/AutocompleteComponent.vue";
 export default {
-  computed: {
-    user() {
-      return this.$store.getters.getUser;
-    }
-  },
-  data() {
-    return {
-      overlay: false,
-      searchQuery: '',
-      suggestions: [],
-      showSuggestions: false,
-      typingTimeout: null,
-      selectedSuggestion: null,
-      addressInfo: null,
-
-      files: [],
-      displayFiles: [],
-      title: '',
-      titleRules: [
-        value => !!value || 'Название обязательно',
-        value => value.length < 30 || 'Название не должно быть больше 30 символов',
-        value => value.length > 3 || 'Название должно содержать хотя бы 3 букв'
-      ],
-      description: '',
-      descriptionRules: [
-        value => !!value || 'Описание обязательно',
-        value => value.length > 50 || `Описание должно содержать более 50 символов! У вас ${value.length}/50`
-      ],
-      extraConditions: '',
-      conditionRules: [],
-      addressString: '',
-      address: [
-        value => !!value || 'Адрес обязателен'
-      ],
-      deposit: false,
-      minDeposit: 0,
-      minimumDepositRules: [
-        value => !!value || 'Введите сумму минимального залога'
-      ],
-      price: '',
-      priceRules: [
-        value => {
-          const pattern = /^[0-9]{0,100}$/
-          return pattern.test(value) || "Цена может содержать только цифры!"
+    computed: {
+        user() {
+            return this.$store.getters.getUser;
         }
-      ],
-      categoryId: '',
-      categories: [],
-      contractTypeId: '',
-      contracts: ['Недвижимость', 'Движимое имущество'],
-      timeunitId: '',
-      timeunit: '',
-      tags:''
-    }
+    },
+    components:{
+    AutocompleteComponent
   },
-  watch: {
-      overlay (val) {
-        val && setTimeout(() => {
-          this.overlay = false
-        }, 3000)
-      },
+    data() {
+        return {
+            overlay: false,
+            searchQuery: '',
+            suggestions: [],
+            showSuggestions: false,
+            typingTimeout: null,
+            selectedSuggestion: null,
+            addressInfo: null,
+            files: [],
+            displayFiles: [],
+            title: '',
+            titleRules: [
+                value => !!value || 'Название обязательно',
+                value => value.length < 30 || 'Название не должно быть больше 30 символов',
+                value => value.length > 3 || 'Название должно содержать хотя бы 3 букв'
+            ],
+            description: '',
+            descriptionRules: [
+                value => !!value || 'Описание обязательно',
+                value => value.length > 50 || `Описание должно содержать более 50 символов! У вас ${value.length}/50`
+            ],
+            extraConditions: '',
+            conditionRules: [],
+            addressString: '',
+            address: [
+                value => !!value || 'Адрес обязателен'
+            ],
+            deposit: false,
+            minDeposit: 0,
+            minimumDepositRules: [
+                value => !!value || 'Введите сумму минимального залога'
+            ],
+            price: '',
+            priceRules: [
+                value => {
+                    const pattern = /^[0-9]{0,100}$/;
+                    return pattern.test(value) || "Цена может содержать только цифры!";
+                }
+            ],
+            categoryId: '',
+            categories: [],
+            contractTypeId: '',
+            contracts: ['Недвижимость', 'Движимое имущество'],
+            timeunitId: '',
+            timeunit: '',
+            tags: ''
+        };
     },
-  methods: {
-    handleInput() {
-      clearTimeout(this.typingTimeout);
-      if (this.searchQuery.length >= 5) {
-        this.typingTimeout = setTimeout(this.fetchSuggestions, 2000);
-      } else {
-        this.suggestions = [];
-        this.showSuggestions = false;
-      }
+    watch: {
+        overlay(val) {
+            val && setTimeout(() => {
+                this.overlay = false;
+            }, 3000);
+        },
     },
-    fetchSuggestions() {
-      const apiUrl = `https://suggest-maps.yandex.ru/v1/suggest?apikey=8abf69e1-ed41-498f-af8e-e2f3b86fadc4&text=${encodeURIComponent(this.searchQuery)}`;
-      axios.get(apiUrl)
-        .then(response => {
-          this.suggestions = response.data.results;
-          this.showSuggestions = true;
-        })
-        .catch(error => {
-          console.error('Error fetching address suggestions:', error);
-        });
-    },
-    selectSuggestion(suggestion) {
-      this.searchQuery = suggestion.title.text;
-      this.selectedSuggestion = suggestion;
-      this.suggestions = [];
-      this.showSuggestions = false;
-      this.submitAddress(suggestion.title.text); // Pass the selected address to submitAddress method
-    },
-    submitAddress(address) {
-      const apiUrl = `https://geocode-maps.yandex.ru/1.x/?apikey=5570fbc5-a3de-4dd6-9158-221866f70379&geocode=${address}`;
-
-      axios.get(apiUrl)
-        .then(response => {
-          const parser = new DOMParser();
-          const xmlDoc = parser.parseFromString(response.data, 'text/xml');
-
-          const country = xmlDoc.getElementsByTagName('CountryName')[0].textContent;
-          const region = xmlDoc.getElementsByTagName('AdministrativeAreaName')[0].textContent;
-          const city = xmlDoc.getElementsByTagName('LocalityName')[0].textContent;
-          const street = xmlDoc.getElementsByTagName('ThoroughfareName')[0].textContent;
-          const building = xmlDoc.getElementsByTagName('PremiseNumber')[0].textContent;
-          const postindex = xmlDoc.getElementsByTagName('postal_code')[0].textContent;
-          const pos = xmlDoc.getElementsByTagName('pos')[0].textContent.split(' ');
-
-          this.addressInfo = {
-            country: country,
-            region: region,
-            city: city,
-            street: street,
-            building: building,
-            postindex: postindex,
-            lat: pos[1],
-            lon: pos[0]
-          };
-        })
-        .catch(error => {
-          console.error('Error fetching address information:', error);
-        });
-    },
-    async sendForm() {
-  const ans = await this.$refs.adForm.validate();
-  if (ans.valid === false) {
-    alert('Форма заполнена неправильно!');
-    return;
-  }
-
-  // Create a new FormData object
-  const formData = new FormData();
-
-  // Append fields to the FormData object
-  formData.append('userId', null);
-  formData.append('title', this.title);
-  formData.append('description', this.description);
-  formData.append('extraConditions', this.extraConditions);
-  formData.append('neededDeposit', this.deposit);
-  formData.append('minDeposit', parseInt(this.minDeposit));
-  formData.append('price', parseInt(this.price));
-  formData.append('categoryId', this.categoryId);
-  formData.append('timeUnitId', this.timeunitId);
-  formData.append('contractTypeId', parseInt(this.contractTypeId));
-  formData.append('tags', this.tags);
-
-  // Append files to the FormData object
-  this.files.forEach(file => {
-    formData.append('files', file); // Assuming this.files is an array of File objects
-  });
-
-  // Append address details to the FormData object
-  formData.append('street', this.addressInfo.street);
-  formData.append('house', this.addressInfo.building);
-  formData.append('country', this.addressInfo.country);
-  formData.append('city', this.addressInfo.city);
-  formData.append('region', this.addressInfo.region);
-  formData.append('postindex', this.addressInfo.postindex);
-  formData.append('latitude', this.addressInfo.lat);
-  formData.append('longitude', this.addressInfo.lon);
-  formData.append('tags', this.addressInfo.lon);
-
-
-  // Now you can send this formData in your HTTP request
-  this.overlay = true
-  axios.post('http://localhost:5174/bff/ad/create', formData, {
-    headers: {
-      'Content-Type': 'multipart/form-data',
-      'Authorization': `Bearer ${this.user.access_token}`
-    }
-  }).then(response => {
-    console.log(response); 
-  if (response.status === 200 && response.data && response.data.data && response.data.data.id) {
-    const id = response.data.data.id;
-    const redirectUrl = '/details/' + id; 
-    window.location.href = redirectUrl;
-  } else {
-    // Handle the case where the response is not as expected
-    console.error('Не получилось поймать объявление ID');
-  }
-})
-    .catch(error => console.error(error))
-},
-    async get() {
-      await axios.get('http://localhost:5174/bff/timeunit/get')
-        .then(response => this.timeunit = response.data.data);
-      await axios.get('http://localhost:5174/bff/category/get')
-        .then(response => this.categories = response.data.data);
-    },
-    removeFile() {
-      this.displayFiles.splice(-1);
-      this.files.splice(-1);
-    },
-    addFiles() {
-      const length = this.files.length;
-      for (let i = 0; i < length; i++) {
-        this.displayFiles.push(URL.createObjectURL(this.files[i]))
-      }
-    },
-    setContractType(value) {
-      for (let i = 0; i < this.contracts.length; i++) {
-        if (this.contracts[i] === value) {
-          this.contractTypeId = i;
+    methods: {
+        handleInput() {
+            clearTimeout(this.typingTimeout);
+            if (this.searchQuery.length >= 5) {
+                this.typingTimeout = setTimeout(this.fetchSuggestions, 2000);
+            }
+            else {
+                this.suggestions = [];
+                this.showSuggestions = false;
+            }
+        },
+        fetchSuggestions() {
+            const apiUrl = `https://suggest-maps.yandex.ru/v1/suggest?apikey=8abf69e1-ed41-498f-af8e-e2f3b86fadc4&text=${encodeURIComponent(this.searchQuery)}`;
+            axios.get(apiUrl)
+                .then(response => {
+                this.suggestions = response.data.results;
+                this.showSuggestions = true;
+            })
+                .catch(error => {
+                console.error('Error fetching address suggestions:', error);
+            });
+        },
+        selectSuggestion(suggestion) {
+            this.searchQuery = suggestion.title.text;
+            this.selectedSuggestion = suggestion;
+            this.suggestions = [];
+            this.showSuggestions = false;
+            this.submitAddress(suggestion.title.text); // Pass the selected address to submitAddress method
+        },
+        submitAddress(address) {
+            const apiUrl = `https://geocode-maps.yandex.ru/1.x/?apikey=5570fbc5-a3de-4dd6-9158-221866f70379&geocode=${address}`;
+            axios.get(apiUrl)
+                .then(response => {
+                const parser = new DOMParser();
+                const xmlDoc = parser.parseFromString(response.data, 'text/xml');
+                const country = xmlDoc.getElementsByTagName('CountryName')[0].textContent;
+                const region = xmlDoc.getElementsByTagName('AdministrativeAreaName')[0].textContent;
+                const city = xmlDoc.getElementsByTagName('LocalityName')[0].textContent;
+                const street = xmlDoc.getElementsByTagName('ThoroughfareName')[0].textContent;
+                const building = xmlDoc.getElementsByTagName('PremiseNumber')[0].textContent;
+                const postindex = xmlDoc.getElementsByTagName('postal_code')[0].textContent;
+                const pos = xmlDoc.getElementsByTagName('pos')[0].textContent.split(' ');
+                this.addressInfo = {
+                    country: country,
+                    region: region,
+                    city: city,
+                    street: street,
+                    building: building,
+                    postindex: postindex,
+                    lat: pos[1],
+                    lon: pos[0]
+                };
+            })
+                .catch(error => {
+                console.error('Error fetching address information:', error);
+            });
+        },
+        async sendForm() {
+            const ans = await this.$refs.adForm.validate();
+            if (ans.valid === false) {
+                alert('Форма заполнена неправильно!');
+                return;
+            }
+            // Create a new FormData object
+            const formData = new FormData();
+            // Append fields to the FormData object
+            formData.append('userId', null);
+            formData.append('title', this.title);
+            formData.append('description', this.description);
+            formData.append('extraConditions', this.extraConditions);
+            formData.append('neededDeposit', this.deposit);
+            formData.append('minDeposit', parseInt(this.minDeposit));
+            formData.append('price', parseInt(this.price));
+            formData.append('categoryId', this.categoryId);
+            formData.append('timeUnitId', this.timeunitId);
+            formData.append('contractTypeId', parseInt(this.contractTypeId));
+            formData.append('tags', this.tags);
+            // Append files to the FormData object
+            this.files.forEach(file => {
+                formData.append('files', file); // Assuming this.files is an array of File objects
+            });
+            // Append address details to the FormData object
+            formData.append('street', this.addressInfo.street);
+            formData.append('house', this.addressInfo.building);
+            formData.append('country', this.addressInfo.country);
+            formData.append('city', this.addressInfo.city);
+            formData.append('region', this.addressInfo.region);
+            formData.append('postindex', this.addressInfo.postindex);
+            formData.append('latitude', this.addressInfo.lat);
+            formData.append('longitude', this.addressInfo.lon);
+            formData.append('tags', this.addressInfo.lon);
+            // Now you can send this formData in your HTTP request
+            this.overlay = true;
+            axios.post('http://localhost:5174/bff/ad/create', formData, {
+                headers: {
+                    'Content-Type': 'multipart/form-data',
+                    'Authorization': `Bearer ${this.user.access_token}`
+                }
+            }).then(response => {
+                console.log(response);
+                if (response.status === 200 && response.data && response.data.data && response.data.data.id) {
+                    const id = response.data.data.id;
+                    const redirectUrl = '/details/' + id;
+                    window.location.href = redirectUrl;
+                }
+                else {
+                    // Handle the case where the response is not as expected
+                    console.error('Не получилось поймать объявление ID');
+                }
+            })
+                .catch(error => console.error(error));
+        },
+        async get() {
+            await axios.get('http://localhost:5174/bff/timeunit/get')
+                .then(response => this.timeunit = response.data.data);
+            await axios.get('http://localhost:5174/bff/category/get')
+                .then(response => this.categories = response.data.data);
+        },
+        removeFile() {
+            this.displayFiles.splice(-1);
+            this.files.splice(-1);
+        },
+        addFiles() {
+            const length = this.files.length;
+            for (let i = 0; i < length; i++) {
+                this.displayFiles.push(URL.createObjectURL(this.files[i]));
+            }
+        },
+        setContractType(value) {
+            for (let i = 0; i < this.contracts.length; i++) {
+                if (this.contracts[i] === value) {
+                    this.contractTypeId = i;
+                }
+            }
+        },
+        itemProps(item) {
+            return {
+                title: item.title,
+                value: item.id
+            };
         }
-      }
     },
-    itemProps(item) {
-      return {
-        title: item.title,
-        value: item.id
-      }
-    }
-  },
-  mounted() {
-    this.get()
-  },
+    mounted() {
+        this.get();
+    },
+    components: { AutoComplete }
 };
 </script>
 
