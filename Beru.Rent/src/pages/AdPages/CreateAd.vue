@@ -132,29 +132,28 @@
               @update:modelValue="setContractType($event)">
             </v-select>
           </div>
+
           <div class="form-group">
             <div class="autocomplete-wrapper v-field__input">
-    <v-text-field
-      clearable
-      variant="outlined"
-      prepend-icon="mdi-map-marker"
-      v-model="searchQuery"
-      name="searchQuery"
-      label="Введите адрес одной строкой"
-      :rules="address"
-      hide-details="auto"
-      @input="handleInput"
-      placeholder="Введите адрес"
-    ></v-text-field>
-
+              <v-text-field
+                clearable
+                variant="outlined"
+                prepend-icon="mdi-map-marker"
+                v-model="searchQuery"
+                name="searchQuery"
+                label="Введите адрес одной строкой"
+                :rules="address"
+                hide-details="auto"
+                @input="handleInput"
+                placeholder="Введите адрес"
+              ></v-text-field>
+            </div>
     <ul v-if="showSuggestions" class="suggestions-list">
       <li v-for="(suggestion, index) in suggestions" :key="index" @click="selectSuggestion(suggestion)">
         {{ suggestion.title.text }}, {{ suggestion.subtitle.text }}
       </li>
-    </ul>
-    </div>
-<AutocompleteComponent />
-
+    </ul> 
+    
 
 
     <!-- Display address information -->
@@ -208,16 +207,12 @@
 </template>
 <script>
 import axios from "axios";
-import AutocompleteComponent from "@/components/Autocomplete/AutocompleteComponent.vue";
 export default {
     computed: {
         user() {
             return this.$store.getters.getUser;
         }
     },
-    components:{
-    AutocompleteComponent
-  },
     data() {
         return {
             overlay: false,
@@ -418,8 +413,18 @@ export default {
     },
     mounted() {
         this.get();
-    },
-    components: { AutoComplete }
+    }
 };
 </script>
 
+<style>
+.suggestions-list{
+  border:1px;
+  z-index: 100px;
+}
+ul {
+  list-style-type: none;
+  border-color: aquamarine;
+}
+
+</style>
