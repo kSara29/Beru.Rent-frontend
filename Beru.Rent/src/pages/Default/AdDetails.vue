@@ -1,4 +1,12 @@
 <template>
+  <v-container>
+  <v-alert
+    density="compact"
+    type="warning"
+    title="Что-то пошло не так"
+    text="Не получилось загрузить данные по этому объявлению. Проверьте, существует ли оно?"
+  ></v-alert></v-container>
+
   <v-container class="d-flex">
     <v-row>
       <v-col cols="12" md="7">
@@ -82,13 +90,27 @@
 
             <v-container v-if="itemData">
               <p>Аренда ------------------------ {{itemData.price}} Тенге в {{ itemData.timeUnit.title }}</p>
-              <v-container v-if="dBeg && dEnd">
-                  <p>Выбранный период аренды:</p>
-                  <p>Начало: {{ dBeg }}</p>
-                  <p>Конец: {{ dEnd }}</p>
-
-              </v-container>
+            
             </v-container>
+            <v-container v-if="dBeg && dEnd">
+                  <p>Выбранный период аренды:</p>
+                  
+                  <label for="timeBeg">Уточните время начала аренды:</label>
+                  <input type="time" id="timeBeg" name="timeBeg" min="09:00" max="18:00" v-model="timeBeg" @change="updateTime('begin', $event)" required />
+                  <p>Начало: {{ formatDate(dBeg) }} Время {{ timeBeg }}</p>
+                  <hr>
+                  
+                  <label for="timeEnd">Уточните время окончания аренды:</label>
+                  <input type="time" id="timeEnd" name="timeEnd" min="09:00" max="18:00" v-model="timeEnd" @change="updateTime('end', $event)" required />
+                  <p>Конец: {{ formatDate(dEnd) }} Время {{ timeEnd }}</p>
+                 <hr>
+                 <v-continer>
+                  
+                <v-btn v-if="timeEnd&&timeBeg" @click="askForCost()">Рассчитать стоимость аренды</v-btn>
+                <p v-if="bookCost"> Итоговая стоимость: {{ bookCost }} Тенге</p>
+              </v-continer>
+              </v-container>
+              
           </v-container>
         </v-container>
         <v-container>
@@ -150,7 +172,11 @@ export default {
   },
   data() {
     return {
+      bookCost:'',
+      timeBeg:'',
+      timeEnd: '',
       dialog: false,
+      alert:false,
       overlay: false,
       itemData: null,
       itemId: null,
@@ -216,11 +242,34 @@ export default {
           });
         })
         .catch(error => {
+          this.alert=true;
           console.error('Ошибка при загрузке данных товара:', error);
         })
           .finally(() => {
         this.overlay = false; 
       });
+    },
+    askForCost(){
+      axios.get('http://localhost:5174/bff/ad/getAdCost/', {
+          params: {
+            adId: this.itemId,
+            dbeg: this.dBeg,
+            dend: this.dEnd
+          }
+        })
+        .then(response => {
+          // Handle successful response
+          console.log(response.data);
+          if (response.data.status === 0) {
+            this.bookCost = response.data.data.number;
+          } else {
+            console.error('Error occurred:', response.data.errors);
+          }
+        })
+        .catch(error => {
+          // Handle error
+          console.error('Error occurred:', error);
+        });
     },
     prepareCarouselImages(byteArray) {
       this.carouselImages = byteArray.map(byteArray => `data:image/jpeg;base64,${byteArray}`);
@@ -245,9 +294,35 @@ export default {
         let k1 = row1, k2 = row2;
         return (k1 > k2) ? 1 : ( (k2 > k1) ? -1 : 0 );
       });
-      this.dBeg = event[0].toJSON();
-      this.dEnd = event[event.length - 1].toJSON();
+      this.dBeg = event[0];
+      this.dEnd = event[event.length - 1];
     },
+
+
+    updateTime(type, event) {
+      if (type === 'begin') {
+        this.timeBeg = event.target.value;
+        const [hoursStr, minutesStr] = this.timeBeg.split(':');
+        const hours = parseInt(hoursStr, 10);
+        const minutes = parseInt(minutesStr, 10);
+        this.dBeg.setHours(hours);
+        this.dBeg.setMinutes(minutes);
+        this.dBeg.toJSON();
+      } else if (type === 'end') {
+        this.timeEnd = event.target.value;
+        const [hoursStr, minutesStr] = this.timeEnd.split(':');
+        const hours = parseInt(hoursStr, 10);
+        const minutes = parseInt(minutesStr, 10);
+        this.dEnd.setHours(hours);
+        this.dEnd.setMinutes(minutes);
+        this.dEnd.toJSON();
+    }
+  },
+   formatDate(date) {
+  const options = { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' };
+  const formattedDate = date.toLocaleDateString('ru-Ru', options);
+  return formattedDate;
+},
     book(){
       console.log(this.itemData)
       axios.post(`http://localhost:5174/bff/booking/create`,
