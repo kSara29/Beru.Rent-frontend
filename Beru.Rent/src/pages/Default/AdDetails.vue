@@ -1,12 +1,4 @@
 <template>
-  <v-container>
-  <v-alert id="alert-error" style="display: none;"
-    density="compact"
-    type="warning"
-    title="Что-то пошло не так"
-    text="Не получилось загрузить данные по этому объявлению. Проверьте, существует ли оно?"
-  ></v-alert></v-container>
-
   <v-container class="d-flex">
     <v-row>
       <v-col cols="12" md="7">
@@ -23,7 +15,13 @@
           >
        </v-carousel-item>
         </v-carousel>
-
+        <v-container>
+            <v-alert id="alert-error" style="display: none;"
+              density="compact"
+              type="warning"
+              title="Что-то пошло не так"
+            ></v-alert>
+        </v-container>
         <v-container v-if="itemData">
           <h5>Описание товара</h5>
           <p>{{ itemData.description }}</p>
@@ -69,9 +67,6 @@
           <p>{{ itemData.createdAt }}</p>
         </v-container>
 
-        <v-container>
-          <v-btn @click="book()" style="background-color: #0d194d; color: white; margin-left: 0px; margin-top: 20px;">Оставить заявку на бронирование</v-btn>
-        </v-container>
       </v-col>
 <!--КАЛЕНДАРЬ-->
 
@@ -108,6 +103,7 @@
                   
                 <v-btn v-if="timeEnd&&timeBeg" @click="askForCost()">Рассчитать стоимость аренды</v-btn>
                 <p v-if="bookCost"> Итоговая стоимость: {{ bookCost }} Тенге</p>
+                <v-btn  v-if="timeEnd&&timeBeg" @click="book()" style="background-color: #0d194d; color: white; margin-left: 0px; margin-top: 20px;">Оставить заявку на бронирование</v-btn>
               </v-continer>
               </v-container>
               
@@ -338,7 +334,15 @@ export default {
             'Authorization': `Bearer ${this.user.access_token}`
         }})
         .then(result => {console.log(result);
-          this.dialog = true})
+          if (result.data.data != null){
+            this.dialog = true
+          } else {
+            const element = document.getElementById('alert-error');
+          if (element) {
+             element.style.display = 'block'; 
+            }
+          }
+          })
     }
   }
 };
