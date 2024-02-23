@@ -4,19 +4,19 @@
     <v-divider></v-divider>
     <!-- Заявки на бронирования к юзеру -->
     <button @click="rotate('icon-arrow-my')" class="d-inline-flex align-items-center rounded my-btn" data-bs-toggle="collapse" data-bs-target="#to-me" aria-expanded="false" aria-current="false">
-      <v-icon id="icon-arrow-my" icon="mdi-arrow-right-bold"></v-icon> Предложения ко мне
+      <v-icon id="icon-arrow-my" icon="mdi-arrow-right-bold"></v-icon> Мои бронирования
     </button>
     <div class="collapse" id="to-me" style="">
       <v-list class="list-unstyled fw-normal pb-1 small">
         <v-icon icon=""></v-icon>
-        <v-list-item class="align-items-center rounded invisible-item" link v-for="not in myNotifications" prepend-icon="mdi-exclamation" :title="'От: ' + not.ownerName" :subtitle="'Сумма: '
+        <v-list-item class="align-items-center rounded invisible-item" link v-for="not in myNotifications" prepend-icon="mdi-exclamation" :title="'Владелец: ' + not.ownerName" :subtitle="'Сумма: '
         + not.cost" @click="getAd(not)"></v-list-item>
       </v-list>
     </div>
 
     <!-- Заявки на бронирование от юзера -->
     <button @click="rotate('icon-arrow-from-me')" class="d-inline-flex align-items-center rounded my-btn" data-bs-toggle="collapse" data-bs-target="#from-me" aria-expanded="false" aria-current="false">
-      <v-icon id="icon-arrow-from-me" icon="mdi-arrow-right-bold"></v-icon> Предложения от меня
+      <v-icon id="icon-arrow-from-me" icon="mdi-arrow-right-bold"></v-icon> Заявки на бронирования
     </button>
     <div class="collapse" id="from-me" style="">
       <v-list class="list-unstyled fw-normal pb-1 small">
@@ -55,6 +55,9 @@
         <p class="card-text">Цена: {{ad.price}}</p>
         <p class="card-text"><small class="text-muted">{{today}}</small></p>
       </div>
+      <v-btn :to="'/details/' + this.ad.id" :width="350" stacked outlined class="ml-3">
+      <router-link :to="'/details/' + this.ad.id" style="text-decoration: none; color: red;">Перейти к объявлению</router-link>
+    </v-btn>
     </div>
   </v-navigation-drawer>
   <v-navigation-drawer :width="550">
@@ -64,15 +67,13 @@
       <v-btn @click="answer(false)" :width="350" stacked outlined class="ml-3">Отказать</v-btn> <br/> <br/>
     </div>
     <div v-if="this.currentNot.bookingState === 'Accept'">
-      <v-btn to="/user/deals" :width="350" stacked outlined class="ml-3">Перейти на страницу сделки</v-btn> <br/> <br/>
-      <v-btn to="/chat" :width="350" stacked outlined class="ml-3">Открыть чат</v-btn> <br/> <br/>
+      <v-btn to="/user/deals" :width="350" stacked outlined class="ml-3">Перейти на страницу мои сделки</v-btn> <br/> <br/>
+      <!-- <v-btn to="/chat" :width="350" stacked outlined class="ml-3">Открыть чат</v-btn> <br/> <br/> -->
     </div>
-    <v-btn to="/profile/" :width="350" stacked outlined class="ml-3">
+    <!-- <v-btn to="/profile/" :width="350" stacked outlined class="ml-3">
       <router-link to="/profile/" style="text-decoration: none; color: red; text-align: center">Перейти к профилью пользователья</router-link>
-    </v-btn> <br/> <br/>
-    <v-btn :to="'/details/' + this.ad.id" :width="350" stacked outlined class="ml-3">
-      <router-link :to="'/details/' + this.ad.id" style="text-decoration: none; color: red;">Перейти к объявлению</router-link>
-    </v-btn>
+    </v-btn>  --><br/> <br/>
+    
   </v-navigation-drawer>
 </template>
 
@@ -122,7 +123,7 @@ export default {
           }
         });
 
-      await axios.get(`http://localhost:5174/bff/booking/getalltenantbookings/?id=${this.user.userId}&page=1`, {
+      await axios.get(`http://localhost:5174/bff/booking/getalltenantbookings/?id=${this.userToken.profile.sub}&page=1`, {
         headers: {
           'accept': 'text/plain',
           'Content-Type': 'application/json',
@@ -134,7 +135,7 @@ export default {
           this.getAd(response.data.data.dealPageDto[0])
         });
 
-      await axios.get(`http://localhost:5174/bff/booking/getallbookings/?id=${this.user.userId}&page=1`, {
+      await axios.get(`http://localhost:5174/bff/booking/getallbookings/?id=${this.userToken.profile.sub}&page=1`, {
         headers: {
           'accept': 'text/plain',
           'Content-Type': 'application/json',

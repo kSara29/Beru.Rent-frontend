@@ -4,17 +4,15 @@
       <v-col cols="12" md="7">
         <v-container v-if="itemData">
           <p style="color: cadetblue; font-weight: bold;">Категория: {{itemData.category.title }}</p>
+          <p v-if="!showbookingOpt" style="color: cadetblue; font-weightrgb(11, 134, 30)">Это ваше объявление</p>
           <p class="display-6">{{itemData.title }}</p>
         </v-container>
-        <v-carousel hide-delimiters style="height: 500px;">
-          <v-carousel-item
-            v-for="(image, index) in carouselImages"
-            :key="index"
-            :src="image"
-            contain
-          >
-       </v-carousel-item>
-        </v-carousel>
+
+
+        <v-carousel hide-delimiters style="height: 500px;" v-if="carouselImages.length > 0">
+    <v-carousel-item v-for="(image, index) in carouselImages" :key="index" :src="image" contain></v-carousel-item>
+</v-carousel>
+
         <v-container>
             <v-alert id="alert-error" style="display: none;"
               density="compact"
@@ -87,7 +85,7 @@
               <p>Аренда ------------------------ {{itemData.price}} Тенге в {{ itemData.timeUnit.title }}</p>
             
             </v-container>
-            <v-container v-if="dBeg && dEnd">
+            <v-container v-if="dBeg && dEnd && showbookingOpt">
                   <p>Выбранный период аренды:</p>
                   
                   <label for="timeBeg">Уточните время начала аренды:</label>
@@ -189,7 +187,8 @@ export default {
       suggestions: [],
       dBeg: new Date(),
       dEnd: new Date(),
-      value: ''
+      value: '',
+      showbookingOpt: true
     };
   },
   watch: {
@@ -225,9 +224,11 @@ export default {
       axios.get(`http://localhost:5174/bff/ad/getById?Id=${itemId}`)
         .then(response => {
           this.itemData = response.data.data;
+          if(this.itemData.userId == this.user.profile.sub){
+            this.showbookingOpt=false;
+          }
           this.prepareCarouselImages(this.itemData.files);
           this.parentData = response.data.data.id
-
           ymaps.ready(() => {
             var map = new ymaps.Map("yandexMap", {
               center: [this.itemData.addressExtra.latitude, this.itemData.addressExtra.longitude],
