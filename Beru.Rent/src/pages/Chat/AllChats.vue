@@ -61,19 +61,18 @@ export default{
       console.log('Chat selected:', chat.id);
     },
     getParticipantName(participants) {
-      // Assuming the first participant that is not the current user is the other person
       const otherParticipant = participants.find(p => p !== this.currentUserId);
-      return otherParticipant || 'Unknown'; // Replace with logic to get participant's name
+      return otherParticipant || 'Unknown';
     },
     getLastMessageSnippet(messages) {
       if (!messages.length) return 'No messages';
       const lastMessage = messages[messages.length - 1];
-      return lastMessage.content; // Or any other relevant snippet from the message
+      return lastMessage.content;
     },
     formatTimestamp(timestamp) {
       // Format the timestamp as desired, e.g., 'Feb 11'
       const date = new Date(timestamp);
-      return date.toLocaleDateString(); // This is very basic formatting
+      return date.toLocaleDateString();
     }
   },
   created() {

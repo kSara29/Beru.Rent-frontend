@@ -51,7 +51,7 @@ export default {
 
       const messageToSend = {
         text: this.newMessage,
-        senderId: this.currentUserId, // Используйте текущий ID пользователя
+        senderId: this.currentUserId,
       };
 
       await axios.post('http://localhost:5174/bff/chat/sendMessageByChatId', {
@@ -79,9 +79,9 @@ export default {
         text: message,
       });
     },
-    setupSignalR() {
+    setupSignalR(chatId) {
       this.hubConnection = new signalR.HubConnectionBuilder()
-        .withUrl('http://localhost:5027/chatHub')
+        .withUrl(`http://localhost:5027/chatHub?chatId=${chatId}`)
         .build();
 
       this.hubConnection.on('ReceiveMessage', this.receiveMessage);
@@ -105,7 +105,7 @@ export default {
     },
   },
   mounted() {
-    this.setupSignalR();
+    this.setupSignalR(this.chatId);
     this.loadChatHistory(this.chatId);
     this.currentUserId = this.user.profile.sub;
     console.log(this.currentUserId);

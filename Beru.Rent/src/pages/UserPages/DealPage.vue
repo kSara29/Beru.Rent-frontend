@@ -27,7 +27,9 @@
     </div>
   </v-navigation-drawer>
   <v-navigation-drawer width="1100">
-    <Chat />
+    <div class="chat-messages" v-if="currentDeal">
+      <Chat :chatId="currentDeal.chatId" />
+    </div>
   </v-navigation-drawer>
   <v-navigation-drawer :width="400">
     <br/><br/><br/><br/><br/><br/><br/><br/><br/>
@@ -35,9 +37,7 @@
       <v-btn @click="action(true)" :width="250" stacked outlined class="ml-3">Закрыть сделку</v-btn> <br/> <br/>
     </div>
     <div v-if="this.currentDeal.isMy === false">
-      <v-btn to="" :width="250" stacked outlined class="ml-3">Прикрепить документ</v-btn> <br/> <br/>
-      <v-btn @click="suggest(false)" :width="250" stacked outlined class="ml-3">Отказаться от сделки</v-btn> <br/> <br/>
-      <v-btn @click="suggest(false)" :width="250" stacked outlined class="ml-3">Продлить сделку</v-btn> <br/> <br/>
+      <v-btn @click="getContract()" :width="250" stacked outlined class="ml-3">Перейти к договору</v-btn> <br/> <br/>
     </div>
     <v-btn to="" :width="250" stacked outlined class="ml-3">
       <router-link to="" style="text-decoration: none; color: red; text-align: center">Пожаловаться на пользователя.</router-link>
@@ -50,8 +50,14 @@
 
 <script>
 import axios from 'axios'
-import Chat from '@/components/Forms/ChatComponent.vue'
+ //import Chat from '@/components/Forms/ChatComponent.vue'
+import Chat from "@/pages/Chat/Chat.vue";
 export default {
+  computed:{
+    userToken() {
+      return this.$store.getters.getUser;
+    }
+  },
   data:() => ({
     user: '',
     deals: [],
@@ -60,29 +66,35 @@ export default {
   }),
   methods: {
     async getDeals() {
-      await axios.get('http://localhost:5174/bff/deal/GetAllDeals/?id=c698dfc2-61a9-46eb-bf7f-0ffb2067b9bd')
+      await axios.get('http://localhost:5174/bff/deal/GetAllDeals/?id=c698dfc2-61a9-46eb-bf7f-0ffb2067b9bd', {
+        headers: {
+          'Authorization': `Bearer ${this.userToken.access_token}`
+        }
+      })
         .then(response => {
           response.data.data.dealPageDto.forEach((element) => element.isMy = false);
           this.deals = response.data.data.dealPageDto;
+          console.log(this.deals);
         })
-      await axios.get('http://localhost:5174/bff/deal/GetAllTenantDeals/?id=c698dfc2-61a9-46eb-bf7f-0ffb2067b9bd')
+      await axios.get('http://localhost:5174/bff/deal/GetAllTenantDeals/?id=c698dfc2-61a9-46eb-bf7f-0ffb2067b9bd', {
+        headers: {
+          'Authorization': `Bearer ${this.userToken.access_token}`
+        }
+      })
         .then(response => {
           response.data.data.dealPageDto.forEach((element) => element.isMy = true);
           this.myDeals = response.data.data.dealPageDto;
           this.currentDeal = response.data.data.dealPageDto[0];
+          console.log(this.myDeals);
+          console.log(this.currentDeal);
         });
     },
     rotate(id) {
       let arrow = document.getElementById(id);
       arrow.classList.toggle('rot');
     },
-    suggest(isTrue) {
-      if (isTrue === false) {
-
-      }
-      else {
-
-      }
+    getContract(){
+      window.location.href = `https://localhost:3000/doc/${this.currentDeal.id}`
     },
     action(isTrue) {
       if (isTrue === false) {
@@ -95,10 +107,12 @@ export default {
       this.currentDeal = deal;
       console.log(deal);
       console.log(this.currentDeal);
+      console.log(this.currentDeal.chatId);
     }
   },
   mounted() {
     this.getDeals()
+    console.log(this.currentDeal)
   },
   components: {
     Chat
