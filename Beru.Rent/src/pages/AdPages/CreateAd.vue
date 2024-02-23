@@ -16,15 +16,17 @@
             :show-size="1000"
             @change="addFiles()">
           </v-file-input>
-          <v-carousel hide-delimiters="">
-            <v-carousel-item
-              v-for="(item) in displayFiles"
-              :key="item.name"
-              :src="item"
-              cover=""
-              height="200"
-            ></v-carousel-item>
-          </v-carousel>
+
+
+          <v-carousel hide-delimiters style="height: 500px;" v-if="displayFiles.length > 0">
+        <v-carousel-item
+          v-for="(image, index) in displayFiles"
+          :key="index"
+          :src="image"
+          contain
+        ></v-carousel-item>
+      </v-carousel>
+
           <v-btn @click="removeFile()">Удалить последнее фото</v-btn>
           <br/>
           <br/>
