@@ -46,7 +46,8 @@
 
     <!-- Регистрация -->
     <v-btn to="/register" stacked outlined class="ml-3" >
-      <router-link to="/register" style="text-decoration: none; color: inherit" >Регистрация</router-link>
+<!--      <router-link to="/register" style="text-decoration: none; color: inherit" >Регистрация</router-link>-->
+      <button style="text-decoration: none; color: inherit" @click="register">Регистрация</button>
     </v-btn>
 
    <!-- Логин -->
@@ -92,6 +93,9 @@
       categories: []
     }),
     methods:{
+      register(){
+        window.location.href = `https://localhost:7258/register`
+      },
       login() {
         this.$userManager.signinRedirect();
       },

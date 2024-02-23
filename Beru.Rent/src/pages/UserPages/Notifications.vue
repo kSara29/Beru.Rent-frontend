@@ -73,7 +73,7 @@
     <!-- <v-btn to="/profile/" :width="350" stacked outlined class="ml-3">
       <router-link to="/profile/" style="text-decoration: none; color: red; text-align: center">Перейти к профилью пользователья</router-link>
     </v-btn>  --><br/> <br/>
-    
+
   </v-navigation-drawer>
 </template>
 
@@ -123,7 +123,7 @@ export default {
           }
         });
 
-      await axios.get(`http://localhost:5174/bff/booking/getalltenantbookings/?id=${this.userToken.profile.sub}&page=1`, {
+      await axios.get(`http://localhost:5174/bff/booking/getalltenantbookings`, {
         headers: {
           'accept': 'text/plain',
           'Content-Type': 'application/json',
@@ -135,7 +135,7 @@ export default {
           this.getAd(response.data.data.dealPageDto[0])
         });
 
-      await axios.get(`http://localhost:5174/bff/booking/getallbookings/?id=${this.userToken.profile.sub}&page=1`, {
+      await axios.get(`}/booking/getallbookings`, {
         headers: {
           'accept': 'text/plain',
           'Content-Type': 'application/json',
@@ -146,7 +146,7 @@ export default {
         this.getAd(response.data.data.dealPageDto[0])
       });
 
-      await axios.get(`http://localhost:5174/bff/dispute/getalldisputes/?id=${this.user.userId}`, {
+      /*await axios.get(`http://localhost:5174/bff/dispute/getalldisputes/?id=${this.user.userId}`, {
         headers: {
           'accept': 'text/plain',
           'Content-Type': 'application/json',
@@ -154,7 +154,7 @@ export default {
         }
       }).then((response) => {
         this.disputes = response.data.data;
-      });
+      });*/
     },
     prepareCarouselImages(byteArray) {
       this.displayFiles = byteArray.map(byteArray => `data:image/jpeg;base64,${byteArray}`);
