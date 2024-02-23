@@ -1,10 +1,5 @@
-<script setup>
-
-</script>
-
 <template>
   <v-card width="100%" class="ad">
-    <!-- Conditional rendering for default image -->
     <img
       v-if="ad.files && ad.files[0] !== null"
       class="custom-img"
@@ -18,19 +13,18 @@
       alt="Empty Item Image"
     />
 
-    <!-- Card Title and Actions -->
     <v-card-title primary-title>
       <div>
-        <h3 class="headline mb-0">{{ ad.title }}</h3>
-        <div>{{ ad.price }}₸/{{ ad.timeUnit.title }}</div>
+        <h3 class="text headline mb-0" style="font-size:28px;">{{ ad.title }}</h3>
+        <div class="text" style="font-size:18px;"> {{ ad.price }}₸/{{ ad.timeUnit.title }}</div>
       </div>
     </v-card-title>
 
     <v-card-actions>
       <v-btn flat color="orange">
-        <router-link style="text-decoration: none; color: inherit" :to="'details/' + adId">Смотреть</router-link>
+        <router-link style="text-decoration: none; color: inherit" :to="'details/' + adId" class="text">Смотреть</router-link>
       </v-btn>
-    
+
     </v-card-actions>
   </v-card>
 </template>
@@ -41,24 +35,27 @@ export default {
     'ad'
   ],
   data: () => ({
-    adId: '', // Инициализация без значения
+    adId: '',
     file: '',
   }),
   mounted() {
-    // Установка значения adId из пропса ad при монтировании компонента
-    this.adId = this.ad.id; // Предполагая, что у ad есть поле id
+    this.adId = this.ad.id;
     console.log(this.ad)
   }
 }
 </script>
 
 <style scoped>
-.ad{
-  margin-left: 50px;
-  margin-bottom: 20px;
-}
-.custom-img {
-  width: 100%; /* Adjust the width to fit the container */
-  height: auto; /* Maintain aspect ratio */
-}
+  .text{
+    font-family: "Comfortaa", sans-serif;
+    font-style: normal;
+  }
+  .ad{
+    margin-left: 50px;
+    margin-bottom: 20px;
+  }
+  .custom-img {
+    width: 100%;
+    height: auto;
+  }
 </style>

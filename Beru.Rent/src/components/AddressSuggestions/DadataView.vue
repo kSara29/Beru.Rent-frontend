@@ -7,7 +7,7 @@
         min="2016-06-15"
         max="2025-03-20"
         width="100%"
-        color="green lighten-1"
+        color="#FFCA28"
         multiple
       ></v-date-picker>
     </v-row>

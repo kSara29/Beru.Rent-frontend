@@ -1,18 +1,31 @@
 <template>
-    <v-parallax height="600px!important" src="https://cdn.vuetifyjs.com/images/backgrounds/vbanner.jpg">
+<!--    <v-parallax height="600px!important" src="https://cdn.vuetifyjs.com/images/backgrounds/vbanner.jpg">-->
+  <v-parallax height="600px!important" src="../../../public/satisfied.jpg">
       <div class="slogan d-flex flex-column justify-center align-center text-white">
-        <h1 class="text-h4 font-weight-thin mb-4">
-          Взять вещи в аренду —
-          просто, как раз-два-три
-        </h1>
-        <h5 class="font-weight-thin ">
-          Некоторые вещи стоят довольно дорого, а используются только время от времени — так зачем покупать их, если можно взять в аренду?
-        </h5>
-        <h5 class="font-weight-thin ">
-          Beru.Rent — простой и удобный сервис для аренды вещей с рейтингом, гарантией и многим другим.
-        </h5>
+        <div style="display:flex; margin-left:60%">
+          <div style="display:flex; flex-direction: column;">
+            <h1 class="main-text" style="margin-top: -120px">
+              Взять вещи в аренду — <br>
+              просто, как раз-два-три
+            </h1>
+            <div>
+              <h5 class="sub-text" style="margin-top: 20px">
+                Некоторые вещи стоят довольно дорого, а используются только время от времени — так зачем покупать их, если можно взять в аренду?
+              </h5>
+              <h5 class="sub-text" style="margin-top: 50px">
+                Beru.Rent — простой и удобный сервис для аренды вещей с рейтингом, гарантией и многим другим.
+              </h5>
+            </div>
+          </div>
+        </div>
       </div>
     </v-parallax>
+
+  <v-container style="display:flex; margin-top: 30px">
+    <v-text-field label="Что ищете?" variant="solo"></v-text-field>
+    <v-btn size="x-large" style="margin-left: 15px" color="#FFCA28" class="text"> Поиск</v-btn>
+  </v-container>
+
 
   <v-container>
     <v-select
@@ -23,19 +36,18 @@
       label="Выберите категорию"
       solo
       variant="outlined"
-      class="category">
+      class="category text"
+      color="#FFCA28">
     </v-select>
 
-    <v-btn
+    <v-btn class="text"
       v-for="option in sortOptions"
       style="margin-bottom: 30px; margin-right: 10px;"
        :key="option.value"
-       :color="selectedSort === option.value ? 'blue' : 'default'"
+       :color="selectedSort === option.value ? '#FFCA28' : 'default'"
         @click="selectSortOption(option.value)">
         {{ option.label }}
     </v-btn>
-
-    
 
 
     <v-row>
@@ -73,7 +85,6 @@ export default {
     selectedCategory: '',
     categories: [],
     selectedSort: 'fromnew',
-    sortOptions: ['fromnew', 'fromold', 'fromhigh', 'fromlow'],
     totalPages: 0,
     sortOptions: [
     { label: 'Цена по убыванию', value: 'fromhigh' },
@@ -82,20 +93,13 @@ export default {
     { label: 'От старых к новым', value: 'fromold' }
   ]
   }),
-  watch: {
-      overlay (val) {
-        val && setTimeout(() => {
-          this.overlay = false
-        }, 3000)
-      },
-    },
   methods: {
       selectSortOption(optionValue) {
         this.selectedSort = optionValue;
       },
       get() {
         axios.get('http://localhost:5174/bff/category/get')
-          .then(response => 
+          .then(response =>
           this.categories = response.data.data);
       },
     fetchItems() {
@@ -125,7 +129,7 @@ export default {
             console.error('Ошибка при загрузке данных:', error);
           })
           .finally(() => {
-        this.overlay = false; 
+        this.overlay = false;
       });
     },
     dataUrl(byteArray) {
@@ -139,6 +143,11 @@ export default {
     this.fetchItems();
   },
   watch: {
+    overlay (val) {
+      val && setTimeout(() => {
+        this.overlay = false
+      }, 3000)
+    },
     currentPage() {
       this.fetchItems();
     },
@@ -159,6 +168,28 @@ export default {
 </script>
 
 <style>
+  .main-text {
+    font-family: "Comfortaa", sans-serif;
+    font-size:50px;
+    font-optical-sizing: auto;
+    font-weight: 400;
+    font-style: normal;
+  }
+  .sub-text{
+    font-family: "Comfortaa", sans-serif;
+    font-size:25px;
+    font-optical-sizing: auto;
+    font-weight: 300;
+    font-style: normal;
+  }
+  .text{
+    font-family: "Comfortaa", sans-serif;
+    font-size:15px;
+    font-style: normal;
+  }
+  .custom-img{
+    height: 300px!important;
+  }
   .v-img__img{
     height: 100%!important;
   }
