@@ -12,7 +12,7 @@
     <div class="collapse" id="to-me" style="">
       <v-list class="list-styled fw-normal pb-1 small">
         <v-icon icon=""></v-icon>
-        <v-list-item @click="change(deal)" class="align-items-center rounded" link v-for="deal in myDeals" prepend-icon="mdi-exclamation" :title="'От: ' + deal.id" :subtitle="'Сумма: '"></v-list-item>
+        <v-list-item @click="change(deal)" class="align-items-center rounded" link v-for="deal in myDeals" prepend-icon="mdi-exclamation" :title="'Владелец ' + deal.ownerName" :subtitle="'Сумма: '"></v-list-item>
       </v-list>
     </div>
 
@@ -22,7 +22,7 @@
     <div class="collapse" id="from-me" style="">
       <v-list class="list-styled fw-normal pb-1 small">
         <v-icon icon=""></v-icon>
-        <v-list-item @click="change(deal)" class="align-items-center rounded" link v-for="deal in deals" prepend-icon="mdi-exclamation" :title="'От: ' + deal.id" :subtitle="'Сумма: '"></v-list-item>
+        <v-list-item @click="change(deal)" class="align-items-center rounded" link v-for="deal in deals" prepend-icon="mdi-exclamation" :title="'Заказчик ' + deal.tenantName" :subtitle="'Сумма: '"></v-list-item>
       </v-list>
     </div>
   </v-navigation-drawer>
@@ -33,7 +33,7 @@
   </v-navigation-drawer>
   <v-navigation-drawer :width="400">
     <br/><br/><br/><br/><br/><br/><br/><br/><br/>
-    <div v-if="this.currentDeal.isMy === true">
+    <div v-if="this.currentDeal.isMy === false">
       <v-btn @click="action(true)" :width="250" stacked outlined class="ml-3">Закрыть сделку</v-btn> <br/> <br/>
     </div>
     <div v-if="this.currentDeal.isMy === false">
