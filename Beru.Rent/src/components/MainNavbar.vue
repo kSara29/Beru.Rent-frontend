@@ -9,62 +9,40 @@
         </v-btn>
       </v-app-bar-title>
 
-    <!-- Поисковик -->
-<!--    <v-btn icon>
-      <v-icon @click="search()">mdi-magnify</v-icon>
-    </v-btn>-->
-
-<!--    <v-text-field
-      hide-details
-      single-line
-      v-model="searchItem"
-    ></v-text-field>
-
-    &lt;!&ndash; Категория &ndash;&gt;
-    <v-app-bar-title style="align-self: self-start">
-      <v-select
-        clearable
-        label="Категория"
-        :items="categories"
-        v-model="category"
-      ></v-select>
-    </v-app-bar-title>-->
-
     <v-spacer></v-spacer>
 
     <div v-if="!user" class="ml-3">
 
-    <!-- Регистрация -->
-    <v-btn to="/register" stacked outlined class="ml-3" >
-<!--      <router-link to="/register" style="text-decoration: none; color: inherit" >Регистрация</router-link>-->
-      <button style="text-decoration: none; color: inherit" @click="register">Регистрация</button>
-    </v-btn>
+      <!-- Регистрация -->
+      <v-btn to="/register" stacked outlined class="ml-3" >
+        <button style="text-decoration: none; color: inherit" @click="register">Регистрация</button>
+      </v-btn>
 
-   <!-- Логин -->
-    <v-btn stacked outlined class="ml-3" >
-      <button style="text-decoration: none; color: inherit" @click="login">ВОЙТИ</button>
-    </v-btn>
-  </div>
+     <!-- Логин -->
+      <v-btn stacked outlined class="ml-3" >
+        <button style="text-decoration: none; color: inherit" @click="login">ВОЙТИ</button>
+      </v-btn>
+    </div>
 
     <div v-if="user" class="ml-3">
     <!-- Список уведомлении -->
-    <v-btn to="/profile/notifications/" >
-      <v-icon icon="mdi-bell" style="text-decoration: none; color: inherit"></v-icon>
-    </v-btn>
-    <!-- Создание объявления -->
-    <v-btn to="/createad" stacked outlined class="ml-3" >
-      <router-link to="/createad" style="text-decoration: none; color: inherit">Создать объявление</router-link>
-    </v-btn>
-    <!--button @click="logout">Выйти</button-->
-    <v-btn to="/logout" stacked outlined class="ml-3" >
-      <router-link to="/logout" style="text-decoration: none; color: inherit">
-        <v-icon icon="mdi-login"></v-icon>
-        Выйти</router-link>
-    </v-btn>
-    <!-- Личный кабинет -->
-    <v-btn to="/profile/" stacked outlined class="ml-3" >
-      <router-link to="/profile" style="text-decoration: none; color: inherit">Личный кабинет</router-link>
-    </v-btn>
+      <v-btn to="/profile/notifications/" >
+        <v-icon icon="mdi-bell" style="text-decoration: none; color: inherit"></v-icon>
+      </v-btn>
+      <!-- Создание объявления -->
+      <v-btn to="/createad" stacked outlined class="ml-3" >
+        <router-link to="/createad" style="text-decoration: none; color: inherit">Создать объявление</router-link>
+      </v-btn>
+      <!--button @click="logout">Выйти</button-->
+      <v-btn to="/logout" stacked outlined class="ml-3" >
+        <router-link to="/logout" style="text-decoration: none; color: inherit">
+          <v-icon icon="mdi-login"></v-icon>
+          Выйти</router-link>
+      </v-btn>
+      <!-- Личный кабинет -->
+      <v-btn to="/profile/" stacked outlined class="ml-3" >
+        <router-link to="/profile" style="text-decoration: none; color: inherit">Личный кабинет</router-link>
+      </v-btn>
 
     </div>
 

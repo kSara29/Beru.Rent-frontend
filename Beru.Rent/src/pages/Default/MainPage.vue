@@ -1,5 +1,4 @@
 <template>
-<!--    <v-parallax height="600px!important" src="https://cdn.vuetifyjs.com/images/backgrounds/vbanner.jpg">-->
   <v-parallax height="600px!important" src="../../../public/satisfied.jpg">
       <div class="slogan d-flex flex-column justify-center align-center text-white">
         <div style="display:flex; margin-left:60%">
@@ -22,8 +21,8 @@
     </v-parallax>
 
   <v-container style="display:flex; margin-top: 30px">
-    <v-text-field label="Что ищете?" variant="solo"></v-text-field>
-    <v-btn size="x-large" style="margin-left: 15px" color="#FFCA28" class="text"> Поиск</v-btn>
+    <v-text-field label="Что ищете?" variant="solo" v-model="searchItem" @keyup.enter="search()"></v-text-field>
+    <v-btn size="x-large" style="margin-left: 15px" color="#FFCA28" class="text" @click="search()"> Поиск</v-btn>
   </v-container>
 
 
@@ -79,6 +78,7 @@ import axios from 'axios'
 import Ad from '@/components/Ad.vue'
 export default {
   data:() => ({
+    searchItem: '',
     overlay: false,
     items: [],
     currentPage: 1,
@@ -94,14 +94,27 @@ export default {
   ]
   }),
   methods: {
-      selectSortOption(optionValue) {
-        this.selectedSort = optionValue;
-      },
-      get() {
-        axios.get('http://localhost:5174/bff/category/get')
-          .then(response =>
-          this.categories = response.data.data);
-      },
+    search(){
+      if (this.category !== '' && this.searchItem !== ''){
+        window.location.href = `https://localhost:3000/search/${this.category}/${this.searchItem}`
+      }
+      else if (this.searchItem !== '' && this.category === '') {
+        window.location.href = `https://localhost:3000/searchItem/${this.searchItem}`
+      }
+      else if (this.searchItem === '' && this.category !== ''){
+        window.location.href = `https://localhost:3000/searchCategory/${this.category}`
+      } else {
+        window.location.href = `https://localhost:3000/`
+      }
+    },
+    selectSortOption(optionValue) {
+      this.selectedSort = optionValue;
+    },
+    get() {
+      axios.get('http://localhost:5174/bff/category/get')
+        .then(response =>
+        this.categories = response.data.data);
+    },
     fetchItems() {
       let params = {
         page: this.currentPage,
