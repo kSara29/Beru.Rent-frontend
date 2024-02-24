@@ -75,6 +75,10 @@
     <v-btn to="/profile/" stacked outlined class="ml-3" >
       <router-link to="/profile" style="text-decoration: none; color: inherit">Личный кабинет</router-link>
     </v-btn>
+        <!-- Сделки кабинет -->
+        <v-btn to="/user/deals" stacked outlined class="ml-3" >
+      <router-link to="/user/deals" style="text-decoration: none; color: inherit">Мои сделки</router-link>
+    </v-btn>
 
     </div>
 

@@ -58,18 +58,24 @@
       <v-btn :to="'/details/' + this.ad.id" :width="350" stacked outlined class="ml-3">
       <router-link :to="'/details/' + this.ad.id" style="text-decoration: none; color: red;">Перейти к объявлению</router-link>
     </v-btn>
+    <div v-if="this.currentNot.bookingState === 'InQueue'">
+      <v-btn v-if="showApproveBtn" @click="answer(true)" :width="350" stacked outlined class="ml-3">Подтвердить</v-btn> <br/> <br/>
+      <v-btn @click="answer(false)" :width="350" stacked outlined class="ml-3">Отменить</v-btn> <br/> <br/>
+    </div>
+    <div v-if="this.currentNot.bookingState === 'Accept'">
+      <v-btn to="/user/deals" :width="350" stacked outlined class="ml-3">Перейти на страницу мои сделки</v-btn> <br/> <br/>
+    </div>
     </div>
   </v-navigation-drawer>
   <v-navigation-drawer :width="550">
     <br/><br/><br/><br/><br/><br/><br/><br/><br/>
-    <div v-if="this.currentNot.bookingState === 'InQueue'">
-      <v-btn @click="answer(true)" :width="350" stacked outlined class="ml-3">Подтвердить</v-btn> <br/> <br/>
-      <v-btn @click="answer(false)" :width="350" stacked outlined class="ml-3">Отказать</v-btn> <br/> <br/>
+    <!-- <div v-if="this.currentNot.bookingState === 'InQueue'">
+      <v-btn v-if="showApproveBtn" @click="answer(true)" :width="350" stacked outlined class="ml-3">Подтвердить</v-btn> <br/> <br/>
+      <v-btn @click="answer(false)" :width="350" stacked outlined class="ml-3">Отменить</v-btn> <br/> <br/>
     </div>
     <div v-if="this.currentNot.bookingState === 'Accept'">
       <v-btn to="/user/deals" :width="350" stacked outlined class="ml-3">Перейти на страницу мои сделки</v-btn> <br/> <br/>
-      <!-- <v-btn to="/chat" :width="350" stacked outlined class="ml-3">Открыть чат</v-btn> <br/> <br/> -->
-    </div>
+    </div> -->
     <!-- <v-btn to="/profile/" :width="350" stacked outlined class="ml-3">
       <router-link to="/profile/" style="text-decoration: none; color: red; text-align: center">Перейти к профилью пользователья</router-link>
     </v-btn>  --><br/> <br/>
@@ -95,13 +101,21 @@ export default {
     today: new Date(),
     displayFiles: ['https://picsum.photos/1920/1080?random'],
     currentNot: '',
-    disputes: ''
+    disputes: '',
+    showApproveBtn:false
   }),
   methods: {
     async getAd(not) {
       axios.get(`http://localhost:5174/bff/ad/getById?id=${not.adId}`)
         .then(response => {
           this.ad = response.data.data;
+          console.log("Объявление: " + this.ad.userId);
+          console.log("Юзер Id: " + this.userToken.profile.sub);
+
+          if(this.ad.userId == this.userToken.profile.sub){
+            this.showApproveBtn = true;
+            console.log("Показать кнопку? " + this.showApproveBtn);
+          }
           this.prepareCarouselImages(this.ad.files)
         })
       this.currentNot = not;
@@ -135,7 +149,7 @@ export default {
           this.getAd(response.data.data.dealPageDto[0])
         });
 
-      await axios.get(`}/booking/getallbookings`, {
+      await axios.get(`http://localhost:5174/bff/booking/getallbookings`, {
         headers: {
           'accept': 'text/plain',
           'Content-Type': 'application/json',

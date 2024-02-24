@@ -2,10 +2,11 @@
   <v-container>
     <v-card>
       <v-card-title>Чат</v-card-title>
-      <v-card-text style="height: 656px; overflow-y: auto; display: grid">
+      <v-card-text style="height: 656px; overflow-y: auto; display: flex; flex-direction: column;">
         <div v-for="message in messages" :key="message.messageId"
              class="message-bubble"
-             :class="{'message-right': message.senderId === currentUserId, 'message-left': message.senderId !== currentUserId}">
+             :class="{'message-right': message.senderId === currentUserId, 
+             'message-left': message.senderId !== currentUserId}">
           {{ message.text }}
         </div>
       </v-card-text>
@@ -64,7 +65,7 @@ export default {
         }
       })
         .then(response => {
-          this.messages.push(messageToSend);
+          //this.messages.push(messageToSend);
           console.log(response);
         })
         .catch(error => {
@@ -73,9 +74,9 @@ export default {
 
       this.newMessage = '';
     },
-    receiveMessage(user, message) {
+    receiveMessage(senderId, message) {
       this.messages.push({
-        sender: user,
+        senderId: senderId,
         text: message,
       });
     },
@@ -84,7 +85,7 @@ export default {
         .withUrl(`http://localhost:5027/chatHub?chatId=${chatId}`)
         .build();
 
-      this.hubConnection.on('ReceiveMessage', this.receiveMessage);
+        this.hubConnection.on('ReceiveMessage', (senderId, message) => this.receiveMessage(senderId, message));
 
       this.hubConnection.start()
         .then(() => console.log('Connection started!'))
@@ -108,7 +109,7 @@ export default {
     this.setupSignalR(this.chatId);
     this.loadChatHistory(this.chatId);
     this.currentUserId = this.user.profile.sub;
-    console.log(this.currentUserId);
+    console.log("ID текущего пользователя: "+this.currentUserId);
   },
   watch: {
     chatId(newVal) {
@@ -128,6 +129,8 @@ export default {
     display: block;
     max-width: 80%;
     word-wrap: break-word;
+    height: max-content;
+
   }
 
   .message-left {
