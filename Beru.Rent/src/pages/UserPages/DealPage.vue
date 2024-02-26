@@ -33,7 +33,7 @@
   </v-navigation-drawer>
   <v-navigation-drawer :width="400">
     <br/><br/><br/><br/><br/><br/><br/><br/><br/>
-    <div v-if="this.currentDeal.isMy === false">
+    <div v-if="this.currentDeal.isMy === true">
       <v-btn @click="action(true)" :width="250" stacked outlined class="ml-3">Закрыть сделку</v-btn> <br/> <br/>
     </div>
     <div v-if="this.currentDeal.isMy === false">

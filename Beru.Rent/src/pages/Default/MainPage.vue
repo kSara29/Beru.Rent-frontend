@@ -87,10 +87,10 @@ export default {
     selectedSort: 'fromnew',
     totalPages: 0,
     sortOptions: [
-    { label: 'Цена по убыванию', value: 'fromhigh' },
-    { label: 'Цена по возрастанию', value: 'fromlow' },
-    { label: 'От новых к старым', value: 'fromnew' },
-    { label: 'От старых к новым', value: 'fromold' }
+      { label: 'От новых к старым', value: 'fromnew' },
+      { label: 'От старых к новым', value: 'fromold' },
+      { label: 'Цена по убыванию', value: 'fromhigh' },
+      { label: 'Цена по возрастанию', value: 'fromlow' }
   ]
   }),
   methods: {

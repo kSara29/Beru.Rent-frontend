@@ -27,24 +27,9 @@
           <v-btn >
             <router-link style="text-decoration: none; color: inherit;" :to="'allChats'">Чаты</router-link>
           </v-btn>
-          <v-btn @click="toggleGreeting">
-            <p >Сделки</p>
-          </v-btn>
           <v-btn >
-            <router-link style="text-decoration: none; color: inherit;" :to="'allChats'">Бронирования</router-link>
+            <router-link style="text-decoration: none; color: inherit;" :to="'/user/deals'">Сделки</router-link>
           </v-btn>
-        </v-container>
-
-        <v-container v-if="showGreeting" class="mt-3">
-          <v-row justify="center">
-            <v-col cols="12">
-              <v-card>
-                <v-card-text>
-                  <h2>Deals list - Coming soon ...</h2>
-                </v-card-text>
-              </v-card>
-            </v-col>
-          </v-row>
         </v-container>
 
         <v-container class="main-text" style="display:flex; justify-content:center">
